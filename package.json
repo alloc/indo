@@ -1,0 +1,8 @@
+{
+  "name": "indo",
+  "version": "0.0.0",
+  "description": "Workspaces where each package has its own commit history",
+  "author": "Alec Larson",
+  "license": "MIT",
+  "repository": "alloc/indo"
+}
