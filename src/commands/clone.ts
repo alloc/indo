@@ -10,7 +10,6 @@ import { fatal, randstr } from '../core/helpers'
 import { installAndBuild } from '../core/installAndBuild'
 import { linkPackages } from '../core/linkPackages'
 import { loadPackages } from '../core/loadPackages'
-import { loadVendors } from '../core/loadVendors'
 import { loadPackage } from '../core/Package'
 
 export default async (cfg: RootConfig) => {
