@@ -58,7 +58,7 @@ export const spin = (text: string) => {
       this.stop()
       log.error(...args)
       this.start()
-    }
+    },
     start(newText?: string) {
       if (newText !== void 0) {
         text = newText

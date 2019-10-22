@@ -1,6 +1,5 @@
 import AsyncTaskGroup from 'async-task-group'
 import log from 'lodge'
-import ora from 'ora'
 import { join, relative } from 'path'
 import fs from 'saxon/sync'
 import { RootConfig } from './config'

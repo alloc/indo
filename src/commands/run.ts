@@ -1,6 +1,5 @@
 import AsyncTaskGroup from 'async-task-group'
 import log from 'lodge'
-import ora from 'ora'
 import { relative } from 'path'
 import slurm from 'slurm'
 import { RootConfig } from '../core/config'
