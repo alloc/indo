@@ -1,5 +1,6 @@
 import { dirname, join, relative } from 'path'
 import { crawl, createMatcher } from 'recrawl-sync'
+import fs from 'saxon/sync'
 import { RootConfig } from './config'
 import { loadPackage, PackageMap } from './Package'
 
@@ -24,7 +25,7 @@ export function loadVendors(cfg: RootConfig) {
       root = dirname(root)
     }
 
-    if (root) {
+    if (root && fs.isDir(root)) {
       glob = glob.slice(root.length)
       const match = createMatcher([glob])!
       crawl(root, {
