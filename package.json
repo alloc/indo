@@ -18,7 +18,7 @@
     "async-task-group": "^1.3.2",
     "dequals": "^1.0.0",
     "enquirer": "^2.3.2",
-    "lodge": "^0.1.3",
+    "lodge": "^0.1.4",
     "ora": "^4.0.2",
     "recrawl-sync": "^1.2.2",
     "saxon": "^0.1.15",
