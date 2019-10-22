@@ -18,6 +18,7 @@ export class Package {
   devDependencies?: StringMap
   workspaces?: string[] | { packages: string[] }
   scripts?: StringMap
+  bin?: string | { [name: string]: string }
 
   constructor(path: string) {
     Object.defineProperty(this, 'path', {

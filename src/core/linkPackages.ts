@@ -49,6 +49,30 @@ export function linkPackages(cfg: RootConfig, packages: PackageMap) {
           'to',
           log.lyellow('./' + relative(cfg.root, dep.root))
         )
+        if (dep.bin) {
+          const addBinScript = (name: string, bin: string) => {
+            bin = join(dep.root, bin)
+            const link = join(nodeModulesPath, '.bin', name)
+            const target = relative(dirname(link), bin)
+            fs.remove(link)
+            fs.link(link, target)
+            fs.chmod(link, 0o755)
+            log(
+              log.green('+'),
+              'Linked',
+              log.gray(pkg.name + ':') + log.lcyan(name),
+              'to',
+              log.lyellow('./' + relative(cfg.root, bin))
+            )
+          }
+          if (typeof dep.bin == 'string') {
+            addBinScript(dep.name, dep.bin)
+          } else {
+            for (const name in dep.bin) {
+              addBinScript(name, dep.bin[name])
+            }
+          }
+        }
       }
     }
   }
