@@ -1,11 +1,10 @@
 import AsyncTaskGroup from 'async-task-group'
 import log from 'lodge'
-import ora from 'ora'
 import { join, relative } from 'path'
 import fs from 'saxon/sync'
-import { RepoConfig, RootConfig, saveConfig } from '../core/config'
+import { RootConfig, saveConfig } from '../core/config'
 import { git } from '../core/git'
-import { choose } from '../core/helpers'
+import { choose, spin } from '../core/helpers'
 import { installAndBuild } from '../core/installAndBuild'
 import { linkPackages } from '../core/linkPackages'
 import { loadPackages } from '../core/loadPackages'
@@ -24,30 +23,26 @@ export default async (cfg: RootConfig) => {
 async function cloneMissingRepos(cfg: RootConfig) {
   const repos = Object.entries(cfg.repos)
   if (repos.length) {
-    const spinner = ora('Cloning any missing repos...').start()
+    const spinner = spin('Cloning any missing repos...')
 
-    const cloned: Array<[string, RepoConfig]> = []
     const cloner = new AsyncTaskGroup(3)
-    await cloner.map(repos, arg => {
-      const [path, repo] = arg
+    await cloner.map(repos, async ([path, repo]) => {
       if (!fs.exists(path)) {
-        cloned.push(arg)
-        return git.clone(cfg.root, repo, path)
+        const repoId = repo.url + (repo.head ? '#' + repo.head : '')
+        try {
+          await git.clone(cfg.root, repo, path)
+          spinner.log(
+            log.green('+'),
+            `Cloned ${log.green('./' + path)} from`,
+            log.gray(repoId.replace(/^.+:\/\//, ''))
+          )
+        } catch (err) {
+          spinner.error(err)
+        }
       }
     })
 
     spinner.stop()
-    cloned.forEach(([path, repo]) => {
-      let repoId = repo.url
-      if (repo.head) {
-        repoId += '#' + repo.head
-      }
-      log(
-        log.green('+'),
-        `Cloned ${log.green('./' + path)} from`,
-        log.gray(repoId.replace(/^.+:\/\//, ''))
-      )
-    })
   }
 }
 

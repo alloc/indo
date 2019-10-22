@@ -4,7 +4,7 @@ import ora from 'ora'
 import { relative } from 'path'
 import slurm from 'slurm'
 import { RootConfig } from '../core/config'
-import { fatal } from '../core/helpers'
+import { fatal, spin } from '../core/helpers'
 import { loadPackages } from '../core/loadPackages'
 
 export default async (cfg: RootConfig) => {
@@ -19,9 +19,7 @@ export default async (cfg: RootConfig) => {
     skip: cfg.vendor,
   })
 
-  let spinner!: ora.Ora
-  let start = () => (spinner = ora('Running...').start())
-  start()
+  const spinner = spin('Running...')
 
   const runner = new AsyncTaskGroup(args.concurrency)
   await runner.map(Object.values(packages), async pkg => {
@@ -29,21 +27,17 @@ export default async (cfg: RootConfig) => {
     if (script) {
       try {
         await script
-        spinner.stop()
-        log(
+        spinner.log(
           log.green('✓'),
           'Run completed for',
           log.green('./' + relative(cfg.root, pkg.root))
         )
       } catch {
-        spinner.stop()
-        log(
+        spinner.log(
           log.red('⨯'),
           'Build failed:',
           log.yellow('./' + relative(cfg.root, pkg.root))
         )
-      } finally {
-        start()
       }
     }
   })

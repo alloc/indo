@@ -1,6 +1,7 @@
 import crypto from 'crypto'
 import { prompt } from 'enquirer'
 import log from 'lodge'
+import ora from 'ora'
 import * as os from 'os'
 
 export { crawl, createMatcher } from 'recrawl-sync'
@@ -34,4 +35,31 @@ export const fatal = (...args: any[]) => {
 
 export const randstr = (len: number) => {
   return crypto.randomBytes(len).toString('hex')
+}
+
+export const spin = (text: string) => {
+  let spinner = ora(text).start()
+  return {
+    log(...args: any[]) {
+      this.stop()
+      log(...args)
+      this.start()
+    },
+    error(...args: any[]) {
+      this.stop()
+      log.error(...args)
+      this.start()
+    }
+    start(newText?: string) {
+      if (newText !== void 0) {
+        text = newText
+      }
+      spinner = ora(text).start()
+      return this
+    },
+    stop() {
+      spinner.stop()
+      return this
+    },
+  }
 }

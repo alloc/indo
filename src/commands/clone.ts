@@ -1,12 +1,11 @@
 import exec from '@cush/exec'
 import log from 'lodge'
-import ora from 'ora'
 import { join, relative, resolve } from 'path'
 import fs from 'saxon/sync'
 import slurm from 'slurm'
 import { RootConfig, saveConfig } from '../core/config'
 import { git } from '../core/git'
-import { fatal, randstr } from '../core/helpers'
+import { fatal, randstr, spin } from '../core/helpers'
 import { installAndBuild } from '../core/installAndBuild'
 import { linkPackages } from '../core/linkPackages'
 import { loadPackages } from '../core/loadPackages'
@@ -43,7 +42,7 @@ export default async (cfg: RootConfig) => {
     dir = resolve(dir)
   }
 
-  const spinner = ora('Cloning...').start()
+  const spinner = spin('Cloning...')
 
   const repo = { url }
   await git.clone(cfg.root, repo, dir)
