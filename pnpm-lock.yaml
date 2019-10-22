@@ -8,7 +8,7 @@ dependencies:
   recrawl-sync: 1.2.3
   saxon: 0.1.15
   semver: 6.3.0
-  slurm: 0.5.6
+  slurm: 0.5.8
 devDependencies:
   '@types/node': 12.11.2
   '@types/semver': 6.0.2
@@ -1384,10 +1384,10 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-xB8vbDn8FtHNF61LXYlhFK5HDVU=
-  /slurm/0.5.6:
+  /slurm/0.5.8:
     dev: false
     resolution:
-      integrity: sha512-gPtinIcWOEqu/+Fo7AxxleMm8z5usUCfOTLB5mNSzuUkl1w1NAs1ctxdsDV6vo8Zh4hyCBt9GAbJiJO5NBOgmA==
+      integrity: sha512-Ih4MBNEOHjR4pKgFSEJEjn6693SP+h/ISxeAry2TrDmQfgT45HuIPUrI4Xx3FblIhOBcELblHaNASITBYSkjfA==
   /snapdragon-node/2.1.1:
     dependencies:
       define-property: 1.0.0
@@ -1797,7 +1797,7 @@ specifiers:
   recrawl-sync: ^1.2.2
   saxon: ^0.1.15
   semver: ^6.3.0
-  slurm: ^0.5.6
+  slurm: ^0.5.8
   tslint: ^5.20.0
   tslint-mango: ^0.1.12
   typescript: ^3.6.4
