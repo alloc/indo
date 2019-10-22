@@ -44,9 +44,9 @@ export function linkPackages(cfg: RootConfig, packages: PackageMap) {
         log(
           log.green('+'),
           'Linked',
-          log.gray(pkg.name + ':') + log.green(alias),
+          log.gray(pkg.name + ':') + log.lgreen(alias),
           'to',
-          log.lcyan('./' + relative(cfg.root, dep.root))
+          log.lyellow('./' + relative(cfg.root, dep.root))
         )
       }
     }
