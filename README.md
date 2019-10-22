@@ -69,6 +69,11 @@ Remove one or more packages, cleaning up `.indo.json` along the way.
 
 For example, `indo rm foo bar` removes the `./foo` and `./bar` directories (relative to the working directory).
 
+The given directories are not required to contain a `package.json`. For example, you can do `indo rm packages`
+to delete the entire `packages` directory, which may contain dozens of repos, each with its own `package.json`.
+
+It's basically `rm -rf` but with a confirmation prompt and cleanup of the nearest `.indo.json` config.
+
 &nbsp;
 
 ### `indo init`
