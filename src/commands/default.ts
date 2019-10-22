@@ -18,7 +18,7 @@ export default async (cfg: RootConfig) => {
   })
   await findUnknownRepos(cfg, packages)
   await installAndBuild(cfg, Object.values(packages))
-  await linkPackages(cfg, packages)
+  linkPackages(cfg, packages)
 }
 
 async function cloneMissingRepos(cfg: RootConfig) {
