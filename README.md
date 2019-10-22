@@ -43,9 +43,40 @@ an optional directory name (eg: `indo clone lodash a/b/c`).
 
 &nbsp;
 
+### `indo run`
+
+Run a npm script in every non-vendor package.
+
+```sh
+indo run build
+```
+
+&nbsp;
+
+### `indo ls`
+
+See which packages are detected by Indo.
+
+```sh
+indo ls
+```
+
+&nbsp;
+
+### `indo rm`
+
+Remove one or more packages, cleaning up `.indo.json` along the way.
+
+For example, `indo rm foo bar` removes the `./foo` and `./bar` directories (relative to the working directory).
+
+&nbsp;
+
 ### `indo init`
 
 Create a `.indo.json` config in the current directory.
+
+The `indo` command automatically invokes this command when neither the directory nor any of
+its ancestors contain a `.indo.json` config.
 
 &nbsp;
 
