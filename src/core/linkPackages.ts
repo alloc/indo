@@ -5,17 +5,18 @@ import semver from 'semver'
 import { RootConfig } from './config'
 import { splitNameVersion } from './helpers'
 import { loadVendors } from './loadVendors'
-import { PackageMap } from './Package'
+import { PackageMap, StringMap } from './Package'
 
 export function linkPackages(cfg: RootConfig, packages: PackageMap) {
   const vendor = loadVendors(cfg)
   for (const pkg of Object.values(packages)) {
-    if (!pkg.dependencies) {
+    const deps: StringMap = { ...pkg.dependencies, ...pkg.devDependencies }
+    if (!Object.keys(deps).length) {
       continue
     }
 
     const nodeModulesPath = join(pkg.root, 'node_modules')
-    for (let [name, version] of Object.entries(pkg.dependencies)) {
+    for (let [name, version] of Object.entries(deps)) {
       if (/^(link|file):/.test(version)) continue
 
       const alias = cfg.alias[name] || name
