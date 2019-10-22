@@ -20,15 +20,23 @@ export async function installAndBuild(cfg: RootConfig, pkgs: Package[]) {
     const nodeModulesPath = join(pkg.root, 'node_modules')
     if (!fs.isDir(nodeModulesPath)) {
       const npm = pkg.manager
-      await npm.install(['--ignore-scripts'])
-      installed.push(pkg)
-      spinner.log(
-        log.green('✓'),
-        'Installed',
-        log.green('./' + relative(cfg.root, pkg.root)),
-        'dependencies using',
-        log.lcyan(pkg.manager.name)
-      )
+      try {
+        await npm.install(['--ignore-scripts'])
+        installed.push(pkg)
+        spinner.log(
+          log.green('✓'),
+          'Installed',
+          log.green('./' + relative(cfg.root, pkg.root)),
+          'dependencies using',
+          log.lcyan(pkg.manager.name)
+        )
+      } catch {
+        spinner.log(
+          log.red('⨯'),
+          'Failed to install dependencies of',
+          log.lyellow(relative(cfg.root, pkg.root))
+        )
+      }
     }
   })
 
