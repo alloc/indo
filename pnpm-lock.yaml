@@ -1,6 +1,7 @@
 dependencies:
-  '@cush/exec': 1.5.1
+  '@cush/exec': 1.5.2
   async-task-group: 1.3.2
+  bocks: 1.0.0
   dequals: 1.0.0
   enquirer: 2.3.2
   lodge: 0.1.4
@@ -33,12 +34,12 @@ packages:
     dev: true
     resolution:
       integrity: sha512-7dV4eu9gBxoM0dAnj/BCFDW9LFU0zvTrkq0ugM7pnHEgguOEeOz1so2ZghEdzviYzQEED0r4EAgpsBChKy1TRQ==
-  /@cush/exec/1.5.1:
+  /@cush/exec/1.5.2:
     dependencies:
       type-error: 1.0.3
     dev: false
     resolution:
-      integrity: sha512-G0qClhjFCOQfJRlmAGIJca4vGs50xWTArtabh/vWCdwi5Q3qtRZ/u0mwwoXWIqtDyA/lA/J8vKzEO+pncBd/Jw==
+      integrity: sha512-T68XjlOd2WqiDkciH2nhEQhT7J+9am3NdrgkesS+TRxWdNHZzM9MkwRF+FLmMISoJQnr8HEWtLYgritARNRxBA==
   /@cush/relative/0.1.0:
     dev: false
     resolution:
@@ -193,6 +194,10 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha512-5T6P4xPgpp0YDFvSWwEZ4NoE3aM4QBQXDzmVbraCkFj8zHM+mba8SyqB5DbZWyR7mYHo6Y7BdQo3MoA4m0TeQg==
+  /bocks/1.0.0:
+    dev: false
+    resolution:
+      integrity: sha512-SEOcqe1SH0e/UqybMv69oNNr2O1vtHHvP+2UlWHIFqrR897krsZ5pYhruj4XrT1B8/dBwvl8XCR2houPLLy7pw==
   /brace-expansion/1.1.11:
     dependencies:
       balanced-match: 1.0.0
@@ -1788,6 +1793,7 @@ specifiers:
   '@types/node': ^12.11.1
   '@types/semver': ^6.0.2
   async-task-group: ^1.3.2
+  bocks: ^1.0.0
   dequals: ^1.0.0
   enquirer: ^2.3.2
   lodge: ^0.1.4

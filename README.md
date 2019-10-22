@@ -43,6 +43,18 @@ an optional directory name (eg: `indo clone lodash a/b/c`).
 
 &nbsp;
 
+### `indo git`
+
+Run a `git` command in every `.git` repo containing a non-vendor package.
+
+**Note:** Your customized `git` aliases are supported!
+
+```sh
+indo git status
+```
+
+&nbsp;
+
 ### `indo run`
 
 Run a npm script in every non-vendor package.
