@@ -6,6 +6,15 @@ import * as os from 'os'
 
 export { crawl, createMatcher } from 'recrawl-sync'
 
+export const splitNameVersion = (str: string) => {
+  // Ignore the @ in user/org scopes
+  const i = str.slice(1).lastIndexOf('@')
+  return {
+    name: i < 0 ? str : str.slice(0, i),
+    version: i < 0 ? '' : str.slice(i + 1),
+  }
+}
+
 export const isHomeDir = (path: string) => {
   return path === '/' || path === os.homedir()
 }
