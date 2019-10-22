@@ -9,6 +9,7 @@ export default async (cfg: RootConfig) => {
   const args = slurm({
     concurrency: { type: 'number', default: 1 },
   })
+
   const cmd = args['--']
   if (!cmd) {
     return fatal(
@@ -16,27 +17,29 @@ export default async (cfg: RootConfig) => {
       log.lgreen('"indo run -- echo \\$PACKAGE_NAME"') + ')'
     )
   }
-  console.log(args)
+
   const packages = loadPackages(cfg.root, {
     skip: cfg.vendor,
   })
 
   const runner = new AsyncTaskGroup(args.concurrency)
   await runner.map(Object.values(packages), async pkg => {
-    await pkg.exec(
-      cmd,
-      {
-        env: {
-          ...process.env,
-          PACKAGE_NAME: pkg.name,
-          PACKAGE_ROOT: pkg.root,
-          FORCE_COLOR: 'true',
-        },
-      },
-      (stderr, stdout) => {
-        if (stderr) process.stderr.write(stderr)
-        else process.stdout.write(stdout)
-      }
-    )
+    const env = {
+      ...process.env,
+      PWD: pkg.root,
+      PACKAGE_NAME: pkg.name,
+      PACKAGE_ROOT: pkg.root,
+    }
+    await pkg.exec(injectEnv(cmd, env), {
+      env,
+      stdio: 'inherit',
+    })
+  })
+}
+
+function injectEnv(cmd: string, env: object) {
+  const envUnixRegex = /\$(\w+)/g
+  return cmd.replace(envUnixRegex, (_, name) => {
+    return env[name] || ''
   })
 }
