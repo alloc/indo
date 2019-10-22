@@ -13,7 +13,8 @@ export async function installAndBuild(cfg: RootConfig, pkgs: Package[]) {
   const installed: Package[] = []
   const installer = new AsyncTaskGroup(3)
   await installer.map(pkgs, async pkg => {
-    if (!pkg.dependencies && !pkg.devDependencies) {
+    const deps = { ...pkg.dependencies, ...pkg.devDependencies }
+    if (!Object.keys(deps).length) {
       return
     }
     const nodeModulesPath = join(pkg.root, 'node_modules')
