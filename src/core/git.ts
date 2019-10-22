@@ -1,5 +1,8 @@
 import exec from '@cush/exec'
-import { RepoConfig } from './config'
+import { dirname, join, relative } from 'path'
+import fs from 'saxon/sync'
+import { RepoConfig, RootConfig } from './config'
+import { Package } from './Package'
 
 export const git = {
   clone(cwd: string, repo: RepoConfig, path: string) {
@@ -17,5 +20,29 @@ export const git = {
   },
   getActiveBranch(cwd: string) {
     return exec.sync('git rev-parse --abbrev-ref HEAD', { cwd })
+  },
+  findRoots(cfg: RootConfig, packages: Package[]) {
+    const gitRoots = new Set<string>()
+    for (const pkg of packages) {
+      // Find the parent ".git" directory closest to "cfg.root"
+      let root: string | undefined
+      let dir = relative(cfg.root, pkg.root)
+      while (dir !== '.') {
+        // Stop early for tracked repos
+        if (cfg.repos[dir]) {
+          root = dir
+          break
+        }
+        if (fs.isDir(join(dir, '.git'))) {
+          root = dir
+        }
+        // Keep going until "cfg.root"
+        dir = dirname(dir)
+      }
+      if (root) {
+        gitRoots.add(root)
+      }
+    }
+    return gitRoots
   },
 }

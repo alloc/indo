@@ -1,6 +1,6 @@
 import AsyncTaskGroup from 'async-task-group'
 import log from 'lodge'
-import { dirname, join, relative } from 'path'
+import { join } from 'path'
 import fs from 'saxon/sync'
 import { RootConfig, saveConfig } from '../core/config'
 import { git } from '../core/git'
@@ -47,27 +47,16 @@ async function cloneMissingRepos(cfg: RootConfig) {
 }
 
 async function findUnknownRepos(cfg: RootConfig, packages: PackageMap) {
-  const gitRoots = new Set<string>()
-  for (const pkg of Object.values(packages)) {
-    // Find the parent ".git" directory closest to "cfg.root"
-    let root: string | undefined
-    let dir = relative(cfg.root, pkg.root)
-    while (dir !== '.') {
-      if (cfg.repos[dir]) break
-      if (fs.isDir(join(dir, '.git'))) {
-        root = dir
-      }
-      dir = dirname(dir)
-    }
-    if (root) {
-      gitRoots.add(root)
-    }
-  }
+  const gitRoots = git.findRoots(cfg, Object.values(packages))
 
   let changed = false
-  for (const root of Array.from(gitRoots)) {
-    if (fs.isDir(join(root, '.git'))) {
-      log.warn('Found an untracked repository:', log.lcyan(root))
+  for (let rootId of Array.from(gitRoots)) {
+    if (cfg.repos[rootId]) {
+      continue
+    }
+    const cwd = join(cfg.root, rootId)
+    if (fs.isDir(join(cwd, '.git'))) {
+      log.warn('Found an untracked repository:', log.lcyan(rootId))
       const answer = await choose('Pick an action:', [
         { message: 'Add to repos', value: 0 as const },
         { message: 'Add to vendor', value: 1 as const },
@@ -75,12 +64,12 @@ async function findUnknownRepos(cfg: RootConfig, packages: PackageMap) {
 
       changed = true
       if (answer == 0) {
-        cfg.repos[root] = {
-          url: git.getRemoteUrl(root, 'origin'),
-          head: git.getTagForCommit(root) || git.getActiveBranch(root),
+        cfg.repos[rootId] = {
+          url: git.getRemoteUrl(cwd, 'origin'),
+          head: git.getTagForCommit(cwd) || git.getActiveBranch(cwd),
         }
       } else if (answer == 1) {
-        cfg.vendor.push(root + '/**')
+        cfg.vendor.push(rootId + '/**')
       }
     }
   }
