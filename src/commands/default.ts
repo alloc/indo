@@ -5,7 +5,7 @@ import { join, relative } from 'path'
 import fs from 'saxon/sync'
 import { RepoConfig, RootConfig, saveConfig } from '../core/config'
 import { git } from '../core/git'
-import { confirm } from '../core/helpers'
+import { choose } from '../core/helpers'
 import { installAndBuild } from '../core/installAndBuild'
 import { linkPackages } from '../core/linkPackages'
 import { loadPackages } from '../core/loadPackages'
@@ -59,16 +59,18 @@ async function findUnknownRepos(cfg: RootConfig, packages: PackageMap) {
       continue
     }
     if (fs.isDir(join(pkg.root, '.git'))) {
-      log.warn('Package at', log.lcyan(root), 'is unknown to', log.bold('indo'))
-      const answer = await confirm('Should it be cloned when missing?')
-
       changed = true
-      if (answer) {
+      log.warn('Package', log.lcyan(root), 'has an untracked repository.')
+      const answer = await choose('Pick an action:', [
+        { message: 'Add to repos', value: 0 as const },
+        { message: 'Add to vendor', value: 1 as const },
+      ])
+      if (answer == 0) {
         cfg.repos[root] = {
           url: git.getRemoteUrl(pkg.root, 'origin'),
           head: git.getTagForCommit(pkg.root) || git.getActiveBranch(pkg.root),
         }
-      } else {
+      } else if (answer == 1) {
         cfg.vendor.push(root)
       }
     }
