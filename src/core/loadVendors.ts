@@ -20,13 +20,14 @@ export function loadVendors(cfg: RootConfig) {
       return addPackage(glob)
     }
 
-    let root = glob
-    while (root && root.indexOf('*') >= 0) {
-      root = dirname(root)
+    let rootId = glob
+    while (rootId && rootId.indexOf('*') >= 0) {
+      rootId = dirname(rootId)
     }
 
-    if (root && fs.isDir(root)) {
-      glob = glob.slice(root.length)
+    const root = join(cfg.root, rootId)
+    if (rootId && fs.isDir(root)) {
+      glob = glob.slice(rootId.length)
       const match = createMatcher([glob])!
       crawl(root, {
         filter: () => false,
@@ -34,7 +35,7 @@ export function loadVendors(cfg: RootConfig) {
           if (!match(dir)) {
             return false
           }
-          const pkg = addPackage(join(root, dir))
+          const pkg = addPackage(join(rootId, dir))
           if (!pkg) {
             return true
           }
