@@ -1,6 +1,6 @@
 import AsyncTaskGroup from 'async-task-group'
 import log from 'lodge'
-import { join, relative } from 'path'
+import { dirname, join, relative } from 'path'
 import fs from 'saxon/sync'
 import { RootConfig, saveConfig } from '../core/config'
 import { git } from '../core/git'
@@ -47,29 +47,44 @@ async function cloneMissingRepos(cfg: RootConfig) {
 }
 
 async function findUnknownRepos(cfg: RootConfig, packages: PackageMap) {
-  let changed = false
+  const gitRoots = new Set<string>()
   for (const pkg of Object.values(packages)) {
-    const root = relative(cfg.root, pkg.root)
-    if (!root || cfg.repos[root]) {
-      continue
+    // Find the parent ".git" directory closest to "cfg.root"
+    let root: string | undefined
+    let dir = relative(cfg.root, pkg.root)
+    while (dir !== '.') {
+      if (cfg.repos[dir]) break
+      if (fs.isDir(join(dir, '.git'))) {
+        root = dir
+      }
+      dir = dirname(dir)
     }
-    if (fs.isDir(join(pkg.root, '.git'))) {
-      changed = true
-      log.warn('Package', log.lcyan(root), 'has an untracked repository.')
+    if (root) {
+      gitRoots.add(root)
+    }
+  }
+
+  let changed = false
+  for (const root of Array.from(gitRoots)) {
+    if (fs.isDir(join(root, '.git'))) {
+      log.warn('Found an untracked repository:', log.lcyan(root))
       const answer = await choose('Pick an action:', [
         { message: 'Add to repos', value: 0 as const },
         { message: 'Add to vendor', value: 1 as const },
       ])
+
+      changed = true
       if (answer == 0) {
         cfg.repos[root] = {
-          url: git.getRemoteUrl(pkg.root, 'origin'),
-          head: git.getTagForCommit(pkg.root) || git.getActiveBranch(pkg.root),
+          url: git.getRemoteUrl(root, 'origin'),
+          head: git.getTagForCommit(root) || git.getActiveBranch(root),
         }
       } else if (answer == 1) {
-        cfg.vendor.push(root)
+        cfg.vendor.push(root + '/**')
       }
     }
   }
+
   if (changed) {
     saveConfig(cfg)
   }
