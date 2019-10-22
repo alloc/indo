@@ -43,6 +43,22 @@ an optional directory name (eg: `indo clone lodash a/b/c`).
 
 &nbsp;
 
+### `indo exec`
+
+Run an arbitrary command in every non-vendor package.
+
+**Note:** Piping is not yet supported.
+
+```sh
+indo exec -- echo \$PACKAGE_NAME
+```
+
+Injected variables include:
+- `PACKAGE_NAME`
+- `PACKAGE_ROOT`
+
+&nbsp;
+
 ### `indo git`
 
 Run a `git` command in every `.git` repo containing a non-vendor package.
