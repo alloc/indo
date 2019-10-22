@@ -3,6 +3,7 @@ import { join, relative } from 'path'
 import fs from 'saxon/sync'
 import semver from 'semver'
 import { RootConfig } from './config'
+import { splitNameVersion } from './helpers'
 import { loadVendors } from './loadVendors'
 import { PackageMap } from './Package'
 
@@ -19,10 +20,9 @@ export function linkPackages(cfg: RootConfig, packages: PackageMap) {
 
       const alias = cfg.alias[name] || name
       if (version.startsWith('npm:')) {
-        ;[name, version] = version.slice(4).split('@')
+        ;({ name, version } = splitNameVersion(version.slice(4)))
       }
 
-      // TODO: compare semver
       const dep = packages[name] || vendor[name]
       if (dep) {
         if (version && !semver.satisfies(dep.version, version)) {
