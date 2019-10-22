@@ -17,7 +17,7 @@ if (!fs.exists(cmdPath)) {
   fatal('Unknown command:', log.lcyan('indo ' + cmd))
 }
 
-if (process.argv.find(arg => arg == '--help' || arg == '-h')) {
+if (process.argv.find(arg => arg == 'help' || arg == '--help' || arg == '-h')) {
   const helpPath = join(
     resolve(cmdPath, '../../../docs'),
     basename(cmdPath).replace(/\.js$/, '.md')
