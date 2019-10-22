@@ -56,7 +56,6 @@ export function linkPackages(cfg: RootConfig, packages: PackageMap) {
             const target = relative(dirname(link), bin)
             fs.remove(link)
             fs.link(link, target)
-            fs.chmod(link, 0o755)
             log(
               log.green('+'),
               'Linked',
