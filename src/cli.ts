@@ -45,4 +45,7 @@ if (cmd !== 'init') {
   }
 }
 
-require(cmdPath).default(config)
+Promise.resolve()
+  .then(() => require(cmdPath).default(config))
+  .then(() => process.exit())
+  .catch(fatal)
