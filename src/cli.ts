@@ -19,7 +19,7 @@ if (!fs.exists(cmdPath)) {
 
 if (process.argv.find(arg => arg == 'help' || arg == '--help' || arg == '-h')) {
   const helpPath = join(
-    resolve(cmdPath, '../../../docs'),
+    resolve(cmdPath, '../../../help'),
     basename(cmdPath).replace(/\.js$/, '.md')
   )
   if (fs.exists(helpPath)) {
