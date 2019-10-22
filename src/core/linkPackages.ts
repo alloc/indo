@@ -1,5 +1,5 @@
 import log from 'lodge'
-import { join, relative } from 'path'
+import { dirname, join, relative } from 'path'
 import fs from 'saxon/sync'
 import semver from 'semver'
 import { RootConfig } from './config'
@@ -39,7 +39,7 @@ export function linkPackages(cfg: RootConfig, packages: PackageMap) {
           continue
         }
         const link = join(nodeModulesPath, alias)
-        const target = relative(nodeModulesPath, dep.root)
+        const target = relative(dirname(link), dep.root)
         fs.remove(link)
         fs.link(link, target)
         log(
