@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import log from 'lodge'
-import { join } from 'path'
+import { basename, join, resolve } from 'path'
 import fs from 'saxon/sync'
 import { loadConfig, RootConfig } from './core/config'
 import { fatal } from './core/helpers'
@@ -18,7 +18,10 @@ if (!fs.exists(cmdPath)) {
 }
 
 if (process.argv.find(arg => arg == '--help' || arg == '-h')) {
-  const helpPath = cmdPath.replace(/\.js$/, '.md')
+  const helpPath = join(
+    resolve(cmdPath, '../../../docs'),
+    basename(cmdPath).replace(/\.js$/, '.md')
+  )
   if (fs.exists(helpPath)) {
     log(fs.read(helpPath))
   }
