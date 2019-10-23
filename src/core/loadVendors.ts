@@ -9,7 +9,9 @@ export function loadVendors(cfg: RootConfig) {
   const addPackage = (dir: string) => {
     const pkgPath = join(cfg.root, dir, 'package.json')
     const pkg = loadPackage(pkgPath)
-    if (pkg) packages[pkg.name] = pkg
+    if (pkg && pkg.name && pkg.version) {
+      packages[pkg.name] = pkg
+    }
     return pkg
   }
 

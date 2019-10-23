@@ -22,7 +22,7 @@ export function loadPackages(root: string, opts: CrawlOptions = {}) {
   const packages: PackageMap = {}
   paths.forEach(pkgPath => {
     const pkg = loadPackage(join(root, pkgPath))!
-    if (pkg.name) {
+    if (pkg.name && pkg.version) {
       packages[pkg.name] = pkg
     }
   })
