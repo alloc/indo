@@ -1,5 +1,5 @@
 import * as os from 'os'
-import { join } from 'path'
+import { dirname, join } from 'path'
 import fs from 'saxon/sync'
 
 /** Local package registry */
@@ -22,10 +22,10 @@ export class Registry {
 
   set(name: string, target: string) {
     this._load()
-    fs.mkdir(this.packageDir)
 
     const link = join(this.packageDir, name)
     fs.remove(link)
+    fs.mkdir(dirname(link))
     fs.link(link, target)
 
     this.packages[name] = target
