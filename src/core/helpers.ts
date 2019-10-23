@@ -16,8 +16,16 @@ export const splitNameVersion = (str: string) => {
   }
 }
 
+export const getRealPath = (path: string) => {
+  try {
+    return realpath.sync(path)
+  } catch {
+    return path
+  }
+}
+
 export const isPathEqual = (a: string, b: string) =>
-  realpath.sync(a) === realpath.sync(b)
+  getRealPath(a) === getRealPath(b)
 
 export const isHomeDir = (path: string) => {
   return path === '/' || path === os.homedir()
