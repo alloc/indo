@@ -5,8 +5,11 @@
   "author": "Alec Larson",
   "license": "MIT",
   "repository": "alloc/indo",
-  "bin": "./dist/cli.js",
+  "bin": {
+    "indo": "bin/indo"
+  },
   "files": [
+    "bin",
     "dist",
     "help",
     "src"

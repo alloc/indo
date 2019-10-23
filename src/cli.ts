@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 import log from 'lodge'
 import { basename, join, resolve } from 'path'
 import fs from 'saxon/sync'
