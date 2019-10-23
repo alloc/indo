@@ -20,4 +20,4 @@ indo clone https://github.com/lodash/lodash.git ./vendor/lodash
 
 4. Done!
 
-Then, other developers can clone your monorepo and run `indo`, which clones `vendor/lodash` for them automatically. For more info, please see ["Bootstrap Your Packages"](./bootstrap.md).
+Then, other developers can clone your monorepo and run `indo`, which clones `vendor/lodash` for them automatically. For more info, please see ["Get Started"](./get-started.md).
