@@ -2,26 +2,33 @@
 
 Workspaces where each package has its own commit history.
 
+Setup your monorepo with one command:
+
+```sh
+npx indo
+```
+
 ## Synopsis
 
-Monorepos are a great way to colocate packages being developed at the same time,
-but having a single commit history isn't always ideal. For example, you might be
-developing a fork of someone else's package. Indo lets you choose which packages
-deserve their own commit history. All you gotta do is run `git init` or `git clone`
-and Indo will respect that. Just be sure to add them to your `.gitignore` if you
-don't want to deal with "git modules".
+Monorepos are great for keeping a bundle of packages tied together by a commit history, but sometimes a package needs (or already has) its own commit history. For example, you might be developing a fork of someone else's package. Indo lets you choose which packages deserve their own commit history. Just run `git clone` and Indo will notice. **Note:** Be sure to add your clones to `.gitignore` to avoid [git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules) (which are *not* supported by Indo).
 
-Indo automatically searches your monorepo for `package.json` so it can be used
-with zero setup. With a single `indo` command, Indo will (1) clone any missing
-repos, (2) install dependencies, and (3) link local packages together (without
-changing any `package.json` files). That's all you need to get started in an
-Indo-powered monorepo.
+Indo automatically searches your monorepo for `package.json` files, which means it can be used with **zero setup**. The `indo` command will (1) create the `.indo.json` if none is found, (2) clone any missing repos, (3) install dependencies, (4) run `build` scripts, and (5) link local packages together.
 
-Indo even plays nicely with other monorepos! For example, let's say you have a
-monorepo all set up elsewhere on your computer. Simply link it to the special
-`./vendor/` directory. Packages found in `./vendor/` are linked to by your own
-packages, but Indo never touches their dependencies (again, assuming the monorepo
-is already set up). **Note:** By design, Indo never does dependency hoisting.
+**Fun facts:**
+
+- Indo *never* hoists dependencies
+- Indo plays nicely with Yarn workspaces
+- Indo makes forking a breeze
+
+&nbsp;
+
+## Guides
+
+- [Bootstrap Your Packages](./docs/bootstrap.md)
+- [Using A Temporary Fork](./docs/using-a-temporary-fork.md)
+- [Using Vendor Packages](./docs/using-vendor.md)
+
+&nbsp;
 
 ## Commands
 
@@ -33,12 +40,25 @@ local packages.
 
 &nbsp;
 
+### `indo help`
+
+Print documentation for a specific command.
+
+```sh
+# What does "indo clone" do?
+indo clone help
+```
+
+Aliases: `-h`, `--help`
+
+&nbsp;
+
 ### `indo clone`
 
 Shallow clone a repository and add it to "repos" in the nearest `.indo.json` config.
 
 You can even provide a package name instead of a git url! For example, `indo clone lodash`
-asks npm for the git url and clones it into `packages/lodash` by default. You can also pass
+asks npm for the git url and clones it into `vendor/lodash` by default. You can also pass
 an optional directory name (eg: `indo clone lodash a/b/c`).
 
 &nbsp;
@@ -95,40 +115,20 @@ indo ls
 
 Remove one or more packages, cleaning up `.indo.json` along the way.
 
-For example, `indo rm foo bar` removes the `./foo` and `./bar` directories (relative to the working directory).
+For example, `indo rm foo bar` removes the `./foo` and `./bar` directories (relative to the current directory) from the filesystem and from the nearest `.indo.json` file.
 
 The given directories are not required to contain a `package.json`. For example, you can do `indo rm packages`
-to delete the entire `packages` directory, which may contain dozens of repos, each with its own `package.json`.
+to delete the entire `packages` directory, which may contain dozens of repos, each with its own `package.json`. Indo re-installs the dependencies of any non-vendor package that was linked to a removed package.
 
-It's basically `rm -rf` but with a confirmation prompt and cleanup of the nearest `.indo.json` config.
+It's basically `rm -rf` but with:
+- a confirmation prompt
+- automatic updates to the nearest `.indo.json` file
 
 &nbsp;
 
 ### `indo init`
 
-Create a `.indo.json` config in the current directory.
+Create an empty `.indo.json` file in the current directory, replacing any pre-existing `.indo.json` file.
 
-The `indo` command automatically invokes this command when neither the directory nor any of
-its ancestors contain a `.indo.json` config.
-
-&nbsp;
-
-## Configuration
-
-The `.indo.json` config may contain these properties.
-
-- `alias?: object`
-- `repos?: object`
-- `vendor?: string[]`
-
-The `alias` object works just like Yarn aliases, except only when linking local
-packages together. For example, `"foo": "bar"` maps any local dependencies on
-`foo` to `bar` **but only if** `bar` is a local package.
-
-The `repos` object tells Indo where to clone from. The `indo` command will search
-for unknown clones and offer to add them to `repos` for you. If you decline, they
-will be added to `vendor` instead.
-
-The `vendor` array tells Indo which globs to treat like external dependencies.
-Any matching package never has its dependencies managed by Indo. No linking, no
-installing. This defaults to `["vendor/**"]`.
+The `indo` command automatically invokes this command when neither the current directory nor any of
+its ancestors contain a `.indo.json` file.
