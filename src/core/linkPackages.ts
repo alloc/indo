@@ -41,7 +41,7 @@ export function linkPackages(cfg: RootConfig, packages: PackageMap) {
         }
         const link = join(nodeModulesPath, alias)
         const target = relative(dirname(link), dep.root)
-        if (realpath(link) !== realpath(dep.root)) {
+        if (realpath.sync(link) !== realpath.sync(dep.root)) {
           fs.remove(link)
           fs.link(link, target)
           log(
@@ -57,7 +57,7 @@ export function linkPackages(cfg: RootConfig, packages: PackageMap) {
             bin = join(dep.root, bin)
             const link = join(nodeModulesPath, '.bin', name)
             const target = relative(dirname(link), bin)
-            if (realpath(link) !== realpath(bin)) {
+            if (realpath.sync(link) !== realpath.sync(bin)) {
               fs.remove(link)
               fs.link(link, target)
               log(
