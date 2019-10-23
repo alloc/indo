@@ -30,14 +30,14 @@ export default async function(cfg: RootConfig) {
   for (let root of args) {
     root = resolve(root)
 
-    const rootDir = relative(cfg.root, root)
-    if (!fs.isDir(rootDir)) {
-      log.error(`Expected ${log.lpink(rootDir)} to be a directory`)
+    const rootId = relative(cfg.root, root)
+    if (!fs.isDir(rootId)) {
+      log.error(`Expected ${log.lpink(rootId)} to be a directory`)
       continue
     }
 
     // Confirm deletion
-    const ok = await confirm(`Delete ${log.yellow('./' + rootDir)} forever?`)
+    const ok = await confirm(`Delete ${log.yellow('./' + rootId)} forever?`)
     if (!ok) continue
 
     // Delete from disk
@@ -47,7 +47,7 @@ export default async function(cfg: RootConfig) {
 
     // Delete descendants from "repos"
     for (const repoDir in cfg.repos) {
-      if (isDescendant(repoDir, rootDir)) {
+      if (isDescendant(repoDir, rootId)) {
         delete cfg.repos[repoDir]
         onDelete(repoDir)
         changed = true
@@ -56,7 +56,7 @@ export default async function(cfg: RootConfig) {
 
     // Delete descendants from "vendor"
     cfg.vendor = cfg.vendor.filter(glob => {
-      if (isDescendant(glob, rootDir)) {
+      if (isDescendant(glob, rootId)) {
         const match = createMatcher([glob])!
         for (const dep of Object.values(vendors)) {
           const depDir = relative(cfg.root, dep.root)
