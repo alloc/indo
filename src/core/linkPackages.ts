@@ -1,10 +1,9 @@
 import log from 'lodge'
 import { dirname, join, relative } from 'path'
-import realpath from 'realpath-native'
 import fs from 'saxon/sync'
 import semver from 'semver'
 import { RootConfig } from './config'
-import { splitNameVersion } from './helpers'
+import { isPathEqual, splitNameVersion } from './helpers'
 import { loadVendors } from './loadVendors'
 import { PackageMap, StringMap } from './Package'
 
@@ -45,7 +44,7 @@ export function linkPackages(
         }
         const link = join(nodeModulesPath, alias)
         const target = relative(dirname(link), dep.root)
-        if (opts.force || realpath.sync(link) !== realpath.sync(dep.root)) {
+        if (opts.force || !isPathEqual(link, dep.root)) {
           fs.remove(link)
           fs.link(link, target)
           log(
@@ -61,7 +60,7 @@ export function linkPackages(
             bin = join(dep.root, bin)
             const link = join(nodeModulesPath, '.bin', name)
             const target = relative(dirname(link), bin)
-            if (opts.force || realpath.sync(link) !== realpath.sync(bin)) {
+            if (opts.force || !isPathEqual(link, bin)) {
               fs.remove(link)
               fs.link(link, target)
               log(

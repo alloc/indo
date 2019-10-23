@@ -3,6 +3,7 @@ import { prompt } from 'enquirer'
 import log from 'lodge'
 import ora from 'ora'
 import * as os from 'os'
+import realpath from 'realpath-native'
 
 export { crawl, createMatcher } from 'recrawl-sync'
 
@@ -14,6 +15,9 @@ export const splitNameVersion = (str: string) => {
     version: i < 0 ? '' : str.slice(i + 1),
   }
 }
+
+export const isPathEqual = (a: string, b: string) =>
+  realpath.sync(a) === realpath.sync(b)
 
 export const isHomeDir = (path: string) => {
   return path === '/' || path === os.homedir()

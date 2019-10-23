@@ -1,11 +1,10 @@
 import log from 'lodge'
 import { dirname, join, relative } from 'path'
-import realpath from 'realpath-native'
 import fs from 'saxon/sync'
 import slurm from 'slurm'
 import { RootConfig } from '../core/config'
 import { getNearestPackage } from '../core/getNearestPackage'
-import { fatal, tildify } from '../core/helpers'
+import { fatal, isPathEqual, tildify } from '../core/helpers'
 import { linkPackages } from '../core/linkPackages'
 import { loadAllPackages } from '../core/loadAllPackages'
 import { registry } from '../core/registry'
@@ -53,10 +52,10 @@ function useGlobalPackage(cfg: RootConfig, name: string) {
 
   fs.mkdir(dirname(link))
   if (fs.exists(link)) {
-    if (realpath.sync(link) !== realpath.sync(target)) {
-      fatal('Path already exists:', log.lgreen('./vendor/' + name))
-    } else {
+    if (isPathEqual(link, target)) {
       fs.remove(link)
+    } else {
+      fatal('Path already exists:', log.lgreen('./vendor/' + name))
     }
   }
 
