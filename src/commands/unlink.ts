@@ -2,10 +2,10 @@ import log from 'lodge'
 import slurm from 'slurm'
 import { RootConfig } from '../core/config'
 import { getNearestPackage } from '../core/getNearestPackage'
-import { fatal } from '../core/helpers'
+import { confirm, fatal } from '../core/helpers'
 import { registry } from '../core/registry'
 
-export default (cfg: RootConfig | null) => {
+export default async (cfg: RootConfig | null) => {
   const args = slurm()
   if (args.length) {
     if (cfg) {
@@ -16,11 +16,29 @@ export default (cfg: RootConfig | null) => {
   } else {
     const pkg = getNearestPackage(process.cwd())
     if (pkg) {
-      if (pkg.root == registry.get(pkg.name)) {
-        registry.delete(pkg.name)
-      } else {
-        fatal('This package is not linked')
+      const root = registry.get(pkg.name)
+      if (!root) {
+        return fatal('Global package', log.lgreen(pkg.name), 'does not exist')
       }
+      if (root !== pkg.root) {
+        log.warn(
+          'Global package',
+          log.lgreen(pkg.name),
+          'is linked to',
+          log.gray(root)
+        )
+        const shouldRemove = await confirm('Remove it anyway?')
+        if (!shouldRemove) {
+          return
+        }
+      }
+      registry.delete(pkg.name)
+      log(
+        log.green('✓'),
+        'Global package',
+        log.lgreen(pkg.name),
+        'has been unlinked'
+      )
     } else {
       fatal('Missing package.json')
     }

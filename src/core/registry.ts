@@ -20,10 +20,15 @@ export class Registry {
     return this.packages[name] || null
   }
 
-  set(name: string, root: string) {
+  set(name: string, target: string) {
     this._load()
-    fs.link(join(this.packageDir, name), root)
-    this.packages[name] = root
+    fs.mkdir(this.packageDir)
+
+    const link = join(this.packageDir, name)
+    fs.remove(link)
+    fs.link(link, target)
+
+    this.packages[name] = target
     this._save()
   }
 

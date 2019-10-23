@@ -18,8 +18,18 @@ export default (cfg: RootConfig | null) => {
   } else {
     // Find the nearest package.json and link it to ~/.indo/packages
     const pkg = getNearestPackage(process.cwd())
-    if (pkg) registry.set(pkg.name, pkg.root)
-    else fatal('Missing package.json')
+    if (pkg) {
+      registry.set(pkg.name, pkg.root)
+      log(
+        log.green('✓'),
+        'Global package',
+        log.lgreen(pkg.name),
+        'now points to',
+        log.gray(pkg.root)
+      )
+    } else {
+      fatal('Missing package.json')
+    }
   }
 }
 
