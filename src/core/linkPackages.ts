@@ -8,7 +8,11 @@ import { splitNameVersion } from './helpers'
 import { loadVendors } from './loadVendors'
 import { PackageMap, StringMap } from './Package'
 
-export function linkPackages(cfg: RootConfig, packages: PackageMap) {
+export function linkPackages(
+  cfg: RootConfig,
+  packages: PackageMap,
+  opts: { force?: boolean } = {}
+) {
   const vendor = loadVendors(cfg)
   for (const pkg of Object.values(packages)) {
     const deps: StringMap = { ...pkg.dependencies, ...pkg.devDependencies }
@@ -41,7 +45,7 @@ export function linkPackages(cfg: RootConfig, packages: PackageMap) {
         }
         const link = join(nodeModulesPath, alias)
         const target = relative(dirname(link), dep.root)
-        if (realpath.sync(link) !== realpath.sync(dep.root)) {
+        if (opts.force || realpath.sync(link) !== realpath.sync(dep.root)) {
           fs.remove(link)
           fs.link(link, target)
           log(
@@ -57,7 +61,7 @@ export function linkPackages(cfg: RootConfig, packages: PackageMap) {
             bin = join(dep.root, bin)
             const link = join(nodeModulesPath, '.bin', name)
             const target = relative(dirname(link), bin)
-            if (realpath.sync(link) !== realpath.sync(bin)) {
+            if (opts.force || realpath.sync(link) !== realpath.sync(bin)) {
               fs.remove(link)
               fs.link(link, target)
               log(
