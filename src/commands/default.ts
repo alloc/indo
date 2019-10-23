@@ -2,6 +2,7 @@ import AsyncTaskGroup from 'async-task-group'
 import log from 'lodge'
 import { join } from 'path'
 import fs from 'saxon/sync'
+import slurm from 'slurm'
 import { RootConfig, saveConfig } from '../core/config'
 import { git } from '../core/git'
 import { choose, spin } from '../core/helpers'
@@ -11,13 +12,19 @@ import { loadPackages } from '../core/loadPackages'
 import { PackageMap } from '../core/Package'
 
 export default async (cfg: RootConfig) => {
+  const args = slurm({
+    force: { type: 'boolean' },
+    f: 'force',
+  })
   await cloneMissingRepos(cfg)
   const packages = loadPackages(cfg.root, {
     skip: cfg.vendor,
   })
   await findUnknownRepos(cfg, packages)
   await installAndBuild(cfg, Object.values(packages))
-  linkPackages(cfg, packages)
+  linkPackages(cfg, packages, {
+    force: args.force,
+  })
 }
 
 async function cloneMissingRepos(cfg: RootConfig) {
