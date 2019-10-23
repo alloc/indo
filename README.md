@@ -28,6 +28,7 @@ Indo automatically searches your monorepo for `package.json` files, which means 
 - [Using Vendor Packages](./docs/using-vendor.md)
 - [Using Yarn Workspaces](./docs/using-yarn-workspaces.md)
 - [Using A Temporary Fork](./docs/using-a-temporary-fork.md)
+- [Using `yarn link`](./docs/using-yarn-link.md)
 - [Configuration](./docs/config.md)
 
 &nbsp;
