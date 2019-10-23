@@ -10,7 +10,7 @@ import { loadPackages } from '../core/loadPackages'
 import { loadVendors } from '../core/loadVendors'
 import { loadPackage, Package } from '../core/Package'
 
-export default async function(cfg: RootConfig) {
+export default async (cfg: RootConfig) => {
   const args = slurm({
     dry: true,
     n: 'dry',

@@ -4,7 +4,7 @@ import { RootConfig } from '../core/config'
 import { loadPackages } from '../core/loadPackages'
 import { loadVendors } from '../core/loadVendors'
 
-export default function(cfg: RootConfig) {
+export default (cfg: RootConfig) => {
   const packages = Object.values({
     ...loadVendors(cfg),
     ...loadPackages(cfg.root, {

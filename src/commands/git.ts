@@ -7,7 +7,7 @@ import { RootConfig } from '../core/config'
 import { git } from '../core/git'
 import { loadPackages } from '../core/loadPackages'
 
-export default async function(cfg: RootConfig) {
+export default async (cfg: RootConfig) => {
   const cmd = slurm('*')._
   const packages = loadPackages(cfg.root, {
     skip: cfg.vendor,

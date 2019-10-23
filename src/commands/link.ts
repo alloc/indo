@@ -7,7 +7,7 @@ import { getNearestPackage } from '../core/getNearestPackage'
 import { fatal } from '../core/helpers'
 import { registry } from '../core/registry'
 
-export default function(cfg: RootConfig | null) {
+export default (cfg: RootConfig | null) => {
   const [name] = slurm()
   if (name) {
     if (cfg) {
