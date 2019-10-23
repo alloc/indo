@@ -73,11 +73,8 @@ slurm.error = reason => {
 let config: RootConfig | null = null
 if (cmd !== 'init') {
   config = loadConfig()
-  if (!config) {
+  if (!config && cmd !== 'link' && cmd !== 'unlink') {
     config = require('./commands/init').default()
-    if (!config) {
-      fatal('Missing config')
-    }
   }
 }
 
