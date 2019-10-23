@@ -6,13 +6,15 @@ import slurm from 'slurm'
 import { RootConfig } from '../core/config'
 import { getNearestPackage } from '../core/getNearestPackage'
 import { fatal, tildify } from '../core/helpers'
+import { linkPackages } from '../core/linkPackages'
+import { loadAllPackages } from '../core/loadAllPackages'
 import { registry } from '../core/registry'
 
 export default (cfg: RootConfig | null) => {
   const [name] = slurm()
   if (name) {
     if (cfg) {
-      linkGlobalPackage(cfg, name)
+      useGlobalPackage(cfg, name)
     } else {
       fatal('Missing config. Did you run', log.lcyan('indo init'), 'yet?')
     }
@@ -34,7 +36,7 @@ export default (cfg: RootConfig | null) => {
   }
 }
 
-function linkGlobalPackage(cfg: RootConfig, name: string) {
+function useGlobalPackage(cfg: RootConfig, name: string) {
   const pkgPath = registry.get(name)
   if (!pkgPath) {
     fatal(
@@ -62,4 +64,6 @@ function linkGlobalPackage(cfg: RootConfig, name: string) {
     'to',
     log.lyellow(tildify(target))
   )
+  const packages = loadAllPackages(cfg)
+  linkPackages(cfg, packages)
 }

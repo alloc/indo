@@ -1,16 +1,10 @@
 import log from 'lodge'
 import { relative } from 'path'
 import { RootConfig } from '../core/config'
-import { loadPackages } from '../core/loadPackages'
-import { loadVendors } from '../core/loadVendors'
+import { loadAllPackages } from '../core/loadAllPackages'
 
 export default (cfg: RootConfig) => {
-  const packages = Object.values({
-    ...loadVendors(cfg),
-    ...loadPackages(cfg.root, {
-      skip: cfg.vendor,
-    }),
-  })
+  const packages = Object.values(loadAllPackages(cfg))
   packages.sort((a, b) => (a.name < b.name ? -1 : 1))
   for (const pkg of packages) {
     log(
