@@ -24,9 +24,11 @@ Indo automatically searches your monorepo for `package.json` files, which means 
 
 ## Guides
 
-- [Bootstrap Your Packages](./docs/bootstrap.md)
-- [Using A Temporary Fork](./docs/using-a-temporary-fork.md)
+- [Get Started](./docs/get-started.md)
 - [Using Vendor Packages](./docs/using-vendor.md)
+- [Using Yarn Workspaces](./docs/using-yarn-workspaces.md)
+- [Using A Temporary Fork](./docs/using-a-temporary-fork.md)
+- [Configuration](./docs/config.md)
 
 &nbsp;
 

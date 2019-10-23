@@ -1,5 +1,5 @@
 
-  *indo* <gray>- Prepare your monorepo for action!</gray>
+  <bold>indo</bold><gray> - Prepare your monorepo for action!</gray>
 
 1. Clone any missing repos
 
