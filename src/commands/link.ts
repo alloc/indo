@@ -1,5 +1,5 @@
 import log from 'lodge'
-import { join, relative } from 'path'
+import { dirname, join, relative } from 'path'
 import realpath from 'realpath-native'
 import fs from 'saxon/sync'
 import slurm from 'slurm'
@@ -47,8 +47,11 @@ function useGlobalPackage(cfg: RootConfig, name: string) {
       'yet?'
     )
   }
+
   const link = join(cfg.root, 'vendor', name)
   const target = join(registry.packageDir, name)
+
+  fs.mkdir(dirname(link))
   if (fs.exists(link)) {
     if (realpath.sync(link) !== realpath.sync(target)) {
       fatal('Path already exists:', log.lgreen('./vendor/' + name))
@@ -56,6 +59,7 @@ function useGlobalPackage(cfg: RootConfig, name: string) {
       fs.remove(link)
     }
   }
+
   fs.link(link, target)
   log(
     log.green('+'),
@@ -64,6 +68,7 @@ function useGlobalPackage(cfg: RootConfig, name: string) {
     'to',
     log.lyellow(tildify(target))
   )
+
   const packages = loadAllPackages(cfg)
   linkPackages(cfg, packages)
 }
