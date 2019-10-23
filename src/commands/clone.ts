@@ -36,7 +36,7 @@ export default async (cfg: RootConfig) => {
   let dir = args[1]
   const needsRename = !dir
   if (needsRename) {
-    dir = join(cfg.root, 'packages', 'tmp' + randstr(10))
+    dir = join(cfg.root, 'vendor', 'tmp' + randstr(10))
     fs.mkdir(dir)
   } else {
     dir = resolve(dir)
@@ -52,7 +52,7 @@ export default async (cfg: RootConfig) => {
   const pkg = loadPackage(join(dir, 'package.json'))
   if (needsRename) {
     if (pkg) {
-      dir = join(cfg.root, 'packages', pkg.name)
+      dir = join(cfg.root, 'vendor', pkg.name)
       pkg.move(dir)
     } else {
       fs.remove(dir)
