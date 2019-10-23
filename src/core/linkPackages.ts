@@ -1,5 +1,6 @@
 import log from 'lodge'
 import { dirname, join, relative } from 'path'
+import realpath from 'realpath-native'
 import fs from 'saxon/sync'
 import semver from 'semver'
 import { RootConfig } from './config'
@@ -40,29 +41,33 @@ export function linkPackages(cfg: RootConfig, packages: PackageMap) {
         }
         const link = join(nodeModulesPath, alias)
         const target = relative(dirname(link), dep.root)
-        fs.remove(link)
-        fs.link(link, target)
-        log(
-          log.green('+'),
-          'Linked',
-          log.gray(pkg.name + ':') + log.lgreen(alias),
-          'to',
-          log.lyellow('./' + relative(cfg.root, dep.root))
-        )
+        if (realpath(link) !== realpath(dep.root)) {
+          fs.remove(link)
+          fs.link(link, target)
+          log(
+            log.green('+'),
+            'Linked',
+            log.gray(pkg.name + ':') + log.lgreen(alias),
+            'to',
+            log.lyellow('./' + relative(cfg.root, dep.root))
+          )
+        }
         if (dep.bin) {
           const addBinScript = (name: string, bin: string) => {
             bin = join(dep.root, bin)
             const link = join(nodeModulesPath, '.bin', name)
             const target = relative(dirname(link), bin)
-            fs.remove(link)
-            fs.link(link, target)
-            log(
-              log.green('+'),
-              'Linked',
-              log.gray(pkg.name + ':') + log.lcyan(name),
-              'to',
-              log.lyellow('./' + relative(cfg.root, bin))
-            )
+            if (realpath(link) !== realpath(bin)) {
+              fs.remove(link)
+              fs.link(link, target)
+              log(
+                log.green('+'),
+                'Linked',
+                log.gray(pkg.name + ':') + log.lcyan(name),
+                'to',
+                log.lyellow('./' + relative(cfg.root, bin))
+              )
+            }
           }
           if (typeof dep.bin == 'string') {
             addBinScript(dep.name, dep.bin)
