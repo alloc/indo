@@ -19,6 +19,11 @@ export const isHomeDir = (path: string) => {
   return path === '/' || path === os.homedir()
 }
 
+export const tildify = (path: string) => {
+  const home = os.homedir() + '/'
+  return path.startsWith(home) ? path.replace(home, '~/') : path
+}
+
 export const choose = async <T = string>(
   message: string,
   choices: string[] | Array<{ message: string; value: T }>
