@@ -6,7 +6,7 @@ import { RootConfig } from '../core/config'
 import { getNearestPackage } from '../core/getNearestPackage'
 import { fatal, isPathEqual, tildify } from '../core/helpers'
 import { linkPackages } from '../core/linkPackages'
-import { loadAllPackages } from '../core/loadAllPackages'
+import { loadPackages } from '../core/loadPackages'
 import { registry } from '../core/registry'
 
 export default (cfg: RootConfig | null) => {
@@ -68,6 +68,10 @@ function useGlobalPackage(cfg: RootConfig, name: string) {
     log.lyellow(tildify(target))
   )
 
-  const packages = loadAllPackages(cfg)
-  linkPackages(cfg, packages)
+  linkPackages(
+    cfg,
+    loadPackages(cfg.root, {
+      skip: cfg.vendor,
+    })
+  )
 }
