@@ -5,19 +5,26 @@ import fs from 'saxon/sync'
 import { loadConfig, RootConfig } from './core/config'
 import { fatal } from './core/helpers'
 
+const helpArg = process.argv.find(
+  arg => arg == 'help' || arg == '--help' || arg == '-h'
+)
+
 let cmd = process.argv[2]
 if (cmd && cmd[0] !== '-') {
   process.argv.splice(2, 1)
+  if (cmd == helpArg) {
+    cmd = 'default'
+  }
 } else {
   cmd = 'default'
 }
 
 const cmdPath = join(__dirname, 'commands', cmd + '.js')
-if (!fs.exists(cmdPath)) {
+if (helpArg !== 'help' && !fs.exists(cmdPath)) {
   fatal('Unknown command:', log.lcyan('indo ' + cmd))
 }
 
-if (process.argv.find(arg => arg == 'help' || arg == '--help' || arg == '-h')) {
+if (helpArg) {
   const helpPath = join(
     resolve(cmdPath, '../../../help'),
     basename(cmdPath).replace(/\.js$/, '.md')
