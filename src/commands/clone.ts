@@ -44,7 +44,7 @@ export default async (cfg: RootConfig) => {
 
   const spinner = spin('Cloning...')
 
-  const repo = { url }
+  const repo = { url, head: args.branch }
   await git.clone(cfg.root, repo, dir)
 
   spinner.stop()
