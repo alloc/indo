@@ -1,6 +1,7 @@
 import log from 'lodge'
 import fs from 'saxon/sync'
 import { loadConfig } from '../core/config'
+import { tildify } from '../core/helpers'
 
 export default () => {
   fs.write('.indo.json', '{}')
@@ -9,7 +10,7 @@ export default () => {
     'Created',
     log.lgreen('.indo.json'),
     'in',
-    log.gray(process.cwd())
+    log.gray(tildify(process.cwd()))
   )
   return loadConfig()
 }
