@@ -7,6 +7,7 @@ import { getInverseDeps } from '../core/getInverseDeps'
 import {
   confirm,
   createMatcher,
+  fatal,
   getRelativeId,
   log,
   spin,
@@ -20,6 +21,9 @@ export default async (cfg: RootConfig) => {
     dry: true,
     n: 'dry',
   })
+  if (!args.length) {
+    throw fatal('Must give one or more package names and/or relative paths')
+  }
 
   const packages = loadPackages(cfg.root, { skip: cfg.vendor })
   const vendors = loadVendors(cfg)
