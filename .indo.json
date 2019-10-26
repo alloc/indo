@@ -1,0 +1,8 @@
+{
+  "repos": {
+    "vendor/enquirer": {
+      "url": "git@github.com:aleclarson/enquirer.git",
+      "head": "types-1"
+    }
+  }
+}
