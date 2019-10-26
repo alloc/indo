@@ -1,4 +1,4 @@
-import { join, relative } from 'path'
+import { join } from 'path'
 import fs from 'saxon/sync'
 import slurm from 'slurm'
 import { RootConfig } from '../core/config'
