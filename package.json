@@ -1,6 +1,6 @@
 {
   "name": "indo",
-  "version": "0.2.14",
+  "version": "0.2.15",
   "description": "Workspaces where each package has its own commit history",
   "author": "Alec Larson",
   "license": "MIT",
