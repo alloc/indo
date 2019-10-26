@@ -1,9 +1,8 @@
 import AsyncTaskGroup from 'async-task-group'
-import log from 'lodge'
 import { join, relative } from 'path'
 import fs from 'saxon/sync'
 import { RootConfig } from './config'
-import { spin } from './helpers'
+import { log, spin } from './helpers'
 import { Package } from './Package'
 
 export async function installAndBuild(cfg: RootConfig, pkgs: Package[]) {

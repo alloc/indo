@@ -1,8 +1,7 @@
 import AsyncTaskGroup from 'async-task-group'
-import log from 'lodge'
 import slurm from 'slurm'
 import { RootConfig } from '../core/config'
-import { fatal } from '../core/helpers'
+import { fatal, log } from '../core/helpers'
 import { loadPackages } from '../core/loadPackages'
 
 export default async (cfg: RootConfig) => {

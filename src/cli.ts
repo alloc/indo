@@ -1,8 +1,7 @@
-import log from 'lodge'
 import { basename, join, resolve } from 'path'
 import fs from 'saxon/sync'
 import { loadConfig, RootConfig } from './core/config'
-import { fatal } from './core/helpers'
+import { fatal, log } from './core/helpers'
 
 const helpArg = process.argv.find(
   arg => arg == 'help' || arg == '--help' || arg == '-h'

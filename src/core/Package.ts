@@ -1,8 +1,7 @@
 import exec from '@cush/exec'
-import log from 'lodge'
 import { dirname, join } from 'path'
 import fs from 'saxon/sync'
-import { fatal } from './helpers'
+import { fatal, log } from './helpers'
 import { getPackageManager, PackageManager } from './npm'
 
 export type PackageMap = { [path: string]: Package }

@@ -1,8 +1,7 @@
-import log from 'lodge'
 import slurm from 'slurm'
 import { RootConfig } from '../core/config'
 import { getNearestPackage } from '../core/getNearestPackage'
-import { confirm, fatal } from '../core/helpers'
+import { confirm, fatal, log } from '../core/helpers'
 import { registry } from '../core/registry'
 
 export default async (cfg: RootConfig | null) => {

@@ -1,7 +1,6 @@
-import log from 'lodge'
 import fs from 'saxon/sync'
 import { loadConfig } from '../core/config'
-import { tildify } from '../core/helpers'
+import { log, tildify } from '../core/helpers'
 
 export default () => {
   fs.write('.indo.json', '{}')

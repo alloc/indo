@@ -5,6 +5,7 @@ import ora from 'ora'
 import * as os from 'os'
 import realpath from 'realpath-native'
 
+export { default as log } from 'lodge'
 export { crawl, createMatcher } from 'recrawl-sync'
 
 export const splitNameVersion = (str: string) => {

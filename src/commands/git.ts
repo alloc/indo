@@ -1,10 +1,10 @@
 import exec from '@cush/exec'
 import bocks from 'bocks'
-import log from 'lodge'
 import { join } from 'path'
 import slurm from 'slurm'
 import { RootConfig } from '../core/config'
 import { git } from '../core/git'
+import { log } from '../core/helpers'
 import { loadPackages } from '../core/loadPackages'
 
 export default async (cfg: RootConfig) => {

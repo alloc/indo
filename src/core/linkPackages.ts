@@ -1,9 +1,8 @@
-import log from 'lodge'
 import { dirname, join, relative } from 'path'
 import fs from 'saxon/sync'
 import semver from 'semver'
 import { RootConfig } from './config'
-import { isPathEqual, splitNameVersion } from './helpers'
+import { isPathEqual, log, splitNameVersion } from './helpers'
 import { loadVendors } from './loadVendors'
 import { PackageMap, StringMap } from './Package'
 

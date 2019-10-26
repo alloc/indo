@@ -1,6 +1,6 @@
-import log from 'lodge'
 import { relative } from 'path'
 import { RootConfig } from '../core/config'
+import { log } from '../core/helpers'
 import { loadAllPackages } from '../core/loadAllPackages'
 
 export default (cfg: RootConfig) => {
