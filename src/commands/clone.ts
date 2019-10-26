@@ -7,7 +7,6 @@ import { git } from '../core/git'
 import { fatal, log, randstr, spin } from '../core/helpers'
 import { installAndBuild } from '../core/installAndBuild'
 import { linkPackages } from '../core/linkPackages'
-import { loadPackages } from '../core/loadPackages'
 import { loadPackage } from '../core/Package'
 
 export default async (cfg: RootConfig) => {
@@ -72,12 +71,7 @@ export default async (cfg: RootConfig) => {
     await installAndBuild(cfg, [pkg])
   }
 
-  linkPackages(
-    cfg,
-    loadPackages(cfg.root, {
-      skip: cfg.vendor,
-    })
-  )
+  linkPackages(cfg)
 
   cfg.repos[dir] = repo
   saveConfig(cfg)

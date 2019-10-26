@@ -3,12 +3,15 @@ import fs from 'saxon/sync'
 import semver from 'semver'
 import { RootConfig } from './config'
 import { isPathEqual, log, splitNameVersion } from './helpers'
+import { loadPackages } from './loadPackages'
 import { loadVendors } from './loadVendors'
-import { PackageMap, StringMap } from './Package'
+import { StringMap } from './Package'
 
 export function linkPackages(
   cfg: RootConfig,
-  packages: PackageMap,
+  packages = loadPackages(cfg.root, {
+    skip: cfg.vendor,
+  }),
   opts: { force?: boolean } = {}
 ) {
   const vendor = loadVendors(cfg)
