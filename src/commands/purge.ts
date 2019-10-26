@@ -9,6 +9,7 @@ import {
   createMatcher,
   fatal,
   getRelativeId,
+  isDescendant,
   log,
   spin,
 } from '../core/helpers'
@@ -122,9 +123,4 @@ export default async (cfg: RootConfig) => {
   if (changed && !args.dry) {
     saveConfig(cfg)
   }
-}
-
-/** Returns true if `parent` is equal to (or a parent of) the `path` argument */
-function isDescendant(path: string, parent: string) {
-  return path === parent || path.startsWith(parent + '/')
 }

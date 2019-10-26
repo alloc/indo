@@ -9,6 +9,10 @@ import realpath from 'realpath-native'
 export { default as log } from 'lodge'
 export { crawl, createMatcher } from 'recrawl-sync'
 
+/** Returns true if `parent` is equal to (or a parent of) the `path` argument */
+export const isDescendant = (path: string, parent: string) =>
+  path === parent || path.startsWith(parent + '/')
+
 export const getRelativeId = (root: string, path: string) => {
   path = relative(root, resolve(path))
   return path[0] !== '.' ? './' + path : path
