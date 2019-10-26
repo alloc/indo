@@ -70,7 +70,7 @@ if (helpArg) {
 
 import slurm from 'slurm'
 slurm.error = reason => {
-  log.error(reason)
+  if (reason) log.error(reason)
   process.exit(1)
 }
 
@@ -85,4 +85,4 @@ if (cmd !== 'init') {
 Promise.resolve()
   .then(() => require(cmdPath).default(config))
   .then(() => process.exit())
-  .catch(fatal)
+  .catch(slurm.error)
