@@ -18,6 +18,7 @@ interface Config {
     install: string
     run: string
     add: (opts: AddOptions) => [string, exec.Argv]
+    remove: string
   }
 }
 
@@ -45,6 +46,10 @@ export class PackageManager {
     const [cmd, argv] = this.commands.add(opts)
     return this.pkg.exec(cmd, [...names, ...argv], ...args)
   }
+
+  remove(names: string[], ...args: exec.Args) {
+    return this.pkg.exec(this.commands.remove, names, ...args)
+  }
 }
 
 const configs: Config[] = [
@@ -67,6 +72,7 @@ const configs: Config[] = [
             : null,
         ],
       ],
+      remove: 'yarn remove',
     },
   },
   {
@@ -82,6 +88,7 @@ const configs: Config[] = [
           opts.dev ? '-D' : opts.optional ? '-O' : null,
         ],
       ],
+      remove: 'npm uninstall',
     },
   },
   {
@@ -103,16 +110,23 @@ const configs: Config[] = [
             : null,
         ],
       ],
+      remove: 'pnpm remove',
     },
   },
 ]
 
-const yarn = {
-  ...configs[0],
+const yarn = configs[0]
+const defaultYarn: Config = {
+  ...yarn,
   commands: {
-    ...configs[0].commands,
+    ...yarn.commands,
     // Never create a lockfile where none exists.
     install: 'yarn --no-lockfile',
+    add: opts => {
+      const args = yarn.commands.add(opts)
+      args[1].push('--no-lockfile')
+      return args
+    },
   },
 }
 
@@ -123,5 +137,5 @@ export function getPackageManager(pkg: Package) {
       return new PackageManager(pkg, config)
     }
   }
-  return new PackageManager(pkg, yarn)
+  return new PackageManager(pkg, defaultYarn)
 }
