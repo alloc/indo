@@ -43,7 +43,7 @@ export class PackageManager {
 
   add(names: string[], opts: AddOptions, ...args: exec.Args) {
     const [cmd, argv] = this.commands.add(opts)
-    return this.pkg.exec(cmd, [...names, ...argv])
+    return this.pkg.exec(cmd, [...names, ...argv], ...args)
   }
 }
 
