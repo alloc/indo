@@ -82,27 +82,29 @@ export default async (cfg: RootConfig) => {
       })
     }
 
-    const spinner = spin('Installing dependencies...')
-    const installer = new AsyncTaskGroup(3)
-    await installer.map(Array.from(parents), async (pkg: Package) => {
-      try {
-        await pkg.manager.install()
-        spinner.log(
-          log.green('✓'),
-          'Installed',
-          log.green('./' + relative(cfg.root, pkg.root)),
-          'dependencies using',
-          log.lcyan(pkg.manager.name)
-        )
-      } catch {
-        spinner.log(
-          log.red('⨯'),
-          'Failed to install dependencies of',
-          log.lyellow(relative(cfg.root, pkg.root))
-        )
-      }
-    })
-    spinner.stop()
+    if (parents.size) {
+      const spinner = spin('Installing dependencies...')
+      const installer = new AsyncTaskGroup(3)
+      await installer.map(Array.from(parents), async (pkg: Package) => {
+        try {
+          await pkg.manager.install()
+          spinner.log(
+            log.green('✓'),
+            'Installed',
+            log.green('./' + relative(cfg.root, pkg.root)),
+            'dependencies using',
+            log.lcyan(pkg.manager.name)
+          )
+        } catch {
+          spinner.log(
+            log.red('⨯'),
+            'Failed to install dependencies of',
+            log.lyellow(relative(cfg.root, pkg.root))
+          )
+        }
+      })
+      spinner.stop()
+    }
   }
 
   if (changed && !args.dry) {
