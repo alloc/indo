@@ -12,6 +12,12 @@ if (cmd && cmd[0] !== '-') {
   process.argv.splice(2, 1)
   if (cmd == helpArg) {
     cmd = 'default'
+  } else {
+    const aliases = {
+      ls: 'list',
+      rm: 'remove',
+    }
+    cmd = aliases[cmd] || cmd
   }
 } else {
   cmd = 'default'
