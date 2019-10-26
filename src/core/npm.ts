@@ -3,12 +3,21 @@ import { join } from 'path'
 import fs from 'saxon/sync'
 import { Package } from './Package'
 
+interface AddOptions {
+  prod?: boolean
+  dev?: boolean
+  optional?: boolean
+  peer?: boolean
+  exact?: boolean
+}
+
 interface Config {
   name: string
   lock: string
   commands: {
     install: string
     run: string
+    add: (opts: AddOptions) => [string, exec.Argv]
   }
 }
 
@@ -31,6 +40,11 @@ export class PackageManager {
       return this.pkg.exec(this.commands.run, [name], ...args)
     }
   }
+
+  add(names: string[], opts: AddOptions, ...args: exec.Args) {
+    const [cmd, argv] = this.commands.add(opts)
+    return this.pkg.exec(cmd, [...names, ...argv])
+  }
 }
 
 const configs: Config[] = [
@@ -40,6 +54,19 @@ const configs: Config[] = [
     commands: {
       install: 'yarn',
       run: 'yarn run',
+      add: opts => [
+        'yarn add',
+        [
+          opts.exact ? '--exact' : null,
+          opts.dev
+            ? '--dev'
+            : opts.optional
+            ? '--optional'
+            : opts.peer
+            ? '--peer'
+            : null,
+        ],
+      ],
     },
   },
   {
@@ -48,6 +75,13 @@ const configs: Config[] = [
     commands: {
       install: 'npm install',
       run: 'npm run',
+      add: opts => [
+        'npm install',
+        [
+          opts.exact ? '-E' : null,
+          opts.dev ? '-D' : opts.optional ? '-O' : null,
+        ],
+      ],
     },
   },
   {
@@ -56,6 +90,19 @@ const configs: Config[] = [
     commands: {
       install: 'pnpm install',
       run: 'pnpm run',
+      add: opts => [
+        'pnpm add',
+        [
+          opts.exact ? '-E' : null,
+          opts.dev
+            ? '-D'
+            : opts.optional
+            ? '-O'
+            : opts.peer
+            ? '--save-peer'
+            : null,
+        ],
+      ],
     },
   },
 ]
@@ -63,9 +110,9 @@ const configs: Config[] = [
 const yarn = {
   ...configs[0],
   commands: {
+    ...configs[0].commands,
     // Never create a lockfile where none exists.
     install: 'yarn --no-lockfile',
-    run: 'yarn run',
   },
 }
 
