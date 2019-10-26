@@ -17,7 +17,7 @@ export default async (cfg: RootConfig | null) => {
     if (pkg) {
       const root = registry.get(pkg.name)
       if (!root) {
-        return fatal('Global package', log.lgreen(pkg.name), 'does not exist')
+        throw fatal('Global package', log.lgreen(pkg.name), 'does not exist')
       }
       if (root !== pkg.root) {
         log.warn(

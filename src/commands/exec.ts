@@ -11,7 +11,7 @@ export default async (cfg: RootConfig) => {
 
   const cmd = args['--']
   if (!cmd) {
-    return fatal(
+    throw fatal(
       'No command given (eg:',
       log.lgreen('"indo run -- echo \\$PACKAGE_NAME"') + ')'
     )
