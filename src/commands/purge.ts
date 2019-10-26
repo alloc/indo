@@ -4,7 +4,13 @@ import fs from 'saxon/sync'
 import slurm from 'slurm'
 import { RootConfig, saveConfig } from '../core/config'
 import { getInverseDeps } from '../core/getInverseDeps'
-import { confirm, createMatcher, log, spin } from '../core/helpers'
+import {
+  confirm,
+  createMatcher,
+  getRelativeId,
+  log,
+  spin,
+} from '../core/helpers'
 import { loadPackages } from '../core/loadPackages'
 import { loadVendors } from '../core/loadVendors'
 import { loadPackage, Package } from '../core/Package'
@@ -29,20 +35,22 @@ export default async (cfg: RootConfig) => {
   for (let root of args) {
     root = resolve(root)
 
-    const rootId = relative(cfg.root, root)
-    if (!fs.isDir(rootId)) {
-      log.error(`Expected ${log.lpink(rootId)} to be a directory`)
+    const displayName = getRelativeId(process.cwd(), root)
+    if (!fs.exists(root)) {
+      log.error(`Path named ${log.yellow(displayName)} does not exist`)
       continue
     }
 
     // Confirm deletion
-    const ok = await confirm(`Delete ${log.yellow('./' + rootId)} forever?`)
+    const ok = await confirm(`Delete ${log.yellow(displayName)} forever?`)
     if (!ok) continue
 
     // Delete from disk
     if (!args.dry) {
       fs.remove(root, true)
     }
+
+    const rootId = relative(cfg.root, root)
 
     // Delete descendants from "repos"
     for (const repoDir in cfg.repos) {

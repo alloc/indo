@@ -8,6 +8,11 @@ import realpath from 'realpath-native'
 export { default as log } from 'lodge'
 export { crawl, createMatcher } from 'recrawl-sync'
 
+export const getRelativeId = (root: string, path: string) => {
+  path = relative(root, resolve(path))
+  return path[0] !== '.' ? './' + path : path
+}
+
 export const splitNameVersion = (str: string) => {
   // Ignore the @ in user/org scopes
   const i = str.slice(1).lastIndexOf('@')
