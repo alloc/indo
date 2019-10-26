@@ -3,6 +3,7 @@ import { prompt } from 'enquirer'
 import log from 'lodge'
 import ora from 'ora'
 import * as os from 'os'
+import { relative, resolve } from 'path'
 import realpath from 'realpath-native'
 
 export { default as log } from 'lodge'
