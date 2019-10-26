@@ -47,7 +47,7 @@ export function linkPackages(
         const link = join(nodeModulesPath, alias)
         const target = relative(dirname(link), dep.root)
         if (opts.force || !isPathEqual(link, dep.root)) {
-          fs.remove(link)
+          fs.remove(link, true)
           fs.link(link, target)
           log(
             log.green('+'),
