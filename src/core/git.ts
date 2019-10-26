@@ -2,6 +2,7 @@ import exec from '@cush/exec'
 import { dirname, join, relative } from 'path'
 import fs from 'saxon/sync'
 import { RepoConfig, RootConfig } from './config'
+import { isHomeDir } from './helpers'
 import { Package } from './Package'
 
 export const git = {
@@ -20,6 +21,25 @@ export const git = {
   },
   getActiveBranch(cwd: string) {
     return exec.sync('git rev-parse --abbrev-ref HEAD', { cwd })
+  },
+  getRemotes(cwd: string) {
+    const remotes: { [name: string]: { name: string; url: string } } = {}
+    const lines = exec.sync('git remote -v', { cwd }).split('\n')
+    lines.forEach(line => {
+      const [, name, url] = /([^\s]+)\s([^\s]+)/.exec(line)!
+      remotes[name] = { name, url }
+    })
+    return Object.values(remotes)
+  },
+  findRoot(cwd: string) {
+    let root = cwd
+    while (!isHomeDir(root)) {
+      const gitDir = join(root, '.git')
+      if (fs.isDir(gitDir)) {
+        return root
+      }
+      root = dirname(root)
+    }
   },
   findRoots(cfg: RootConfig, packages: Package[]) {
     const gitRoots = new Set<string>()
