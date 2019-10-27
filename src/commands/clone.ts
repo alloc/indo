@@ -53,7 +53,7 @@ export default async (cfg: RootConfig) => {
       dir = join(cfg.root, 'vendor', pkg.name)
       pkg.move(dir)
     } else {
-      fs.remove(dir)
+      fs.remove(dir, true)
       fatal('Cannot infer package name when no "package.json" exists')
     }
   }
