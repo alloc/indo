@@ -15,7 +15,8 @@
     "src"
   ],
   "scripts": {
-    "build": "tsc -p ."
+    "build": "tsc -p .",
+    "prepare": "npm run build"
   },
   "dependencies": {
     "@cush/exec": "^1.5.1",
