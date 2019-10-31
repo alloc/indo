@@ -62,11 +62,7 @@ export default async (cfg: RootConfig) => {
     })
 
     const { head } = repos[root]
-    cfg.repos[root] = {
-      url,
-      head: head === 'master' ? undefined : head,
-    }
-
+    cfg.repos[root] = { url, head }
     saveConfig(cfg)
   }
 }
