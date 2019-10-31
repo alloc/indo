@@ -20,10 +20,10 @@ export const getRelativeId = (root: string, path: string) => {
 
 export const splitNameVersion = (str: string) => {
   // Ignore the @ in user/org scopes
-  const i = str.slice(1).lastIndexOf('@')
+  const i = str.lastIndexOf('@')
   return {
-    name: i < 0 ? str : str.slice(0, i),
-    version: i < 0 ? '' : str.slice(i + 1),
+    name: i <= 0 ? str : str.slice(0, i),
+    version: i <= 0 ? '' : str.slice(i + 1),
   }
 }
 
