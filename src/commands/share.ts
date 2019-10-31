@@ -30,15 +30,17 @@ export default async (cfg: RootConfig) => {
         continue
       }
       const root = relative(cfg.root, gitRoot)
-      const url = git.getRemoteUrl(gitRoot)
-      const head = git.getActiveBranch(gitRoot)
-      repos[root] = { root, url, head }
-      choices.push({
-        name: root,
-        hint:
-          log.gray(' - ' + url.replace(/^https:\/\//, '')) +
-          (head == 'master' ? '' : log.lyellow(' ' + head)),
-      })
+      if (!repos[root]) {
+        const url = git.getRemoteUrl(gitRoot)
+        const head = git.getActiveBranch(gitRoot)
+        repos[root] = { root, url, head }
+        choices.push({
+          name: root,
+          hint:
+            log.gray(' - ' + url.replace(/^https:\/\//, '')) +
+            (head == 'master' ? '' : log.lyellow(' ' + head)),
+        })
+      }
     }
   }
 
