@@ -33,7 +33,7 @@ async function cloneMissingRepos(cfg: RootConfig) {
 
     const cloner = new AsyncTaskGroup(3)
     await cloner.map(repos, async ([path, repo]) => {
-      if (!fs.exists(path)) {
+      if (!fs.exists(join(cfg.root, path))) {
         const repoId = repo.url + (repo.head ? '#' + repo.head : '')
         try {
           await git.clone(cfg.root, repo, path)
