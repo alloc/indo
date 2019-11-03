@@ -15,9 +15,15 @@ export class Package {
   version!: string
   dependencies?: StringMap
   devDependencies?: StringMap
-  workspaces?: string[] | { packages: string[] }
+
+  /** The scripts available to `npm run` */
   scripts?: StringMap
+
+  /** The modules linked to `node_modules/.bin` */
   bin?: string | { [name: string]: string }
+
+  /** Yarn workspaces config */
+  workspaces?: string[] | { packages: string[] }
 
   constructor(path: string) {
     Object.defineProperty(this, 'path', {
