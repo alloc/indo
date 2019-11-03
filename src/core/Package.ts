@@ -2,7 +2,7 @@ import exec from '@cush/exec'
 import { dirname, join } from 'path'
 import fs from 'saxon/sync'
 import { fatal, log } from './helpers'
-import { LernaConfig, loadLernaConfig } from './lerna'
+import { hasLernaConfig, LernaConfig, loadLernaConfig } from './lerna'
 import { getPackageManager, PackageManager } from './npm'
 
 export type PackageMap = { [path: string]: Package }
@@ -26,6 +26,9 @@ export class Package {
   /** Yarn workspaces config */
   workspaces?: string[] | { packages: string[] }
 
+  /** Lerna config */
+  lerna?: LernaConfig
+
   constructor(path: string) {
     Object.defineProperty(this, 'path', {
       value: path,
@@ -37,13 +40,15 @@ export class Package {
       log.warn('Failed to read:', path)
       fatal(err)
     }
-  }
-
-  /** Lerna config */
-  get lerna(): LernaConfig | undefined {
-    return Object.defineProperty(this, 'lerna', {
-      value: loadLernaConfig(this),
-    }).lerna
+    if (hasLernaConfig(this)) {
+      Object.defineProperty(this, 'lerna', {
+        configurable: true,
+        get: () =>
+          Object.defineProperty(this, 'lerna', {
+            value: loadLernaConfig(this),
+          }).lerna,
+      })
+    }
   }
 
   /** The root directory where "package.json" lives */
