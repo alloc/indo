@@ -4,6 +4,7 @@ dependencies:
   bocks: 1.0.0
   dequals: 1.0.0
   enquirer: 2.3.2
+  find-dependency: 1.1.0
   lodge: 0.1.4
   ora: 4.0.2
   realpath-native: 1.1.0
@@ -12,8 +13,8 @@ dependencies:
   semver: 6.3.0
   slurm: 0.5.9
 devDependencies:
-  '@types/node': 12.11.5
-  '@types/semver': 6.0.2
+  '@types/node': 12.12.5
+  '@types/semver': 6.2.0
   prettier: 1.18.2
   prettier-tslint: 0.4.2_prettier@1.18.2+typescript@3.6.4
   tslint: 5.20.0_typescript@3.6.4
@@ -60,7 +61,7 @@ packages:
       node: '>= 6'
     resolution:
       integrity: sha512-shAmDyaQC4H92APFoIaVDHCx5bStIocgvbwQyxPRrbUY20V1EYTbSDchWbuwlMG3V17cprZhA6+78JfB+3DTPw==
-  /@phenomnomnominal/tsquery/3.0.0_typescript@3.6.4:
+  /@phenomnomnominal/tsquery/4.0.0_typescript@3.6.4:
     dependencies:
       esquery: 1.0.1
       typescript: 3.6.4
@@ -68,15 +69,15 @@ packages:
     peerDependencies:
       typescript: ^3
     resolution:
-      integrity: sha512-SW8lKitBHWJ9fAYkJ9kJivuctwNYCh3BUxLdH0+XiR1GPBiu+7qiZzh8p8jqlj1LgVC1TbvfNFroaEsmYlL8Iw==
-  /@types/node/12.11.5:
+      integrity: sha512-s2Yet/MCj9Jh6nR6GfldrUPT6Y+aM1jIAdiKcOKEzmeKALT0Tc7SFIkYP3KvzjzbkKK5W7BiJ3cWy2UOa4ITbw==
+  /@types/node/12.12.5:
     dev: true
     resolution:
-      integrity: sha512-LC8ALj/24PhByn39nr5jnTvpE7MujK8y7LQmV74kHYF5iQ0odCPkMH4IZNZw+cobKfSXqaC8GgegcbIsQpffdA==
-  /@types/semver/6.0.2:
+      integrity: sha512-KEjODidV4XYUlJBF3XdjSH5FWoMCtO0utnhtdLf1AgeuZLOrRbvmU/gaRCVg7ZaQDjVf3l84egiY0mRNe5xE4A==
+  /@types/semver/6.2.0:
     dev: true
     resolution:
-      integrity: sha512-G1Ggy7/9Nsa1Jt2yiBR2riEuyK2DFNnqow6R7cromXPMNynackRY1vqFTLz/gwnef1LHokbXThcPhqMRjUbkpQ==
+      integrity: sha512-1OzrNb4RuAzIT7wHSsgZRlMBlNsJl+do6UblR7JMW4oB7bbR+uBEYtUh7gEc/jM84GGilh68lSOokyM/zNUlBA==
   /ansi-colors/3.2.4:
     dev: false
     engines:
@@ -595,6 +596,10 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-1USBHUKPmOsGpj3EAtJAPDKMOPc=
+  /find-dependency/1.1.0:
+    dev: false
+    resolution:
+      integrity: sha512-mGc+iR/wJyMxIY4xq9vHIFJcuiI9UtZ7dY6PuONVtEnk+cvuTy8/Urzc+tYAM6nIJJhuarKBShP3VoSlDcwZrA==
   /find-up/2.1.0:
     dependencies:
       locate-path: 2.0.0
@@ -683,10 +688,10 @@ packages:
       node: '>=4'
     resolution:
       integrity: sha512-yTzMmKygLp8RUpG1Ymu2VXPSJQZjNAZPD4ywgYEaG7e4tBJeUQBO8OpXrf1RCNcEs5alsoJYPAMiIHP0cmeC7w==
-  /graceful-fs/4.2.2:
+  /graceful-fs/4.2.3:
     dev: false
     resolution:
-      integrity: sha512-IItsdsea19BoLC7ELy13q1iJFNmd7ofZH5+X/pJr90/nRoPEX0DJo1dHDbgtYWOhJhcCgMDTOw84RZ72q6lB+Q==
+      integrity: sha512-a30VEBm4PEdx1dRB7MFK7BejejvCvBronbLjht+sHuGYj8PHs7M/5Z+rt5lw551vZ7yfTCj4Vuyy3mSJytDWRQ==
   /has-flag/3.0.0:
     engines:
       node: '>=4'
@@ -1446,7 +1451,7 @@ packages:
       integrity: sha1-QKNmnzsHfR6UPURinhV91IAjvy4=
   /saxon/0.1.17:
     dependencies:
-      graceful-fs: 4.2.2
+      graceful-fs: 4.2.3
     dev: false
     resolution:
       integrity: sha512-zvq2W0f8VVgTF/SGLcucGbI8uHbrqMsSbsn4shtMXZNpRH1C/CrJ4HOEamoExzrGm2vvx3ERDsfe0lFCkCjEyA==
@@ -1699,9 +1704,9 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-xPw9PgNPLG3iKRxmK7DWr+Ea/SzrvfHtjFt5LBl61gk2UBG/DB9kCXRjv+xyIU1rUtnayLeMUVJBcMX8Z17nDg==
-  /tslint-etc/1.7.0_tslint@5.20.0+typescript@3.6.4:
+  /tslint-etc/1.7.1_tslint@5.20.0+typescript@3.6.4:
     dependencies:
-      '@phenomnomnominal/tsquery': 3.0.0_typescript@3.6.4
+      '@phenomnomnominal/tsquery': 4.0.0_typescript@3.6.4
       tslib: 1.10.0
       tslint: 5.20.0_typescript@3.6.4
       tsutils: 3.17.1_typescript@3.6.4
@@ -1712,7 +1717,7 @@ packages:
       tslint: ^5.0.0
       typescript: ^2.3.0 || ^3.0.0
     resolution:
-      integrity: sha512-8NOGfr4zRquMNugz8D9gr0Tz8xxNA1Zrd2OFqURaWNKV779GO4LhqHjFL572m3MusUwSxPkUOMSmsqAwkvu6qQ==
+      integrity: sha512-5hG/ywGf9xCdi4Rb/wv5jTNs/L3izav+LYYE0Rp1A7WBsxyzGDlOmhfnHDYLf9sodVv1TWj9Su7IxErea0xGDA==
   /tslint-jasmine-rules/1.6.0_tslint@5.20.0:
     dependencies:
       tslint: 5.20.0_typescript@3.6.4
@@ -1726,7 +1731,7 @@ packages:
       tslint: 5.20.0_typescript@3.6.4
       tslint-clean-code: 0.2.10_tslint@5.20.0+typescript@3.6.4
       tslint-config-prettier: 1.18.0
-      tslint-etc: 1.7.0_tslint@5.20.0+typescript@3.6.4
+      tslint-etc: 1.7.1_tslint@5.20.0+typescript@3.6.4
       tslint-jasmine-rules: 1.6.0_tslint@5.20.0
       tslint-misc-rules: 3.5.1_tslint@5.20.0+typescript@3.6.4
       tslint-react: 3.6.0_tslint@5.20.0+typescript@3.6.4
@@ -1930,6 +1935,7 @@ specifiers:
   bocks: ^1.0.0
   dequals: ^1.0.0
   enquirer: ^2.3.2
+  find-dependency: ^1.1.0
   lodge: ^0.1.4
   ora: ^4.0.2
   prettier: ^1.18.2
