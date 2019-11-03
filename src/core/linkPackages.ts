@@ -48,6 +48,7 @@ export function linkPackages(
         const target = relative(dirname(link), dep.root)
         if (opts.force || !isPathEqual(link, dep.root)) {
           fs.remove(link, true)
+          fs.mkdir(dirname(link))
           fs.link(link, target)
           log(
             log.green('+'),
@@ -64,6 +65,7 @@ export function linkPackages(
             const target = relative(dirname(link), bin)
             if (opts.force || !isPathEqual(link, bin)) {
               fs.remove(link)
+              fs.mkdir(dirname(link))
               fs.link(link, target)
               log(
                 log.green('+'),
