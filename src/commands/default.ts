@@ -8,19 +8,28 @@ import { choose, log, spin } from '../core/helpers'
 import { installAndBuild } from '../core/installAndBuild'
 import { linkPackages } from '../core/linkPackages'
 import { loadPackages } from '../core/loadPackages'
-import { PackageMap } from '../core/Package'
+import { loadPackage, PackageMap } from '../core/Package'
 
 export default async (cfg: RootConfig) => {
   const args = slurm({
     force: { type: 'boolean' },
     f: 'force',
   })
+
   await cloneMissingRepos(cfg)
+
   const packages = loadPackages(cfg.root, {
     skip: cfg.vendor,
   })
+
   await findUnknownRepos(cfg, packages)
-  await installAndBuild(cfg, Object.values(packages))
+
+  // Skip the install step if the root package uses Lerna or Yarn workspaces.
+  const rootPkg = loadPackage(join(cfg.root, 'package.json'))
+  if (rootPkg && !rootPkg.workspaces && !rootPkg.lerna) {
+    await installAndBuild(cfg, Object.values(packages))
+  }
+
   linkPackages(cfg, packages, {
     force: args.force,
   })
