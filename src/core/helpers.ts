@@ -49,13 +49,15 @@ export const tildify = (path: string) => {
 
 export const choose = async <T = string>(
   message: string,
-  choices: string[] | Array<{ message: string; value: T }>
+  choices: string[] | Array<{ message: string; value: T }>,
+  initial?: T
 ) =>
   (await prompt<{ result: T }>({
     type: 'select',
     name: 'result',
     message,
     choices: choices as any,
+    initial,
   })).result
 
 export const confirm = async (message: string) =>
