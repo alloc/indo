@@ -5,6 +5,7 @@ dependencies:
   dequals: 1.0.0
   enquirer: 2.3.2
   find-dependency: 1.1.0
+  glob-regex: 0.3.2
   lodge: 0.1.4
   ora: 4.0.2
   realpath-native: 1.1.0
@@ -1704,7 +1705,7 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-xPw9PgNPLG3iKRxmK7DWr+Ea/SzrvfHtjFt5LBl61gk2UBG/DB9kCXRjv+xyIU1rUtnayLeMUVJBcMX8Z17nDg==
-  /tslint-etc/1.7.1_tslint@5.20.0+typescript@3.6.4:
+  /tslint-etc/1.9.1_tslint@5.20.0+typescript@3.6.4:
     dependencies:
       '@phenomnomnominal/tsquery': 4.0.0_typescript@3.6.4
       tslib: 1.10.0
@@ -1717,7 +1718,7 @@ packages:
       tslint: ^5.0.0
       typescript: ^2.3.0 || ^3.0.0
     resolution:
-      integrity: sha512-5hG/ywGf9xCdi4Rb/wv5jTNs/L3izav+LYYE0Rp1A7WBsxyzGDlOmhfnHDYLf9sodVv1TWj9Su7IxErea0xGDA==
+      integrity: sha512-lkZQSHRoTNm8EkLC76VYJ66JGY5oymCICzEFISTSYLOhwd/vKE0ljQY7AJIDp+4LT/BSLDDu6LklDYJqca+63Q==
   /tslint-jasmine-rules/1.6.0_tslint@5.20.0:
     dependencies:
       tslint: 5.20.0_typescript@3.6.4
@@ -1731,7 +1732,7 @@ packages:
       tslint: 5.20.0_typescript@3.6.4
       tslint-clean-code: 0.2.10_tslint@5.20.0+typescript@3.6.4
       tslint-config-prettier: 1.18.0
-      tslint-etc: 1.7.1_tslint@5.20.0+typescript@3.6.4
+      tslint-etc: 1.9.1_tslint@5.20.0+typescript@3.6.4
       tslint-jasmine-rules: 1.6.0_tslint@5.20.0
       tslint-misc-rules: 3.5.1_tslint@5.20.0+typescript@3.6.4
       tslint-react: 3.6.0_tslint@5.20.0+typescript@3.6.4
@@ -1936,6 +1937,7 @@ specifiers:
   dequals: ^1.0.0
   enquirer: ^2.3.2
   find-dependency: ^1.1.0
+  glob-regex: ^0.3.2
   lodge: ^0.1.4
   ora: ^4.0.2
   prettier: ^1.18.2
