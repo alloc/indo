@@ -8,10 +8,15 @@ import { getPublishedVersions } from '../core/getPublishedVersions'
 import { choose, fatal, log, spin, splitNameVersion } from '../core/helpers'
 import { linkPackages } from '../core/linkPackages'
 import { loadPackages } from '../core/loadPackages'
-import { Package } from '../core/Package'
+import { Package, resetPackageCache } from '../core/Package'
 
 const NODE_MODULES = 'node_modules'
 const PJ = 'package.json'
+
+const getPackages = (cfg: RootConfig) =>
+  loadPackages(cfg.root, {
+    skip: cfg.vendor,
+  })
 
 export default async (cfg: RootConfig) => {
   const args = slurm({
@@ -22,9 +27,7 @@ export default async (cfg: RootConfig) => {
     fatal('Must provide one or more dependency names')
   }
 
-  const packages = loadPackages(cfg.root, {
-    skip: cfg.vendor,
-  })
+  let packages = getPackages(cfg)
 
   type UpgradeMap = Map<Package, string[]>
   const upgradesByPkg: UpgradeMap = new Map()
@@ -132,7 +135,9 @@ export default async (cfg: RootConfig) => {
     await promise
     spinner.stop()
 
-    linkPackages(cfg, packages)
+    // Ensure the new dependencies are linked up.
+    resetPackageCache()
+    linkPackages(cfg, getPackages(cfg))
   }
 }
 

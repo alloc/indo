@@ -8,7 +8,9 @@ import { getPackageManager, PackageManager } from './npm'
 export type PackageMap = { [path: string]: Package }
 export type StringMap = { [name: string]: string }
 
-const packageCache: PackageMap = {}
+let packageCache: PackageMap = {}
+
+export const resetPackageCache = () => void (packageCache = {})
 
 export class Package {
   path!: string
