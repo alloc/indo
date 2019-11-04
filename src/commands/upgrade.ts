@@ -109,12 +109,27 @@ export default async (cfg: RootConfig) => {
     }
 
     log('')
-    const spinner = spin('Upgrading dependencies...')
-    await Promise.all(
-      Array.from(upgradesByPkg, ([pkg, upgrades]) =>
-        pkg.manager.add(upgrades, { dev: !!args.dev })
-      )
+    let done = 0
+    let count = 0
+
+    console.log(upgradesByPkg)
+    const spinner = spin('Upgrading dependencies [0/0]')
+    const promise = Promise.all(
+      Array.from(upgradesByPkg, ([pkg, upgrades]) => {
+        spinner.start(
+          `Upgrading dependencies [${done}/${(count += upgrades.length)}]`
+        )
+        return pkg.manager
+          .add(upgrades, { dev: !!args.dev })
+          .then(() =>
+            spinner.start(
+              `Upgrading dependencies [${(done += upgrades.length)}/${count}]`
+            )
+          )
+      })
     )
+
+    await promise
     spinner.stop()
 
     linkPackages(cfg, packages)
