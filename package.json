@@ -25,6 +25,7 @@
     "dequals": "^1.0.0",
     "enquirer": "^2.3.2",
     "find-dependency": "^1.1.0",
+    "glob-regex": "^0.3.2",
     "lodge": "^0.1.4",
     "ora": "^4.0.2",
     "realpath-native": "^1.1.0",
