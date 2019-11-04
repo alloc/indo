@@ -1,7 +1,7 @@
 import { dirname, join, relative } from 'path'
-import { fs } from './fs'
 import semver from 'semver'
 import { RootConfig } from './config'
+import { fs } from './fs'
 import { isPathEqual, log, splitNameVersion } from './helpers'
 import { loadPackages } from './loadPackages'
 import { loadVendors } from './loadVendors'
