@@ -115,7 +115,6 @@ export default async (cfg: RootConfig) => {
     let done = 0
     let count = 0
 
-    console.log(upgradesByPkg)
     const spinner = spin('Upgrading dependencies [0/0]')
     const promise = Promise.all(
       Array.from(upgradesByPkg, ([pkg, upgrades]) => {
