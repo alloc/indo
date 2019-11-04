@@ -18,6 +18,7 @@ export class Package {
   version!: string
   dependencies?: StringMap
   devDependencies?: StringMap
+  peerDependencies?: StringMap
 
   /** The scripts available to `npm run` */
   scripts?: StringMap

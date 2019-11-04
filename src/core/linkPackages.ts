@@ -16,7 +16,11 @@ export function linkPackages(
 ) {
   const vendor = loadVendors(cfg)
   for (const pkg of Object.values(packages)) {
-    const deps: StringMap = { ...pkg.dependencies, ...pkg.devDependencies }
+    const deps: StringMap = {
+      ...pkg.dependencies,
+      ...pkg.devDependencies,
+      ...pkg.peerDependencies,
+    }
     if (!Object.keys(deps).length) {
       continue
     }
