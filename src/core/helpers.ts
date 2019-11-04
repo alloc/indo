@@ -47,9 +47,15 @@ export const tildify = (path: string) => {
   return path.startsWith(home) ? path.replace(home, '~/') : path
 }
 
+export type Choice<T = string> = {
+  name: string
+  message?: string
+  value?: T
+}
+
 export const choose = async <T = string>(
   message: string,
-  choices: string[] | Array<{ message: string; value: T }>,
+  choices: string[] | Array<Choice<T>>,
   initial?: T
 ) =>
   (await prompt<{ result: T }>({
