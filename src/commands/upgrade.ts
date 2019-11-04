@@ -13,11 +13,6 @@ import { Package, resetPackageCache } from '../core/Package'
 const NODE_MODULES = 'node_modules'
 const PJ = 'package.json'
 
-const getPackages = (cfg: RootConfig) =>
-  loadPackages(cfg.root, {
-    skip: cfg.vendor,
-  })
-
 export default async (cfg: RootConfig) => {
   const args = slurm({
     dev: true,
@@ -27,7 +22,7 @@ export default async (cfg: RootConfig) => {
     fatal('Must provide one or more dependency names')
   }
 
-  let packages = getPackages(cfg)
+  const packages = loadPackages(cfg)
 
   type UpgradeMap = Map<Package, string[]>
   const upgradesByPkg: UpgradeMap = new Map()
@@ -137,7 +132,7 @@ export default async (cfg: RootConfig) => {
 
     // Ensure the new dependencies are linked up.
     resetPackageCache()
-    linkPackages(cfg, getPackages(cfg))
+    linkPackages(cfg)
   }
 }
 

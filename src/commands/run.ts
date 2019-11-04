@@ -13,10 +13,7 @@ export default async (cfg: RootConfig) => {
     fatal('Must provide a script name')
   }
 
-  const packages = loadPackages(cfg.root, {
-    skip: cfg.vendor,
-  })
-
+  const packages = loadPackages(cfg)
   const spinner = spin('Running...')
 
   const runner = new AsyncTaskGroup(args.concurrency)

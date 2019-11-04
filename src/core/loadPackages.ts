@@ -1,30 +1,32 @@
 import { join } from 'path'
 import { crawl } from 'recrawl-sync'
+import { RootConfig } from './config'
 import { GitIgnore } from './gitignore'
 import { loadPackage, PackageMap } from './Package'
 
-type CrawlOptions = Parameters<typeof crawl>[1]
+export function loadPackages(cfg: RootConfig) {
+  const packages: PackageMap = {}
+  const addPackage = (pkgPath: string) => {
+    const pkg = loadPackage(join(cfg.root, pkgPath))!
+    if (pkg.name && pkg.version) {
+      packages[pkg.name] = pkg
+    }
+  }
 
-export function loadPackages(root: string, opts: CrawlOptions = {}) {
+  // Find packages in the root repository.
+  findPackages(cfg.root).forEach(addPackage)
+  return packages
+}
+
+function findPackages(root: string) {
   const gitignore = new GitIgnore(root)
   const notIgnored = (path: string) => {
     return !gitignore.test(join(root, path))
   }
-
-  const paths = crawl(root, {
-    ...opts,
-    only: opts.only || ['**/package.json'],
-    skip: ['.git', 'node_modules', ...(opts.skip || [])],
+  return crawl(root, {
+    only: ['**/package.json'],
+    skip: ['.git', 'node_modules'],
     enter: notIgnored,
     filter: notIgnored,
   })
-
-  const packages: PackageMap = {}
-  paths.forEach(pkgPath => {
-    const pkg = loadPackage(join(root, pkgPath))!
-    if (pkg.name && pkg.version) {
-      packages[pkg.name] = pkg
-    }
-  })
-  return packages
 }

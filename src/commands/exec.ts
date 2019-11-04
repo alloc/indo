@@ -17,9 +17,7 @@ export default async (cfg: RootConfig) => {
     )
   }
 
-  const packages = loadPackages(cfg.root, {
-    skip: cfg.vendor,
-  })
+  const packages = loadPackages(cfg)
 
   const runner = new AsyncTaskGroup(args.concurrency)
   await runner.map(Object.values(packages), async pkg => {

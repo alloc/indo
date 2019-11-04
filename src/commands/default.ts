@@ -17,11 +17,7 @@ export default async (cfg: RootConfig) => {
   })
 
   await cloneMissingRepos(cfg)
-
-  const packages = loadPackages(cfg.root, {
-    skip: cfg.vendor,
-  })
-
+  const packages = loadPackages(cfg)
   await findUnknownRepos(cfg, packages)
 
   // Skip the install step if the root package uses Lerna or Yarn workspaces.

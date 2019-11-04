@@ -26,7 +26,7 @@ export default async (cfg: RootConfig) => {
     throw fatal('Must give one or more package names and/or relative paths')
   }
 
-  const packages = loadPackages(cfg.root, { skip: cfg.vendor })
+  const packages = loadPackages(cfg)
   const vendors = loadVendors(cfg)
 
   const deleted = new Set<Package>()

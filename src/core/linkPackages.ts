@@ -9,9 +9,7 @@ import { StringMap } from './Package'
 
 export function linkPackages(
   cfg: RootConfig,
-  packages = loadPackages(cfg.root, {
-    skip: cfg.vendor,
-  }),
+  packages = loadPackages(cfg),
   opts: { force?: boolean } = {}
 ) {
   const vendor = loadVendors(cfg)

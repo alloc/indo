@@ -9,10 +9,8 @@ import { loadPackages } from '../core/loadPackages'
 
 export default async (cfg: RootConfig) => {
   const cmd = slurm('*')._
-  const packages = loadPackages(cfg.root, {
-    skip: cfg.vendor,
-  })
 
+  const packages = loadPackages(cfg)
   const gitRoots = Array.from(git.findRoots(cfg, Object.values(packages)))
 
   // Assume "cfg.root" is a git repo
