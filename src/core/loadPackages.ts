@@ -2,6 +2,7 @@ import globRegex from 'glob-regex'
 import { join } from 'path'
 import { crawl } from 'recrawl-sync'
 import { RootConfig } from './config'
+import { fs } from './fs'
 import { GitIgnore } from './gitignore'
 import { loadPackage, PackageMap } from './Package'
 
@@ -33,6 +34,9 @@ export function loadPackages(cfg: RootConfig) {
 }
 
 function findPackages(root: string) {
+  if (!fs.isDir(root)) {
+    return []
+  }
   const gitignore = new GitIgnore(root)
   const notIgnored = (path: string) => {
     return !gitignore.test(join(root, path))
