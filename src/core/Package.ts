@@ -35,7 +35,7 @@ export class Package {
       writable: true,
     })
     try {
-      Object.assign(this, JSON.parse(fs.read(path)))
+      Object.assign(this, fs.readJson(path))
     } catch (err) {
       log.warn('Failed to read:', path)
       fatal(err)

@@ -23,7 +23,7 @@ export function loadConfig(root = process.cwd()) {
   while (true) {
     const configPath = join(root, '.indo.json')
     if (fs.isFile(configPath)) {
-      const config = createConfig(JSON.parse(fs.read(configPath)))
+      const config = createConfig(fs.readJson(configPath))
       return Object.defineProperties(config, {
         path: { value: configPath },
         root: { value: root },

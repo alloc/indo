@@ -41,7 +41,7 @@ export class Registry {
 
   protected _load() {
     if (!this.packages) {
-      this.packages = fs.isFile(this.path) ? JSON.parse(fs.read(this.path)) : {}
+      this.packages = fs.isFile(this.path) ? fs.readJson(this.path) : {}
     }
   }
 
