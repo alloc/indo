@@ -24,12 +24,15 @@ export function linkPackages(
     }
 
     const nodeModulesPath = join(pkg.root, 'node_modules')
-    for (let [name, version] of Object.entries(deps)) {
+    for (let [alias, version] of Object.entries(deps)) {
       if (/^(link|file):/.test(version)) continue
 
-      const alias = cfg.alias[name] || name
+      let name = alias
       if (version.startsWith('npm:')) {
         ;({ name, version } = splitNameVersion(version.slice(4)))
+      }
+      if (name in cfg.alias) {
+        name = cfg.alias[name]
       }
 
       const dep = packages[name] || vendor[name]
