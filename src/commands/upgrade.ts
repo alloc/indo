@@ -8,7 +8,7 @@ import { getPublishedVersions } from '../core/getPublishedVersions'
 import { choose, fatal, log, spin, splitNameVersion } from '../core/helpers'
 import { linkPackages } from '../core/linkPackages'
 import { loadPackages } from '../core/loadPackages'
-import { Package, resetPackageCache } from '../core/Package'
+import { loadPackage, Package, resetPackageCache } from '../core/Package'
 
 const NODE_MODULES = 'node_modules'
 const PJ = 'package.json'
@@ -23,6 +23,11 @@ export default async (cfg: RootConfig) => {
   }
 
   const packages = loadPackages(cfg)
+
+  const rootPkg = loadPackage(join(cfg.root, 'package.json'))
+  if (rootPkg) {
+    packages[rootPkg.name] = rootPkg
+  }
 
   type UpgradeMap = Map<Package, string[]>
   const upgradesByPkg: UpgradeMap = new Map()
