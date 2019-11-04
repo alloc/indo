@@ -106,6 +106,11 @@ export default async (cfg: RootConfig) => {
       }
     }
 
+    if (!upgradesByPkg.size) {
+      log('\n✨  Everything is up-to-date.')
+      return
+    }
+
     log('')
     let done = 0
     let count = 0
