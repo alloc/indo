@@ -1,6 +1,6 @@
 import AsyncTaskGroup from 'async-task-group'
 import { join, relative } from 'path'
-import fs from 'saxon/sync'
+import { fs } from './fs'
 import { RootConfig } from './config'
 import { log, spin } from './helpers'
 import { Package } from './Package'

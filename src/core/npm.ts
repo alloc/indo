@@ -1,6 +1,6 @@
 import exec from '@cush/exec'
 import { join } from 'path'
-import fs from 'saxon/sync'
+import { fs } from './fs'
 import { Package } from './Package'
 
 interface AddOptions {

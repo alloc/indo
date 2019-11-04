@@ -1,7 +1,7 @@
 import findDependency from 'find-dependency'
 import { join } from 'path'
 import realpath from 'realpath-native'
-import fs from 'saxon/sync'
+import { fs } from './fs'
 import { log } from './helpers'
 import { Package } from './Package'
 

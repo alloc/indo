@@ -1,6 +1,6 @@
 import * as os from 'os'
 import { dirname, join } from 'path'
-import fs from 'saxon/sync'
+import { fs } from './fs'
 
 /** Local package registry */
 export class Registry {

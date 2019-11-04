@@ -1,6 +1,6 @@
 import { basename, join, resolve } from 'path'
-import fs from 'saxon/sync'
 import { loadConfig, RootConfig } from './core/config'
+import { fs } from './core/fs'
 import { fatal, log } from './core/helpers'
 
 const helpArg = process.argv.find(

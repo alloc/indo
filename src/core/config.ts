@@ -1,6 +1,6 @@
 import isDeepEqual from 'dequals'
 import { dirname, join } from 'path'
-import fs from 'saxon/sync'
+import { fs } from './fs'
 import { isHomeDir } from './helpers'
 
 export interface RepoConfig {

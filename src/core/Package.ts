@@ -1,6 +1,6 @@
 import exec from '@cush/exec'
 import { dirname, join } from 'path'
-import fs from 'saxon/sync'
+import { fs } from './fs'
 import { fatal, log } from './helpers'
 import { hasLernaConfig, LernaConfig, loadLernaConfig } from './lerna'
 import { getPackageManager, PackageManager } from './npm'

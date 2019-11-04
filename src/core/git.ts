@@ -1,6 +1,6 @@
 import exec from '@cush/exec'
 import { dirname, join, relative } from 'path'
-import fs from 'saxon/sync'
+import { fs } from './fs'
 import { RepoConfig, RootConfig } from './config'
 import { isHomeDir } from './helpers'
 import { Package } from './Package'

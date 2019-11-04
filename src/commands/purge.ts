@@ -1,8 +1,8 @@
 import AsyncTaskGroup from 'async-task-group'
 import { join, relative, resolve } from 'path'
-import fs from 'saxon/sync'
 import slurm from 'slurm'
 import { RootConfig, saveConfig } from '../core/config'
+import { fs } from '../core/fs'
 import { getInverseDeps } from '../core/getInverseDeps'
 import {
   confirm,

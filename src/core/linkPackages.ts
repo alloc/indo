@@ -1,5 +1,5 @@
 import { dirname, join, relative } from 'path'
-import fs from 'saxon/sync'
+import { fs } from './fs'
 import semver from 'semver'
 import { RootConfig } from './config'
 import { isPathEqual, log, splitNameVersion } from './helpers'

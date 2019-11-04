@@ -1,6 +1,6 @@
 import { dirname, join, relative } from 'path'
 import { crawl, createMatcher } from 'recrawl-sync'
-import fs from 'saxon/sync'
+import { fs } from './fs'
 import { RootConfig } from './config'
 import { loadPackage, PackageMap } from './Package'
 

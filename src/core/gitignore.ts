@@ -1,6 +1,6 @@
 import { basename, dirname, isAbsolute, join, relative } from 'path'
 import { createMatcher, GlobMatcher } from 'recrawl-sync'
-import fs from 'saxon/sync'
+import { fs } from './fs'
 import { isHomeDir } from './helpers'
 
 const readLines = (path: string) => fs.read(path).split(/\r?\n/)

@@ -1,7 +1,7 @@
 import { dirname, join, relative } from 'path'
-import fs from 'saxon/sync'
 import slurm from 'slurm'
 import { RootConfig } from '../core/config'
+import { fs } from '../core/fs'
 import { getNearestPackage } from '../core/getNearestPackage'
 import { fatal, isPathEqual, log, tildify } from '../core/helpers'
 import { linkPackages } from '../core/linkPackages'
