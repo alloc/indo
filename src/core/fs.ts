@@ -1,1 +1,2 @@
-export { default as fs } from 'saxon/sync'
+import fs from 'saxon/sync'
+export { fs }
