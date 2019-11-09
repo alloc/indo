@@ -1,7 +1,7 @@
 import AsyncTaskGroup from 'async-task-group'
 import { join, relative } from 'path'
-import { fs } from './fs'
 import { RootConfig } from './config'
+import { fs } from './fs'
 import { log, spin } from './helpers'
 import { Package } from './Package'
 
