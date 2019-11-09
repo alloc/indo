@@ -1,4 +1,5 @@
 import AsyncTaskGroup from 'async-task-group'
+import globRegex from 'glob-regex'
 import { join } from 'path'
 import slurm from 'slurm'
 import { RootConfig, saveConfig } from '../core/config'
@@ -36,9 +37,12 @@ async function cloneMissingRepos(cfg: RootConfig) {
   if (repos.length) {
     const spinner = spin('Cloning any missing repos...')
 
+    const vendorRE = globRegex(cfg.vendor)
+
     const cloner = new AsyncTaskGroup(3)
     await cloner.map(repos, async ([path, repo]) => {
-      if (!fs.exists(join(cfg.root, path))) {
+      const repoPath = join(cfg.root, path)
+      if (!fs.exists(repoPath)) {
         const repoId = repo.url + (repo.head ? '#' + repo.head : '')
         try {
           await git.clone(cfg.root, repo, path)
@@ -47,6 +51,18 @@ async function cloneMissingRepos(cfg: RootConfig) {
             `Cloned ${log.green('./' + path)} from`,
             log.gray(repoId.replace(/^.+:\/\//, ''))
           )
+
+          // Setup vendor packages when freshly cloned.
+          if (vendorRE.test(path)) {
+            const pkg = loadPackage(repoPath)
+            if (pkg) {
+              if (pkg.lerna && !pkg.workspaces) {
+                await pkg.exec('node_modules/.bin/lerna bootstrap')
+              } else {
+                await installAndBuild(cfg, [pkg])
+              }
+            }
+          }
         } catch (err) {
           spinner.error(err)
         }
