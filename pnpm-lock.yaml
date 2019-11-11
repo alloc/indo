@@ -4,7 +4,7 @@ dependencies:
   bocks: 1.0.0
   dequals: 1.0.0
   enquirer: 2.3.2
-  find-dependency: 1.1.0
+  find-dependency: 1.2.0
   glob-regex: 0.3.2
   lodge: 0.1.4
   ora: 4.0.2
@@ -16,8 +16,8 @@ dependencies:
 devDependencies:
   '@types/node': 12.12.7
   '@types/semver': 6.2.0
-  prettier: 1.19.1
-  prettier-tslint: 0.4.2_prettier@1.19.1+typescript@3.7.2
+  prettier: 1.17.1
+  prettier-tslint: 0.4.2_prettier@1.17.1+typescript@3.7.2
   tslint: 5.20.1_typescript@3.7.2
   tslint-mango: 0.1.12
   typescript: 3.7.2
@@ -597,10 +597,10 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-1USBHUKPmOsGpj3EAtJAPDKMOPc=
-  /find-dependency/1.1.0:
+  /find-dependency/1.2.0:
     dev: false
     resolution:
-      integrity: sha512-mGc+iR/wJyMxIY4xq9vHIFJcuiI9UtZ7dY6PuONVtEnk+cvuTy8/Urzc+tYAM6nIJJhuarKBShP3VoSlDcwZrA==
+      integrity: sha512-XnWHB4yUkFlKup2BXTetI9dfpbQ3himq5szUoM4mGPof6QvAJ0QWqylxFp/Idut1atm1imEFtfVNrkkl4lIbFg==
   /find-up/2.1.0:
     dependencies:
       locate-path: 2.0.0
@@ -1337,12 +1337,12 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-AerA/jta9xoqbAL+q7jB/vfgDqs=
-  /prettier-tslint/0.4.2_prettier@1.19.1+typescript@3.7.2:
+  /prettier-tslint/0.4.2_prettier@1.17.1+typescript@3.7.2:
     dependencies:
       chalk: 2.4.2
       globby: 8.0.2
       ignore: 3.3.10
-      prettier: 1.19.1
+      prettier: 1.17.1
       require-relative: 0.8.7
       tslint: 5.20.1_typescript@3.7.2
       typescript: 3.7.2
@@ -1354,13 +1354,13 @@ packages:
       typescript: ^2.5.3 || ^3.0.0
     resolution:
       integrity: sha512-urhX7U/F+fu8sztEs/Z7CxNS8PdEytEwGKhQaH5fxxCdRmHGT45FoClyDlcZrMk9cK/8JpX/asFmTOHtSGJfLg==
-  /prettier/1.19.1:
+  /prettier/1.17.1:
     dev: true
     engines:
       node: '>=4'
     hasBin: true
     resolution:
-      integrity: sha512-s7PoyDv/II1ObgQunCbB9PdLmUcBZcnWOcxDh7O0N/UwDEsHyqkW+Qh28jW+mVuCdx7gLB0BotYI1Y6uI9iyew==
+      integrity: sha512-TzGRNvuUSmPgwivDqkZ9tM/qTGW9hqDKWOE9YHiyQdixlKbv7kvEqsmDPrcHJTKwthU774TQwZXVtaQ/mMsvjg==
   /pump/3.0.0:
     dependencies:
       end-of-stream: 1.4.4
@@ -1940,7 +1940,7 @@ specifiers:
   glob-regex: ^0.3.2
   lodge: ^0.1.4
   ora: ^4.0.2
-  prettier: ^1.18.2
+  prettier: ~1.17.0
   prettier-tslint: ^0.4.2
   realpath-native: ^1.1.0
   recrawl-sync: ^2.0.0
