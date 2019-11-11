@@ -1,11 +1,12 @@
 import AsyncTaskGroup from 'async-task-group'
 import { join, relative } from 'path'
-import { fs } from './fs'
 import { RootConfig } from './config'
+import { fs } from './fs'
 import { log, spin } from './helpers'
 import { Package } from './Package'
 
 export async function installAndBuild(cfg: RootConfig, pkgs: Package[]) {
+  console.time('install dependencies')
   const spinner = spin('Installing dependencies...')
 
   const installed: Package[] = []
@@ -39,8 +40,10 @@ export async function installAndBuild(cfg: RootConfig, pkgs: Package[]) {
   })
 
   spinner.stop()
+  console.timeEnd('install dependencies')
 
   if (installed.length) {
+    console.time('build packages')
     spinner.start('Building packages...')
 
     const builder = new AsyncTaskGroup(3)
@@ -68,5 +71,6 @@ export async function installAndBuild(cfg: RootConfig, pkgs: Package[]) {
     })
 
     spinner.stop()
+    console.timeEnd('build packages')
   }
 }

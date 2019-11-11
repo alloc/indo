@@ -74,6 +74,10 @@ slurm.error = reason => {
   process.exit(1)
 }
 
+if (!process.env.DEBUG) {
+  console.debug = console.time = console.timeEnd = () => {}
+}
+
 let config: RootConfig | null = null
 if (cmd !== 'init') {
   config = loadConfig()

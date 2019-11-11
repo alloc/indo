@@ -12,6 +12,8 @@ export function linkPackages(
   packages = loadPackages(cfg),
   opts: { force?: boolean } = {}
 ) {
+  console.time('link packages')
+
   const vendor = loadVendors(cfg)
   for (const pkg of Object.values(packages)) {
     const deps: StringMap = {
@@ -92,4 +94,6 @@ export function linkPackages(
       }
     }
   }
+
+  console.timeEnd('link packages')
 }

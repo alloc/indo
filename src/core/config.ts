@@ -20,6 +20,7 @@ export interface RootConfig extends Config {
 }
 
 export function loadConfig(root = process.cwd()) {
+  console.time('load config')
   while (true) {
     const configPath = join(root, '.indo.json')
     if (fs.isFile(configPath)) {
@@ -34,6 +35,7 @@ export function loadConfig(root = process.cwd()) {
     }
     root = dirname(root)
   }
+  console.timeEnd()
 }
 
 export function createConfig(props?: Partial<Config>): Config {

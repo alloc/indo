@@ -11,17 +11,30 @@ import { loadPackages } from '../core/loadPackages'
 import { loadPackage, PackageMap } from '../core/Package'
 
 export default async (cfg: RootConfig) => {
+  console.time('parse argv')
   const args = slurm({
     force: { type: 'boolean' },
     f: 'force',
   })
+  console.timeEnd('parse argv')
 
+  console.time('clone missing repos')
   await cloneMissingRepos(cfg)
+  console.timeEnd('clone missing repos')
+
+  console.time('load non-vendor packages into memory')
   const packages = loadPackages(cfg)
+  console.timeEnd('load non-vendor packages into memory')
+
+  console.time('find unknown repos')
   await findUnknownRepos(cfg, packages)
+  console.timeEnd('find unknown repos')
+
+  console.time('load root package')
+  const rootPkg = loadPackage(join(cfg.root, 'package.json'))
+  console.timeEnd('load root package')
 
   // Skip the install step if the root package uses Lerna or Yarn workspaces.
-  const rootPkg = loadPackage(join(cfg.root, 'package.json'))
   if (rootPkg && !rootPkg.workspaces && !rootPkg.lerna) {
     await installAndBuild(cfg, Object.values(packages))
   }
