@@ -8,8 +8,9 @@ import { linkPackages } from '../core/linkPackages'
 import { registry } from '../core/registry'
 
 export default (cfg: RootConfig | null) => {
-  const [name] = slurm()
-  if (name) {
+  const args = slurm({ g: true })
+  let name = args[0] || args.g
+  if (name && !args.g) {
     if (cfg) {
       useGlobalPackage(cfg, name)
     } else {
@@ -19,14 +20,19 @@ export default (cfg: RootConfig | null) => {
     // Find the nearest package.json and link it to ~/.indo/packages
     const pkg = getNearestPackage(process.cwd())
     if (pkg) {
-      registry.set(pkg.name, pkg.root)
-      log(
-        log.green('✓'),
-        'Global package',
-        log.lgreen(pkg.name),
-        'now points to',
-        log.gray(tildify(pkg.root))
-      )
+      name = pkg.name || name
+      if (name) {
+        registry.set(name, pkg.root)
+        log(
+          log.green('✓'),
+          'Global package',
+          log.lgreen(name),
+          'now points to',
+          log.gray(tildify(pkg.root))
+        )
+      } else {
+        fatal('Missing package name (-g)')
+      }
     } else {
       fatal('Missing package.json')
     }

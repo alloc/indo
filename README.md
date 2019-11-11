@@ -90,6 +90,9 @@ indo link
 
 It's basically `yarn link` except with automatic linking to packages in your monorepo. 😻
 
+For a monorepo whose root package is unnamed, use `indo link -g <name>` to register it globally.
+Then use `indo link <name>` to link your local packages to it.
+
 &nbsp;
 
 ### `indo unlink`
