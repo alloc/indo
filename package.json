@@ -29,7 +29,7 @@
     "lodge": "^0.1.4",
     "ora": "^4.0.2",
     "realpath-native": "^1.1.0",
-    "recrawl-sync": "^1.2.2",
+    "recrawl-sync": "^2.0.0",
     "saxon": "^0.1.15",
     "semver": "^6.3.0",
     "slurm": "^0.5.8"
