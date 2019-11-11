@@ -2,7 +2,7 @@ import { dirname, join, relative } from 'path'
 import semver from 'semver'
 import { RootConfig } from './config'
 import { fs } from './fs'
-import { isPathEqual, log, spin, splitNameVersion } from './helpers'
+import { isPathEqual, log, splitNameVersion } from './helpers'
 import { loadPackages } from './loadPackages'
 import { loadVendors } from './loadVendors'
 import { StringMap } from './Package'
@@ -13,7 +13,6 @@ export function linkPackages(
   opts: { force?: boolean } = {}
 ) {
   console.time('link packages')
-  const spinner = spin('Linking packages...')
 
   const vendor = loadVendors(cfg)
   for (const pkg of Object.values(packages)) {
@@ -29,7 +28,6 @@ export function linkPackages(
     const nodeModulesPath = join(pkg.root, 'node_modules')
     for (let [alias, version] of Object.entries(deps)) {
       if (/^(link|file):/.test(version)) continue
-      spinner.start()
 
       let name = alias
       if (version.startsWith('npm:')) {
@@ -42,7 +40,6 @@ export function linkPackages(
       const dep = packages[name] || vendor[name]
       if (dep) {
         if (version && !semver.satisfies(dep.version, version)) {
-          spinner.stop()
           log.warn(
             'Local package',
             log.lgreen('./' + relative(cfg.root, dep.root)),
@@ -60,7 +57,6 @@ export function linkPackages(
           fs.remove(link, true)
           fs.mkdir(dirname(link))
           fs.link(link, target)
-          spinner.stop()
           log(
             log.green('+'),
             'Linked',
@@ -78,7 +74,6 @@ export function linkPackages(
               fs.remove(link)
               fs.mkdir(dirname(link))
               fs.link(link, target)
-              spinner.stop()
               log(
                 log.green('+'),
                 'Linked',
@@ -100,7 +95,6 @@ export function linkPackages(
     }
   }
 
-  spinner.stop()
   log(log.green('✓'), 'Local packages are linked!')
   console.timeEnd('link packages')
 }
