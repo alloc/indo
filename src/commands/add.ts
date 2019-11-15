@@ -3,6 +3,7 @@ import { RootConfig } from '../core/config'
 import { getNearestPackage } from '../core/getNearestPackage'
 import { fatal, log } from '../core/helpers'
 import { linkPackages } from '../core/linkPackages'
+import { resetPackageCache } from '../core/Package'
 
 export default async (cfg: RootConfig) => {
   const args = slurm({
@@ -36,5 +37,6 @@ export default async (cfg: RootConfig) => {
   }
 
   log('')
+  resetPackageCache()
   linkPackages(cfg)
 }
