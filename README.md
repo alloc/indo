@@ -44,6 +44,8 @@ local packages.
 Specify `-f`/`--force` to see which packages are linked where. Otherwise, only
 newly linked packages are printed.
 
+**Note:** Packages are ignored when no `version` exists in their `package.json`.
+
 &nbsp;
 
 ### `indo help`
