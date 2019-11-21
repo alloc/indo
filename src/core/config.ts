@@ -1,7 +1,7 @@
 import isDeepEqual from 'dequals'
 import { dirname, join } from 'path'
 import { fs } from './fs'
-import { isHomeDir } from './helpers'
+import { isHomeDir, time } from './helpers'
 
 export interface RepoConfig {
   url: string
@@ -19,24 +19,23 @@ export interface RootConfig extends Config {
   root: string
 }
 
-export function loadConfig(root = process.cwd()) {
-  console.time('load config')
-  while (true) {
-    const configPath = join(root, '.indo.json')
-    if (fs.isFile(configPath)) {
-      const config = createConfig(fs.readJson(configPath))
-      return Object.defineProperties(config, {
-        path: { value: configPath },
-        root: { value: root },
-      }) as RootConfig
+export const loadConfig = (root = process.cwd()) =>
+  time('load config', () => {
+    while (true) {
+      const configPath = join(root, '.indo.json')
+      if (fs.isFile(configPath)) {
+        const config = createConfig(fs.readJson(configPath))
+        return Object.defineProperties(config, {
+          path: { value: configPath },
+          root: { value: root },
+        }) as RootConfig
+      }
+      if (isHomeDir(root)) {
+        return null
+      }
+      root = dirname(root)
     }
-    if (isHomeDir(root)) {
-      return null
-    }
-    root = dirname(root)
-  }
-  console.timeEnd()
-}
+  })
 
 export function createConfig(props?: Partial<Config>): Config {
   return {

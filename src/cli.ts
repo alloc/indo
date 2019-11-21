@@ -75,6 +75,7 @@ slurm.error = reason => {
 }
 
 if (!process.env.DEBUG) {
+  // tslint:disable-next-line
   console.debug = console.time = console.timeEnd = () => {}
 }
 

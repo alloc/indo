@@ -1,3 +1,4 @@
+/* tslint:disable:no-console */
 import crypto from 'crypto'
 import { prompt } from 'enquirer'
 import log from 'lodge'
@@ -8,6 +9,13 @@ import realpath from 'realpath-native'
 
 export { default as log } from 'lodge'
 export { crawl, createMatcher } from 'recrawl-sync'
+
+export const time = <T>(label: string, action: () => T) => {
+  console.time(label)
+  const result = action()
+  console.timeEnd(label)
+  return result
+}
 
 /** Returns true if `parent` is equal to (or a parent of) the `path` argument */
 export const isDescendant = (path: string, parent: string) =>
