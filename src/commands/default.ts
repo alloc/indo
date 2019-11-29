@@ -54,6 +54,10 @@ async function cloneMissingRepos(cfg: RootConfig) {
             `Cloned ${log.green('./' + path)} from`,
             log.gray(repoId.replace(/^.+:\/\//, ''))
           )
+          const pkg = loadPackage(join(path, 'package.json'))
+          if (pkg) {
+            await installAndBuild(cfg, [pkg])
+          }
         } catch (err) {
           spinner.error(err)
         }
