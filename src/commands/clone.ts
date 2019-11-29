@@ -49,7 +49,7 @@ export default async (cfg: RootConfig) => {
 
   const pkg = loadPackage(join(dir, 'package.json'))
   if (needsRename) {
-    if (pkg) {
+    if (pkg && pkg.name) {
       dir = join(cfg.root, 'vendor', pkg.name)
       pkg.move(dir)
     } else {
