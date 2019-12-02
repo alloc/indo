@@ -39,7 +39,13 @@ export function linkPackages(
 
         const dep = packages[name] || vendor[name]
         if (dep) {
-          if (version && !semver.satisfies(dep.version, version)) {
+          const valid =
+            !version ||
+            semver.satisfies(dep.version, version, {
+              includePrerelease: true,
+            })
+
+          if (!valid) {
             log.warn(
               'Local package',
               log.lgreen('./' + relative(cfg.root, dep.root)),
@@ -51,6 +57,7 @@ export function linkPackages(
             )
             continue
           }
+
           const link = join(nodeModulesPath, alias)
           const target = relative(dirname(link), dep.root)
           if (opts.force || !isPathEqual(link, dep.root)) {
@@ -65,6 +72,7 @@ export function linkPackages(
               log.lyellow('./' + relative(cfg.root, dep.root))
             )
           }
+
           if (dep.bin) {
             const addBinScript = (name: string, bin: string) => {
               bin = join(dep.root, bin)
