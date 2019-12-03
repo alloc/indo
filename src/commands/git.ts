@@ -4,7 +4,7 @@ import { join } from 'path'
 import slurm from 'slurm'
 import { RootConfig } from '../core/config'
 import { git } from '../core/git'
-import { log } from '../core/helpers'
+import { cwdRelative, log } from '../core/helpers'
 import { loadPackages } from '../core/loadPackages'
 
 export default async (cfg: RootConfig) => {
@@ -17,7 +17,12 @@ export default async (cfg: RootConfig) => {
   gitRoots.unshift('')
 
   for (const rootId of Array.from(gitRoots)) {
-    log(bocks(log.bold('./' + rootId)).replace(bocks.RE, log.coal('$1')))
+    log(
+      bocks(log.bold(cwdRelative(join(cfg.root, rootId)))).replace(
+        bocks.RE,
+        log.coal('$1')
+      )
+    )
     log('')
     await exec('git ' + cmd, {
       cwd: join(cfg.root, rootId),

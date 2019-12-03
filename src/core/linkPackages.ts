@@ -2,7 +2,13 @@ import { dirname, join, relative } from 'path'
 import semver from 'semver'
 import { RootConfig } from './config'
 import { fs } from './fs'
-import { isPathEqual, log, splitNameVersion, time } from './helpers'
+import {
+  cwdRelative,
+  isPathEqual,
+  log,
+  splitNameVersion,
+  time,
+} from './helpers'
 import { loadPackages } from './loadPackages'
 import { loadVendors } from './loadVendors'
 import { StringMap } from './Package'
@@ -48,12 +54,12 @@ export function linkPackages(
           if (!valid) {
             log.warn(
               'Local package',
-              log.lgreen('./' + relative(cfg.root, dep.root)),
+              log.lgreen(cwdRelative(dep.root)),
               `(v${dep.version})`,
               'does not satisfy',
               log.yellow(version),
               'required by',
-              log.lgreen('./' + relative(cfg.root, pkg.root))
+              log.lgreen(cwdRelative(pkg.root))
             )
             continue
           }
@@ -69,7 +75,7 @@ export function linkPackages(
               'Linked',
               log.gray(pkg.name + ':') + log.lgreen(alias),
               'to',
-              log.lyellow('./' + relative(cfg.root, dep.root))
+              log.lyellow(cwdRelative(dep.root))
             )
           }
 
@@ -87,7 +93,7 @@ export function linkPackages(
                   'Linked',
                   log.gray(pkg.name + ':') + log.lcyan(name),
                   'to',
-                  log.lyellow('./' + relative(cfg.root, bin))
+                  log.lyellow(cwdRelative(bin))
                 )
               }
             }

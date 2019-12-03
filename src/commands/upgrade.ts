@@ -1,11 +1,18 @@
 import { prompt } from 'enquirer'
-import { join, relative } from 'path'
+import { join } from 'path'
 import semver from 'semver'
 import slurm from 'slurm'
 import { RootConfig } from '../core/config'
 import { fs } from '../core/fs'
 import { getPublishedVersions } from '../core/getPublishedVersions'
-import { choose, fatal, log, spin, splitNameVersion } from '../core/helpers'
+import {
+  choose,
+  cwdRelative,
+  fatal,
+  log,
+  spin,
+  splitNameVersion,
+} from '../core/helpers'
 import { linkPackages } from '../core/linkPackages'
 import { loadPackages } from '../core/loadPackages'
 import { loadPackage, Package, resetPackageCache } from '../core/Package'
@@ -54,7 +61,7 @@ export default async (cfg: RootConfig) => {
       log(
         '\nFound %s required by %s',
         log.lyellow(nameArg + '@' + version),
-        log.lgreen('./' + relative(cfg.root, pkg.root))
+        log.lgreen(cwdRelative(pkg.root))
       )
 
       // These choices are never printed.

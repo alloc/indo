@@ -4,7 +4,7 @@ import slurm from 'slurm'
 import { RootConfig, saveConfig } from '../core/config'
 import { fs } from '../core/fs'
 import { git } from '../core/git'
-import { fatal, log, randstr, spin } from '../core/helpers'
+import { cwdRelative, fatal, log, randstr, spin } from '../core/helpers'
 import { installAndBuild } from '../core/installAndBuild'
 import { linkPackages } from '../core/linkPackages'
 import { loadPackage } from '../core/Package'
@@ -58,11 +58,10 @@ export default async (cfg: RootConfig) => {
     }
   }
 
-  dir = relative(cfg.root, dir)
   log(
     log.green('+'),
     'Cloned',
-    log.green('./' + dir),
+    log.green(cwdRelative(dir)),
     'from',
     log.gray(url.replace(/^.+:\/\//, ''))
   )
@@ -73,6 +72,7 @@ export default async (cfg: RootConfig) => {
 
   linkPackages(cfg)
 
+  dir = relative(cfg.root, dir)
   cfg.repos[dir] = repo
   saveConfig(cfg)
 

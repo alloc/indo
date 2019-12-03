@@ -4,7 +4,7 @@ import slurm from 'slurm'
 import { RootConfig, saveConfig } from '../core/config'
 import { fs } from '../core/fs'
 import { git } from '../core/git'
-import { choose, log, spin, time } from '../core/helpers'
+import { choose, cwdRelative, log, spin, time } from '../core/helpers'
 import { installAndBuild } from '../core/installAndBuild'
 import { linkPackages } from '../core/linkPackages'
 import { loadPackages } from '../core/loadPackages'
@@ -51,7 +51,7 @@ async function cloneMissingRepos(cfg: RootConfig) {
           await git.clone(cfg.root, repo, path)
           spinner.log(
             log.green('+'),
-            `Cloned ${log.green('./' + path)} from`,
+            `Cloned ${log.green(cwdRelative(path))} from`,
             log.gray(repoId.replace(/^.+:\/\//, ''))
           )
           const pkg = loadPackage(join(path, 'package.json'))

@@ -1,9 +1,9 @@
-import { dirname, join, relative } from 'path'
+import { dirname, join } from 'path'
 import slurm from 'slurm'
 import { RootConfig } from '../core/config'
 import { fs } from '../core/fs'
 import { getNearestPackage } from '../core/getNearestPackage'
-import { fatal, isPathEqual, log, tildify } from '../core/helpers'
+import { cwdRelative, fatal, isPathEqual, log, tildify } from '../core/helpers'
 import { linkPackages } from '../core/linkPackages'
 import { registry } from '../core/registry'
 
@@ -59,7 +59,10 @@ function useGlobalPackage(cfg: RootConfig, name: string) {
     if (isPathEqual(link, target)) {
       fs.remove(link)
     } else {
-      fatal('Path already exists:', log.lgreen('./vendor/' + name))
+      fatal(
+        'Path already exists:',
+        log.lgreen(cwdRelative(join(cfg.root, 'vendor', name)))
+      )
     }
   }
 
@@ -67,7 +70,7 @@ function useGlobalPackage(cfg: RootConfig, name: string) {
   log(
     log.green('+'),
     'Linked',
-    log.lgreen('./' + relative(cfg.root, link)),
+    log.lgreen(cwdRelative(link)),
     'to',
     log.lyellow(tildify(target))
   )

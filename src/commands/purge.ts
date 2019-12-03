@@ -7,6 +7,7 @@ import { getInverseDeps } from '../core/getInverseDeps'
 import {
   confirm,
   createMatcher,
+  cwdRelative,
   fatal,
   getRelativeId,
   isDescendant,
@@ -104,7 +105,7 @@ export default async (cfg: RootConfig) => {
           spinner.log(
             log.green('✓'),
             'Installed',
-            log.green('./' + relative(cfg.root, pkg.root)),
+            log.green(cwdRelative(pkg.root)),
             'dependencies using',
             log.lcyan(pkg.manager.name)
           )
@@ -112,7 +113,7 @@ export default async (cfg: RootConfig) => {
           spinner.log(
             log.red('⨯'),
             'Failed to install dependencies of',
-            log.lyellow(relative(cfg.root, pkg.root))
+            log.lyellow(cwdRelative(pkg.root))
           )
         }
       })

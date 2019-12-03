@@ -1,8 +1,7 @@
 import AsyncTaskGroup from 'async-task-group'
-import { relative } from 'path'
 import slurm from 'slurm'
 import { RootConfig } from '../core/config'
-import { fatal, log, spin } from '../core/helpers'
+import { cwdRelative, fatal, log, spin } from '../core/helpers'
 import { loadPackages } from '../core/loadPackages'
 
 export default async (cfg: RootConfig) => {
@@ -25,13 +24,13 @@ export default async (cfg: RootConfig) => {
         spinner.log(
           log.green('✓'),
           'Run completed for',
-          log.green('./' + relative(cfg.root, pkg.root))
+          log.green(cwdRelative(pkg.root))
         )
       } catch {
         spinner.log(
           log.red('⨯'),
           'Build failed:',
-          log.yellow('./' + relative(cfg.root, pkg.root))
+          log.yellow(cwdRelative(pkg.root))
         )
       }
     }

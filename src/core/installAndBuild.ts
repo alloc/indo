@@ -1,8 +1,8 @@
 import AsyncTaskGroup from 'async-task-group'
-import { join, relative } from 'path'
+import { join } from 'path'
 import { RootConfig } from './config'
 import { fs } from './fs'
-import { log, spin, time } from './helpers'
+import { cwdRelative, log, spin, time } from './helpers'
 import { Package } from './Package'
 
 export async function installAndBuild(cfg: RootConfig, pkgs: Package[]) {
@@ -26,7 +26,7 @@ export async function installAndBuild(cfg: RootConfig, pkgs: Package[]) {
           spinner.log(
             log.green('✓'),
             'Installed',
-            log.green('./' + relative(cfg.root, pkg.root)),
+            log.green(cwdRelative(pkg.root)),
             'dependencies using',
             log.lcyan(pkg.manager.name)
           )
@@ -34,7 +34,7 @@ export async function installAndBuild(cfg: RootConfig, pkgs: Package[]) {
           spinner.log(
             log.red('⨯'),
             'Failed to install dependencies of',
-            log.lyellow('./' + relative(cfg.root, pkg.root))
+            log.lyellow(cwdRelative(pkg.root))
           )
         }
       }
@@ -62,7 +62,7 @@ const buildPackages = (cfg: RootConfig, packages: Package[]) =>
           spinner.log(
             log.green('✓'),
             'Built',
-            log.green('./' + relative(cfg.root, pkg.root)),
+            log.green(cwdRelative(pkg.root)),
             'with',
             log.lcyan(npm.commands.run + ' build')
           )
@@ -70,7 +70,7 @@ const buildPackages = (cfg: RootConfig, packages: Package[]) =>
           spinner.log(
             log.lred('⨯'),
             'Build script failed:',
-            log.yellow('./' + relative(cfg.root, pkg.root))
+            log.yellow(cwdRelative(pkg.root))
           )
         }
       }

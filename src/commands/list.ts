@@ -1,6 +1,5 @@
-import { relative } from 'path'
 import { RootConfig } from '../core/config'
-import { log } from '../core/helpers'
+import { cwdRelative, log } from '../core/helpers'
 import { loadAllPackages } from '../core/loadAllPackages'
 
 export default (cfg: RootConfig) => {
@@ -11,7 +10,7 @@ export default (cfg: RootConfig) => {
       log.gray('-'),
       pkg.name,
       pkg.version ? log.lcyan(pkg.version) : '',
-      log.gray('./' + relative(cfg.root, pkg.root))
+      log.gray(cwdRelative(pkg.root))
     )
   }
 }

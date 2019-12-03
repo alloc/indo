@@ -26,6 +26,10 @@ export const getRelativeId = (root: string, path: string) => {
   return path[0] !== '.' ? './' + path : path
 }
 
+export const cwdRelative = (path: string) => {
+  return getRelativeId(process.cwd(), path)
+}
+
 export const splitNameVersion = (str: string) => {
   // Ignore the @ in user/org scopes
   const i = str.lastIndexOf('@')
