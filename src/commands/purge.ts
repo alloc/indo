@@ -1,5 +1,5 @@
 import AsyncTaskGroup from 'async-task-group'
-import { join, relative, resolve } from 'path'
+import { dirname, join, relative, resolve } from 'path'
 import slurm from 'slurm'
 import { RootConfig, saveConfig } from '../core/config'
 import { fs } from '../core/fs'
@@ -53,7 +53,7 @@ export default async (cfg: RootConfig) => {
 
     // Delete from disk
     if (!args.dry) {
-      fs.remove(root, true)
+      purgeDir(root)
     }
 
     const rootId = relative(cfg.root, root)
@@ -90,9 +90,11 @@ export default async (cfg: RootConfig) => {
     for (const pkg of Array.from(deleted)) {
       const links = inverseDeps[pkg.name] || []
       links.forEach(parent => {
-        // TODO: remove "node_modules/{alias}" when "npm:" is used
-        fs.remove(join(parent.root, 'node_modules', pkg.name))
         parents.add(parent)
+        if (!args.dry) {
+          // TODO: remove "node_modules/{alias}" when "npm:" is used
+          purgeDir(join(parent.root, 'node_modules', pkg.name))
+        }
       })
     }
 
@@ -123,5 +125,15 @@ export default async (cfg: RootConfig) => {
 
   if (changed && !args.dry) {
     saveConfig(cfg)
+  }
+}
+
+/** Remove the given directory, and any empty parent directories */
+function purgeDir(path: string) {
+  fs.remove(path, true)
+  while (1) {
+    path = dirname(path)
+    if (fs.list(path).length) break
+    fs.remove(path)
   }
 }
