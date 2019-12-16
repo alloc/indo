@@ -24,8 +24,8 @@ export function linkPackages(
     for (const pkg of Object.values(packages)) {
       const deps: StringMap = {
         ...pkg.dependencies,
-        ...pkg.devDependencies,
         ...pkg.peerDependencies,
+        ...pkg.devDependencies,
       }
       if (!Object.keys(deps).length) {
         continue
