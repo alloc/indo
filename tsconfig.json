@@ -4,6 +4,7 @@
     "esModuleInterop": true,
     "jsx": "react",
     "lib": ["es2017"],
+    "module": "commonjs",
     "moduleResolution": "node",
     "noEmitOnError": false,
     "noUnusedLocals": true,
@@ -11,6 +12,6 @@
     "sourceMap": true,
     "strict": true,
     "suppressImplicitAnyIndexErrors": true,
-    "target": "es5"
+    "target": "es2018"
   }
 }
