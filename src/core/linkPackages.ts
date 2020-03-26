@@ -142,9 +142,10 @@ function searchPnpmCache(pkg: Package, name: string, semverRange: string) {
       if (!fs.exists(versionDir)) {
         continue
       }
-      for (const version of fs.list(versionDir)) {
+      for (let versionHash of fs.list(versionDir)) {
+        const version = versionHash.replace(/_.+$/, '')
         if (semver.satisfies(version, semverRange)) {
-          paths.push(join(versionDir, version, 'node_modules', name))
+          paths.push(join(versionDir, versionHash, 'node_modules', name))
         }
       }
     }
