@@ -29,7 +29,7 @@ export default async (cfg: RootConfig) => {
   )
 
   // Skip the install step if the root package uses Lerna or Yarn workspaces.
-  if (rootPkg && !rootPkg.workspaces && !rootPkg.lerna) {
+  if (!rootPkg || (!rootPkg.workspaces && !rootPkg.lerna)) {
     await installAndBuild(cfg, Object.values(packages))
   }
 
