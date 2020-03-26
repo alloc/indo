@@ -11,7 +11,7 @@ import {
 } from './helpers'
 import { loadPackages } from './loadPackages'
 import { loadVendors } from './loadVendors'
-import { StringMap } from './Package'
+import { Package, StringMap } from './Package'
 
 export function linkPackages(
   cfg: RootConfig,
@@ -64,12 +64,27 @@ export function linkPackages(
             continue
           }
 
-          const link = join(nodeModulesPath, alias)
-          const target = relative(dirname(link), dep.root)
-          if (opts.force || !isPathEqual(link, dep.root)) {
-            fs.remove(link, true)
-            fs.mkdir(dirname(link))
-            fs.link(link, target)
+          // If the dependencies were installed with pnpm, we need to
+          // update the ".pnpm" cache so "peerDependencies" are linked
+          // to the local version.
+          const links =
+            pkg.manager.name == 'pnpm'
+              ? searchPnpmCache(pkg, dep.name, version)
+              : [join(nodeModulesPath, alias)]
+
+          let linked = false
+          for (const link of links) {
+            if (opts.force || !isPathEqual(link, dep.root)) {
+              fs.remove(link, true)
+              fs.mkdir(dirname(link))
+
+              const target = relative(dirname(link), dep.root)
+              fs.link(link, target)
+              linked = true
+            }
+          }
+
+          if (linked) {
             log(
               log.green('+'),
               'Linked',
@@ -111,4 +126,29 @@ export function linkPackages(
 
     log(log.green('✓'), 'Local packages are linked!')
   })
+}
+
+function searchPnpmCache(pkg: Package, name: string, semverRange: string) {
+  const paths: string[] = []
+
+  const cacheDir = join(pkg.root, 'node_modules', '.pnpm')
+  if (fs.exists(cacheDir)) {
+    const registries = fs
+      .list(cacheDir)
+      .filter(name => /^(\..+|.+\.yaml|node_modules)$/.test(name) == false)
+
+    for (const registry of registries) {
+      const versionDir = join(cacheDir, registry, name)
+      if (!fs.exists(versionDir)) {
+        continue
+      }
+      for (const version of fs.list(versionDir)) {
+        if (semver.satisfies(version, semverRange)) {
+          paths.push(join(versionDir, version, 'node_modules', name))
+        }
+      }
+    }
+  }
+
+  return paths
 }
