@@ -45,11 +45,7 @@ export function linkPackages(
 
         const dep = packages[name] || vendor[name]
         if (dep) {
-          const valid =
-            !version ||
-            semver.satisfies(dep.version, version, {
-              includePrerelease: true,
-            })
+          const valid = !version || satisfies(dep.version, version)
 
           if (!valid) {
             log.warn(
@@ -144,7 +140,7 @@ function searchPnpmCache(pkg: Package, name: string, semverRange: string) {
       }
       for (let versionHash of fs.list(versionDir)) {
         const version = versionHash.replace(/_.+$/, '')
-        if (semver.satisfies(version, semverRange)) {
+        if (satisfies(version, semverRange)) {
           paths.push(join(versionDir, versionHash, 'node_modules', name))
         }
       }
@@ -152,4 +148,8 @@ function searchPnpmCache(pkg: Package, name: string, semverRange: string) {
   }
 
   return paths
+}
+
+function satisfies(version: string, semverRange: string) {
+  return semver.satisfies(version, semverRange, { includePrerelease: true })
 }
