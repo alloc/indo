@@ -61,10 +61,7 @@ function useGlobalPackage(cfg: RootConfig, name: string) {
     if (isPathEqual(link, target)) {
       fs.remove(link)
     } else {
-      fatal(
-        'Path already exists:',
-        log.lgreen(cwdRelative(join(cfg.root, 'vendor', name)))
-      )
+      fatal('Path already exists:', log.lgreen(cwdRelative(link)))
     }
   }
 
