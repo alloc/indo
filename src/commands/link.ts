@@ -20,7 +20,9 @@ export default (cfg: RootConfig | null) => {
     // Find the nearest package.json and link it to ~/.indo/packages
     const pkg = getNearestPackage(process.cwd())
     if (pkg) {
-      name = pkg.name || name
+      if (name == null) {
+        name = pkg.name
+      }
       if (name) {
         registry.set(name, pkg.root)
         log(
