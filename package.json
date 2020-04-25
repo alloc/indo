@@ -16,7 +16,7 @@
   ],
   "scripts": {
     "build": "tsc -p .",
-    "prepare": "npm run build && bin/indo"
+    "prepare": "(npm run build || exit 0) &> /dev/null && bin/indo"
   },
   "dependencies": {
     "@cush/exec": "^1.5.1",
