@@ -65,6 +65,13 @@ export class Package {
     }).manager as PackageManager
   }
 
+  clone() {
+    return Object.create(
+      Package.prototype,
+      Object.getOwnPropertyDescriptors(this)
+    ) as this
+  }
+
   /** Run a script */
   run(name: string, ...args: exec.Args) {
     if (this.scripts) {
