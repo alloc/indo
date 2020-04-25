@@ -16,7 +16,7 @@
   ],
   "scripts": {
     "build": "tsc -p .",
-    "prepare": "bin/indo && npm run build"
+    "prepare": "npm run build && bin/indo"
   },
   "dependencies": {
     "@cush/exec": "^1.5.1",
