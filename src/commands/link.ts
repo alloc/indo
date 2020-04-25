@@ -8,15 +8,24 @@ import { linkPackages } from '../core/linkPackages'
 import { registry } from '../core/registry'
 
 export default (cfg: RootConfig | null) => {
-  const args = slurm({ g: true })
-  let name = args[0] || args.g
-  if (name && !args.g) {
-    if (cfg) {
-      useGlobalPackage(cfg, name)
-    } else {
+  const args = slurm({
+    g: true,
+    o: true,
+  })
+
+  const name = args[0]
+  if (name) {
+    if (!cfg) {
       fatal('Missing config. Did you run', log.lcyan('indo init'), 'yet?')
+      return
     }
-  } else {
+    if (!args.g) {
+      linkGlobalPackage(cfg, { name, dest: args.o })
+      return
+    }
+  }
+
+  if (!args.length || args.g) {
     // Find the nearest package.json and link it to ~/.indo/packages
     const pkg = getNearestPackage(process.cwd())
     if (pkg) {
@@ -41,7 +50,7 @@ export default (cfg: RootConfig | null) => {
   }
 }
 
-function useGlobalPackage(cfg: RootConfig, name: string) {
+function getGlobalPackage(name: string) {
   const pkgPath = registry.get(name)
   if (!pkgPath) {
     fatal(
@@ -52,9 +61,15 @@ function useGlobalPackage(cfg: RootConfig, name: string) {
       'yet?'
     )
   }
+  return pkgPath!
+}
 
-  const link = join(cfg.root, 'vendor', name)
-  const target = join(registry.packageDir, name)
+function linkGlobalPackage(
+  cfg: RootConfig,
+  opts: { name: string; dest?: string }
+) {
+  const link = join(cfg.root, opts.dest || join('vendor', opts.name))
+  const target = getGlobalPackage(opts.name)
 
   fs.mkdir(dirname(link))
   if (fs.exists(link)) {
