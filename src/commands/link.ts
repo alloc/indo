@@ -1,8 +1,9 @@
-import { dirname, join } from 'path'
+import { dirname, join, relative } from 'path'
 import slurm from 'slurm'
-import { RootConfig } from '../core/config'
+import { RootConfig, saveConfig } from '../core/config'
 import { fs } from '../core/fs'
 import { getNearestPackage } from '../core/getNearestPackage'
+import { git } from '../core/git'
 import { cwdRelative, fatal, isPathEqual, log, tildify } from '../core/helpers'
 import { linkPackages } from '../core/linkPackages'
 import { registry } from '../core/registry'
@@ -11,6 +12,9 @@ export default (cfg: RootConfig | null) => {
   const args = slurm({
     g: true,
     o: true,
+    hard: {
+      type: 'boolean',
+    },
   })
 
   const name = args[0]
@@ -20,7 +24,7 @@ export default (cfg: RootConfig | null) => {
       return
     }
     if (!args.g) {
-      linkGlobalPackage(cfg, { name, dest: args.o })
+      linkGlobalPackage(cfg, { name, dest: args.o, hard: args.hard })
       return
     }
   }
@@ -66,7 +70,7 @@ function getGlobalPackage(name: string) {
 
 function linkGlobalPackage(
   cfg: RootConfig,
-  opts: { name: string; dest?: string }
+  opts: { name: string; dest?: string; hard?: boolean }
 ) {
   const link = join(cfg.root, opts.dest || join('vendor', opts.name))
   const target = getGlobalPackage(opts.name)
@@ -80,10 +84,20 @@ function linkGlobalPackage(
     }
   }
 
-  fs.link(link, target)
+  if (opts.hard) {
+    fs.copy(target, link)
+    cfg.repos[relative(cfg.root, link)] = {
+      url: git.getRemoteUrl(link),
+      head: git.getActiveBranch(link),
+    }
+    saveConfig(cfg)
+    log(log.green('✓'), 'Updated the "repos" object')
+  } else {
+    fs.link(link, target)
+  }
   log(
     log.green('+'),
-    'Linked',
+    opts.hard ? 'Copied' : 'Linked',
     log.lgreen(cwdRelative(link)),
     'to',
     log.lyellow(tildify(target))
