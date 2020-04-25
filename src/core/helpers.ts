@@ -67,7 +67,7 @@ export type Choice<T = string> = {
 
 export const choose = async <T = string>(
   message: string,
-  choices: string[] | Array<Choice<T>>,
+  choices: Array<string | Choice<T>>,
   initial?: T
 ) =>
   (await prompt<{ result: T }>({
@@ -75,7 +75,7 @@ export const choose = async <T = string>(
     name: 'result',
     message,
     choices: choices as any,
-    initial,
+    initial: initial as any,
   })).result
 
 export const confirm = async (message: string) =>
