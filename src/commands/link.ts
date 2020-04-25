@@ -83,23 +83,31 @@ function linkGlobalPackage(
   }
 
   if (opts.hard) {
-    fs.copy(target, link)
     cfg.repos[relative(cfg.root, link)] = {
-      url: git.getRemoteUrl(link),
-      head: git.getActiveBranch(link),
+      url: git.getRemoteUrl(target),
+      head: git.getActiveBranch(target),
     }
     saveConfig(cfg)
     log(log.green('✓'), 'Updated the "repos" object')
+
+    fs.copy(target, link)
+    log(
+      log.green('+'),
+      'Created',
+      log.lgreen(cwdRelative(link)),
+      'by copying',
+      log.lyellow(tildify(target))
+    )
   } else {
     fs.link(link, target)
+    log(
+      log.green('+'),
+      'Linked',
+      log.lgreen(cwdRelative(link)),
+      'to',
+      log.lyellow(tildify(target))
+    )
   }
-  log(
-    log.green('+'),
-    opts.hard ? 'Copied' : 'Linked',
-    log.lgreen(cwdRelative(link)),
-    'to',
-    log.lyellow(tildify(target))
-  )
 
   linkPackages(cfg)
 }
