@@ -66,7 +66,12 @@ export function linkPackages(
           const links =
             pkg.manager.name == 'pnpm'
               ? searchPnpmCache(pkg, dep.name, version)
-              : [join(nodeModulesPath, alias)]
+              : []
+
+          // Link to "node_modules/{name}" when not installed by pnpm.
+          if (!links.length) {
+            links.push(join(nodeModulesPath, alias))
+          }
 
           let linked = false
           for (const link of links) {
