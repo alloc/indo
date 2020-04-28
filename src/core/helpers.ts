@@ -30,13 +30,13 @@ export const cwdRelative = (path: string) => {
   return getRelativeId(process.cwd(), path)
 }
 
+const NPM_URI_RE = /^(?:(@?[^@]+)@npm:)?(@?[^@]+)(?:@(.+))?$/
+
+// "@foo/bar@*" into { name: "@foo/bar", version: "*" }
+// "foo@npm:bar@*" into { alias: "foo", name: "bar", version: "*" }
 export const splitNameVersion = (str: string) => {
-  // Ignore the @ in user/org scopes
-  const i = str.lastIndexOf('@')
-  return {
-    name: i <= 0 ? str : str.slice(0, i),
-    version: i <= 0 ? '' : str.slice(i + 1),
-  }
+  const [, alias, name, version] = NPM_URI_RE.exec(str) || []
+  return { alias, name, version }
 }
 
 export const getRealPath = (path: string) => {
