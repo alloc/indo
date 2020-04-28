@@ -112,8 +112,11 @@ export default async (cfg: RootConfig) => {
       if (!upgrades) {
         upgradesByPkg.set(pkg, (upgrades = []))
       }
+      if (choice == 'latest') {
+        choice = '^' + knownVersions.slice(-1)[0]
+      }
       if (alias !== nameArg) {
-        choice = `npm:${nameArg}` + (choice == 'latest' ? '' : '@' + choice)
+        choice = `npm:${nameArg}@${choice}`
       }
       upgrades.push(alias + '@' + choice)
     }
