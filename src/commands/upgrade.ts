@@ -44,15 +44,34 @@ export default async (cfg: RootConfig) => {
     : ('dependencies' as const)
 
   for (const arg of args) {
-    const [nameArg, versionArg = 'latest'] = arg.split('@')
+    let { name: nameArg, version: versionArg } = splitNameVersion(arg)
+
+    if (nameArg in cfg.alias) {
+      nameArg = cfg.alias[nameArg]
+    }
+
+    if (!versionArg) {
+      versionArg = 'latest'
+    }
+
     const knownVersions = await getPublishedVersions(nameArg)
 
     let prevChoice: string | undefined
     const matchDependency = async (
       pkg: Package,
       alias: string,
-      version: string
+      ref: string
     ) => {
+      if (ref.startsWith('npm:')) {
+        const { name } = splitNameVersion(ref.slice(4))
+        if (name !== nameArg) {
+          return
+        }
+      }
+
+      const pkgPath = join(pkg.root, NODE_MODULES, alias, PJ)
+      const { version } = fs.readJson(pkgPath)
+
       const versionIdx = knownVersions.indexOf(version)
       const greaterVersions = knownVersions.slice(versionIdx + 1)
       if (!greaterVersions.length) {
@@ -102,18 +121,14 @@ export default async (cfg: RootConfig) => {
     for (const pkg of Object.values(packages)) {
       const deps = pkg[type]
       if (!deps) continue
+
       if (nameArg in deps) {
         await matchDependency(pkg, nameArg, deps[nameArg])
-      } else {
-        for (const [alias, ref] of Object.entries(deps)) {
-          if (ref.startsWith('npm:')) {
-            const { name } = splitNameVersion(ref.slice(4))
-            if (name == nameArg) {
-              const pkgPath = join(pkg.root, NODE_MODULES, alias, PJ)
-              const { version } = fs.readJson(pkgPath)
-              await matchDependency(pkg, alias, version)
-            }
-          }
+      }
+
+      for (const [alias, ref] of Object.entries(deps)) {
+        if (ref.startsWith('npm:')) {
+          await matchDependency(pkg, alias, ref)
         }
       }
     }
