@@ -16,6 +16,8 @@ if (cmd && cmd[0] !== '-') {
     const aliases = {
       ls: 'list',
       rm: 'remove',
+      mv: 'move',
+      rename: 'move',
     }
     cmd = aliases[cmd] || cmd
   }
