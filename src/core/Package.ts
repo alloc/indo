@@ -95,6 +95,7 @@ export class Package {
   }
 }
 
+/** Always pass an absolute path to `package.json` */
 export function loadPackage(pkgPath: string) {
   let pkg = packageCache[pkgPath]
   if (!pkg) {
