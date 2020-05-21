@@ -23,7 +23,10 @@ export const isDescendant = (path: string, parent: string) =>
 
 export const getRelativeId = (root: string, path: string) => {
   path = relative(root, resolve(path))
-  return path[0] !== '.' ? './' + path : path
+  if (/^\.\//.test(path)) {
+    path = path.slice(2)
+  }
+  return path.replace(/\/$/, '')
 }
 
 export const cwdRelative = (path: string) => {
