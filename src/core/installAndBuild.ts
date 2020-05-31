@@ -33,8 +33,8 @@ export async function installAndBuild(cfg: RootConfig, pkgs: Package[]) {
         } catch {
           spinner.log(
             log.red('⨯'),
-            'Failed to install dependencies of',
-            log.lyellow(cwdRelative(pkg.root))
+            'Failed to install dependencies in',
+            log.lyellow(cwdRelative(pkg.path))
           )
         }
       }
