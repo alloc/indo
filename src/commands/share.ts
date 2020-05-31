@@ -3,7 +3,7 @@ import Enquirer = require('enquirer')
 import { join, relative } from 'path'
 import { RootConfig, saveConfig } from '../core/config'
 import { git } from '../core/git'
-import { log } from '../core/helpers'
+import { fatal, log } from '../core/helpers'
 import { loadVendors } from '../core/loadVendors'
 
 type RepoMap = {
@@ -42,6 +42,10 @@ export default async (cfg: RootConfig) => {
         })
       }
     }
+  }
+
+  if (!choices.length) {
+    return fatal('No vendor packages were found.')
   }
 
   const { selected } = await prompt<{ selected: string[] }>({
