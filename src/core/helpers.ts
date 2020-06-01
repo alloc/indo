@@ -26,7 +26,7 @@ export const getRelativeId = (root: string, path: string) => {
   if (/^\.\//.test(path)) {
     path = path.slice(2)
   }
-  return path.replace(/\/$/, '')
+  return path.replace(/\/$/, '') || '.'
 }
 
 export const cwdRelative = (path: string) => {
