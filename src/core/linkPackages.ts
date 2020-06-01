@@ -134,19 +134,42 @@ function searchPnpmCache(pkg: Package, name: string, semverRange: string) {
 
   const cacheDir = join(pkg.root, 'node_modules', '.pnpm')
   if (fs.exists(cacheDir)) {
-    const registries = fs
-      .list(cacheDir)
-      .filter(name => /^(\..+|.+\.yaml|node_modules)$/.test(name) == false)
+    // pnpm v5 introduced a new cache structure, so it needs a special case.
+    const pnpmVersionMajor = Number(
+      pkg.execSync('pnpm --version').split('.')[0]
+    )
 
-    for (const registry of registries) {
-      const versionDir = join(cacheDir, registry, name)
-      if (!fs.exists(versionDir)) {
-        continue
+    // In pnpm v5, packages are stored as `${name}@${version}`
+    if (pnpmVersionMajor >= 5) {
+      const scope = name[0] == '@' ? name.split('/')[0] : ''
+      for (let cacheId of fs.list(join(cacheDir, scope))) {
+        cacheId = join(scope, cacheId)
+        if (cacheId.startsWith(name + '@')) {
+          const versionRegex = /(?:@[^_]+\/)?[^_]+@([^_]+)(?:_.+)?/
+          const [, version] = versionRegex.exec(cacheId)!
+          if (satisfies(version, semverRange)) {
+            paths.push(join(cacheDir, cacheId, 'node_modules', name))
+          }
+        }
       }
-      for (let versionHash of fs.list(versionDir)) {
-        const version = versionHash.replace(/_.+$/, '')
-        if (satisfies(version, semverRange)) {
-          paths.push(join(versionDir, versionHash, 'node_modules', name))
+    }
+    // Before pnpm v5, packages are stored as `${registry}/${name}/${version}`
+    else {
+      const registries = fs
+        .list(cacheDir)
+        .filter(file => /^(\..+|.+\.yaml|node_modules)$/.test(file) == false)
+
+      // Replace any cached package whose version is compatible w/ the local version.
+      for (const registry of registries) {
+        const versionDir = join(cacheDir, registry, name)
+        if (!fs.exists(versionDir)) {
+          continue
+        }
+        for (let versionHash of fs.list(versionDir)) {
+          const version = versionHash.replace(/_.+$/, '')
+          if (satisfies(version, semverRange)) {
+            paths.push(join(versionDir, versionHash, 'node_modules', name))
+          }
         }
       }
     }

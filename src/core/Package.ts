@@ -88,6 +88,11 @@ export class Package {
     return exec(cmd, ...args, { cwd: this.root })
   }
 
+  /** Execute a command in the package root */
+  execSync(cmd: string, ...args: exec.SyncArgs) {
+    return exec.sync(cmd, ...args, { cwd: this.root })
+  }
+
   /** Move the entire package, updating its path */
   move(root: string) {
     fs.rename(this.root, root)
