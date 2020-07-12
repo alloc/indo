@@ -1,4 +1,4 @@
-import { dirname, join, relative } from 'path'
+import { dirname, join, relative, sep } from 'path'
 import slurm from 'slurm'
 import { RootConfig, saveConfig } from '../core/config'
 import { fs } from '../core/fs'
@@ -6,15 +6,15 @@ import { getNearestPackage } from '../core/getNearestPackage'
 import { git } from '../core/git'
 import { cwdRelative, fatal, isPathEqual, log, tildify } from '../core/helpers'
 import { linkPackages } from '../core/linkPackages'
+import { loadPackages } from '../core/loadPackages'
 import { registry } from '../core/registry'
 
 export default (cfg: RootConfig | null) => {
   const args = slurm({
     g: true,
     o: true,
-    hard: {
-      type: 'boolean',
-    },
+    s: { type: 'boolean' },
+    hard: { type: 'boolean' },
   })
 
   const name = args[0]
@@ -24,8 +24,12 @@ export default (cfg: RootConfig | null) => {
       return
     }
     if (!args.g) {
-      linkGlobalPackage(cfg, { name, dest: args.o, hard: args.hard })
-      return
+      return linkGlobalPackage(cfg, {
+        name,
+        dest: args.o,
+        hard: args.hard,
+        save: args.s,
+      })
     }
   }
 
@@ -66,10 +70,14 @@ function getGlobalPackage(name: string) {
   return pkgPath!
 }
 
-function linkGlobalPackage(
-  cfg: RootConfig,
-  opts: { name: string; dest?: string; hard?: boolean }
-) {
+type LinkOptions = {
+  name: string
+  dest?: string
+  hard?: boolean
+  save?: boolean
+}
+
+function linkGlobalPackage(cfg: RootConfig, opts: LinkOptions) {
   const link = join(cfg.root, opts.dest || join('vendor', opts.name))
   const target = getGlobalPackage(opts.name)
 
@@ -80,6 +88,25 @@ function linkGlobalPackage(
     } else {
       fatal('Path already exists:', log.lgreen(cwdRelative(link)))
     }
+  }
+
+  const packages = loadPackages(cfg)
+  if (opts.save) {
+    const cwd = process.cwd()
+    const pkg = Object.values(packages)
+      // Sort by deepest first
+      .sort((a, b) => b.root.length - a.root.length)
+      .find(pkg => cwd == pkg.root || cwd.startsWith(pkg.root + sep))
+
+    if (!pkg) {
+      return fatal(
+        'Cannot find package.json in or above current directory:',
+        log.lyellow(cwd)
+      )
+    }
+
+    // Install the package before linking it.
+    pkg.manager.install([opts.name])
   }
 
   if (opts.hard) {
@@ -109,5 +136,5 @@ function linkGlobalPackage(
     )
   }
 
-  linkPackages(cfg)
+  linkPackages(cfg, packages)
 }
