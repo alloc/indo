@@ -77,7 +77,7 @@ type LinkOptions = {
   save?: boolean
 }
 
-function linkGlobalPackage(cfg: RootConfig, opts: LinkOptions) {
+async function linkGlobalPackage(cfg: RootConfig, opts: LinkOptions) {
   const link = join(cfg.root, opts.dest || join('vendor', opts.name))
   const target = getGlobalPackage(opts.name)
 
@@ -106,7 +106,9 @@ function linkGlobalPackage(cfg: RootConfig, opts: LinkOptions) {
     }
 
     // Install the package before linking it.
-    pkg.manager.install([opts.name])
+    await pkg.manager.install([opts.name], {
+      stdio: 'inherit',
+    })
   }
 
   if (opts.hard) {
