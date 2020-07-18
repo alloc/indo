@@ -45,7 +45,10 @@ export function linkPackages(
 
         const dep = packages[name] || vendor[name]
         if (dep) {
-          const valid = !version || satisfies(dep.version, version)
+          const valid =
+            !version ||
+            satisfies(dep.version, version) ||
+            /^https?:\/\//.test(version)
 
           if (!valid) {
             log.warn(
