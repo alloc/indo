@@ -4,6 +4,8 @@ import { fs } from './fs'
 import { RootConfig } from './config'
 import { loadPackage, PackageMap } from './Package'
 
+const NODE_MODULES = /\/node_modules$/
+
 export function loadVendors(cfg: RootConfig) {
   const packages: PackageMap = {}
   const addPackage = (dir: string) => {
@@ -34,7 +36,7 @@ export function loadVendors(cfg: RootConfig) {
       crawl(root, {
         filter: () => false,
         enter(dir) {
-          if (!match(dir)) {
+          if (!match(dir) || NODE_MODULES.test(dir)) {
             return false
           }
           const pkg = addPackage(join(rootId, dir))
