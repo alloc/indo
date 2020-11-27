@@ -32,7 +32,7 @@
     "recrawl-sync": "^2.0.0",
     "saxon": "^0.2.0",
     "semver": "^6.3.0",
-    "slurm": "^0.5.8"
+    "slurm": "^0.5.10"
   },
   "devDependencies": {
     "@types/node": "^12.11.1",

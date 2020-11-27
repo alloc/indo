@@ -12,7 +12,7 @@ dependencies:
   recrawl-sync: 2.0.0
   saxon: 0.2.8
   semver: 6.3.0
-  slurm: 0.5.9
+  slurm: 0.5.10
 devDependencies:
   '@types/node': 12.12.37
   '@types/semver': 6.2.1
@@ -21,7 +21,7 @@ devDependencies:
   tslint: 5.20.1_typescript@3.8.3
   tslint-mango: 0.1.12
   typescript: 3.8.3
-lockfileVersion: 5.1
+lockfileVersion: 5.2
 packages:
   /@babel/code-frame/7.8.3:
     dependencies:
@@ -1565,10 +1565,10 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-xB8vbDn8FtHNF61LXYlhFK5HDVU=
-  /slurm/0.5.9:
+  /slurm/0.5.10:
     dev: false
     resolution:
-      integrity: sha512-WnohbTN3WwcgO2gYupcKVTOjvOwrEg+inyeGh0RkX6j3GmwFTtOfB7KK3rdfQ898jjWJI4voLD6MvROy2q4OVQ==
+      integrity: sha512-+AyOdqZCdwe8kfjYPxKYSdRcCXBMNDh3azYcBAyVfmtfXuvdZ2HVattk2n5Lta36LyC44gcMnnapxB6NBuKgiA==
   /snapdragon-node/2.1.1:
     dependencies:
       define-property: 1.0.0
@@ -2034,7 +2034,7 @@ specifiers:
   recrawl-sync: ^2.0.0
   saxon: ^0.2.0
   semver: ^6.3.0
-  slurm: ^0.5.8
+  slurm: ^0.5.10
   tslint: ^5.20.0
   tslint-mango: ^0.1.12
   typescript: ^3.6.4
