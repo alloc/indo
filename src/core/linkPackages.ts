@@ -47,6 +47,7 @@ export function linkPackages(
         if (dep) {
           const valid =
             !version ||
+            /^(latest|next)$/.test(version) ||
             satisfies(dep.version, version) ||
             /^https?:\/\//.test(version)
 
