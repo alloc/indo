@@ -9,7 +9,7 @@ dependencies:
   lodge: 0.1.4
   ora: 4.0.4
   realpath-native: 1.1.0
-  recrawl-sync: 2.0.0
+  recrawl-sync: 2.0.2
   saxon: 0.2.8
   semver: 6.3.0
   slurm: 0.5.10
@@ -1432,14 +1432,14 @@ packages:
       node: '>=4'
     resolution:
       integrity: sha512-wlgPA6cCIIg9gKz0fgAPjnzh4yR/LnXovwuo9hvyGvx3h8nX4+/iLZplfUWasXpqD8BdnGnP5njOFjkUwPzvjA==
-  /recrawl-sync/2.0.0:
+  /recrawl-sync/2.0.2:
     dependencies:
       '@cush/relative': 0.1.0
       glob-regex: 0.3.2
-      tslib: 1.11.1
+      tslib: 1.14.1
     dev: false
     resolution:
-      integrity: sha512-RYXv9NeY+z8HAzWf0uDy2ntDpRwWT3SG6yHMWKjOhPdtbo2T/HeeugF9ydiI3kOqbQyMF/5bOUSb0JPRaB1C5w==
+      integrity: sha512-8qprPoeIB7k9r1AoMNcW4lKVBLRyETJsODYB5/tGJtOrU/8Tw4DHRmvPfwjKa/2AP2Kzc/6QHtj+imeeJXP0MQ==
   /regex-not/1.0.2:
     dependencies:
       extend-shallow: 3.0.2
@@ -1770,8 +1770,13 @@ packages:
     resolution:
       integrity: sha512-FWtleNAtZ/Ki2qtqej2CXTOayOH9bHDQF+Q48VpWyDXjbYxA4Yz8iDB31zXOBUlOHHKidDbqGVrTUvQMPmBGBw==
   /tslib/1.11.1:
+    dev: true
     resolution:
       integrity: sha512-aZW88SY8kQbU7gpV19lN24LtXh/yD4ZZg6qieAJDDg+YBsJcSmLGK9QpnUjAKVG/xefmvJGd1WUmfpT/g6AJGA==
+  /tslib/1.14.1:
+    dev: false
+    resolution:
+      integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
   /tslint-clean-code/0.2.10_tslint@5.20.1+typescript@3.8.3:
     dependencies:
       memoize-decorator: 1.0.2
@@ -2031,7 +2036,7 @@ specifiers:
   prettier: ~1.17.0
   prettier-tslint: ^0.4.2
   realpath-native: ^1.1.0
-  recrawl-sync: ^2.0.0
+  recrawl-sync: ^2.0.2
   saxon: ^0.2.0
   semver: ^6.3.0
   slurm: ^0.5.10
