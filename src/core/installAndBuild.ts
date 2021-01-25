@@ -6,8 +6,9 @@ import { cwdRelative, log, spin, time } from './helpers'
 import { Package } from './Package'
 
 export async function installAndBuild(cfg: RootConfig, pkgs: Package[]) {
-  const installed: Package[] = []
+  if (!pkgs.length) return
 
+  const installed: Package[] = []
   await time('install dependencies', async () => {
     const spinner = spin('Installing dependencies...')
 
