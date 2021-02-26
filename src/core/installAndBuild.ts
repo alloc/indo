@@ -11,7 +11,7 @@ export async function installAndBuild(packages: Package[]) {
   }
 }
 
-export async function installPackages(packages: Package[]) {
+export async function installPackages(packages: Package[], force?: boolean) {
   const installed: Package[] = []
 
   if (packages.length)
@@ -25,7 +25,7 @@ export async function installPackages(packages: Package[]) {
           return
         }
         const nodeModulesPath = join(pkg.root, 'node_modules')
-        if (!fs.isDir(nodeModulesPath)) {
+        if (force || !fs.isDir(nodeModulesPath)) {
           const npm = pkg.manager
           try {
             await npm.install(['--ignore-scripts'])
