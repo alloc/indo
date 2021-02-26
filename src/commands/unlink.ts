@@ -41,7 +41,7 @@ export default async (cfg: RootConfig | null) => {
       })
 
     if (paths.length) {
-      process.argv = process.argv.slice(0, 2).concat(paths)
+      process.argv = process.argv.slice(0, 2).concat(paths, '--force')
       await require('./purge').default(cfg)
     }
   } else {
