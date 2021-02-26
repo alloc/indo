@@ -67,7 +67,7 @@ function getGlobalPackage(name: string) {
       'yet?'
     )
   }
-  return pkgPath!
+  return join(registry.packageDir, name)
 }
 
 type LinkOptions = {
