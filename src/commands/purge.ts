@@ -2,7 +2,6 @@ import { dirname, relative, resolve } from 'path'
 import slurm from 'slurm'
 import { RootConfig, saveConfig } from '../core/config'
 import { fs } from '../core/fs'
-import { getInverseDeps } from '../core/getInverseDeps'
 import {
   confirm,
   fatal,
@@ -10,10 +9,10 @@ import {
   isDescendant,
   log,
 } from '../core/helpers'
-import { installPackages } from '../core/installAndBuild'
 import { loadPackages } from '../core/loadPackages'
 import { loadVendors } from '../core/loadVendors'
 import { Package } from '../core/Package'
+import { repairNodeModules } from '../core/repairNodeModules'
 
 export default async (cfg: RootConfig) => {
   const args = slurm({
@@ -81,29 +80,18 @@ export default async (cfg: RootConfig) => {
     })
   }
 
-  if (deleted.size) {
-    // Find packages that depended on any of the deleted packages.
-    const parents = new Set<Package>()
-
-    const inverseDeps = getInverseDeps(Object.values(packages))
-    for (const pkg of Array.from(deleted)) {
-      const links = inverseDeps[pkg.name] || []
-      links.forEach(parent => {
-        parents.add(parent)
-        if (!args.dry) {
-          // TODO: remove "node_modules/{alias}" when "npm:" is used
-          purgeDir(join(parent.root, 'node_modules', pkg.name))
-        }
-      })
-    }
-
-    if (parents.size) {
-      installPackages(Array.from(parents))
-    }
-  }
-
   if (changed && !args.dry) {
     saveConfig(cfg)
+  }
+
+  if (deleted.size) {
+    log(
+      log.green('✓'),
+      'Purged',
+      log.lgreen('' + deleted.size),
+      'package' + (deleted.size == 1 ? '' : 's')
+    )
+    await repairNodeModules(cfg)
   }
 }
 
