@@ -24,7 +24,7 @@ export default async (cfg: RootConfig | null) => {
         return getRelativeId(process.cwd(), join(cfg.root, 'vendor', arg))
       })
       .filter(path => {
-        if (isDescendant(fs.follow(path), registry.packageDir)) {
+        if (isDescendant(fs.follow(path, false), registry.packageDir)) {
           return true
         }
         if (fs.exists(path)) {
