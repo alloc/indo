@@ -24,19 +24,22 @@ export default async (cfg: RootConfig | null) => {
         return getRelativeId(process.cwd(), join(cfg.root, 'vendor', arg))
       })
       .filter(path => {
-        if (isDescendant(fs.follow(path, false), registry.packageDir)) {
+        let target: string
+        try {
+          target = fs.follow(path)
+        } catch {
+          log.warn('Path named', log.yellow(path), 'does not exist')
+          return false
+        }
+        if (isDescendant(target, registry.packageDir)) {
           return true
         }
-        if (fs.exists(path)) {
-          log.warn(
-            'Path named',
-            log.yellow(path),
-            'exists but was not added with',
-            log.lcyan('indo link')
-          )
-        } else {
-          log.warn('Path named', log.yellow(path), 'does not exist')
-        }
+        log.warn(
+          'Path named',
+          log.yellow(path),
+          'exists but was not added with',
+          log.lcyan('indo link')
+        )
         return false
       })
 
