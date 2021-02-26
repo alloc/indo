@@ -67,7 +67,7 @@ export default async (cfg: RootConfig) => {
   )
 
   if (pkg) {
-    await installAndBuild(cfg, [pkg])
+    await installAndBuild([pkg])
   }
 
   linkPackages(cfg)

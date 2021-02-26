@@ -30,7 +30,7 @@ export default async (cfg: RootConfig) => {
 
   // Skip the install step if the root package uses Lerna or Yarn workspaces.
   if (!rootPkg || (!rootPkg.workspaces && !rootPkg.lerna)) {
-    await installAndBuild(cfg, Object.values(packages))
+    await installAndBuild(Object.values(packages))
   }
 
   linkPackages(cfg, packages, {
@@ -56,7 +56,7 @@ async function cloneMissingRepos(cfg: RootConfig) {
           )
           const pkg = loadPackage(join(path, 'package.json'))
           if (pkg) {
-            await installAndBuild(cfg, [pkg])
+            await installAndBuild([pkg])
           }
         } catch (err) {
           spinner.error(err)

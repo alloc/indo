@@ -1,4 +1,3 @@
-import AsyncTaskGroup from 'async-task-group'
 import { dirname, join, relative, resolve } from 'path'
 import slurm from 'slurm'
 import { RootConfig, saveConfig } from '../core/config'
@@ -7,13 +6,12 @@ import { getInverseDeps } from '../core/getInverseDeps'
 import {
   confirm,
   createMatcher,
-  cwdRelative,
   fatal,
   getRelativeId,
   isDescendant,
   log,
-  spin,
 } from '../core/helpers'
+import { installPackages } from '../core/installAndBuild'
 import { loadPackages } from '../core/loadPackages'
 import { loadVendors } from '../core/loadVendors'
 import { loadPackage, Package } from '../core/Package'
@@ -102,27 +100,7 @@ export default async (cfg: RootConfig) => {
     }
 
     if (parents.size) {
-      const spinner = spin('Installing dependencies...')
-      const installer = new AsyncTaskGroup(3)
-      await installer.map(Array.from(parents), async (pkg: Package) => {
-        try {
-          await pkg.manager.install()
-          spinner.log(
-            log.green('✓'),
-            'Installed',
-            log.green(cwdRelative(pkg.root)),
-            'dependencies using',
-            log.lcyan(pkg.manager.name)
-          )
-        } catch {
-          spinner.log(
-            log.red('⨯'),
-            'Failed to install dependencies of',
-            log.lyellow(cwdRelative(pkg.root))
-          )
-        }
-      })
-      spinner.stop()
+      installPackages(Array.from(parents))
     }
   }
 
