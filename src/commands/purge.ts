@@ -1,11 +1,10 @@
-import { dirname, join, relative, resolve } from 'path'
+import { dirname, relative, resolve } from 'path'
 import slurm from 'slurm'
 import { RootConfig, saveConfig } from '../core/config'
 import { fs } from '../core/fs'
 import { getInverseDeps } from '../core/getInverseDeps'
 import {
   confirm,
-  createMatcher,
   fatal,
   getRelativeId,
   isDescendant,
@@ -14,7 +13,7 @@ import {
 import { installPackages } from '../core/installAndBuild'
 import { loadPackages } from '../core/loadPackages'
 import { loadVendors } from '../core/loadVendors'
-import { loadPackage, Package } from '../core/Package'
+import { Package } from '../core/Package'
 
 export default async (cfg: RootConfig) => {
   const args = slurm({
@@ -29,14 +28,12 @@ export default async (cfg: RootConfig) => {
   const packages = loadPackages(cfg)
   const vendors = loadVendors(cfg)
 
+  // The packages within the deleted root.
   const deleted = new Set<Package>()
-  const onDelete = (dir: string) => {
-    const pkgPath = join(cfg.root, dir, 'package.json')
-    const pkg = loadPackage(pkgPath)
-    if (pkg) deleted.add(pkg)
-  }
 
+  // The indo config has changed.
   let changed = false
+
   for (let root of args) {
     root = resolve(root)
 
@@ -57,25 +54,26 @@ export default async (cfg: RootConfig) => {
       purgeDir(root)
     }
 
+    // Find packages within the deleted root
+    for (const pkg of Object.values({ ...packages, ...vendors })) {
+      if (isDescendant(pkg.root, root)) {
+        deleted.add(pkg)
+      }
+    }
+
     const rootId = relative(cfg.root, root)
 
-    // Delete descendants from "repos"
+    // Remove "repos" within the deleted root
     for (const repoDir in cfg.repos) {
       if (isDescendant(repoDir, rootId)) {
         delete cfg.repos[repoDir]
-        onDelete(repoDir)
         changed = true
       }
     }
 
-    // Delete descendants from "vendor"
+    // Remove "vendor" globs within the deleted root
     cfg.vendor = cfg.vendor.filter(glob => {
       if (isDescendant(glob, rootId)) {
-        const match = createMatcher([glob])!
-        for (const dep of Object.values(vendors)) {
-          const depDir = relative(cfg.root, dep.root)
-          if (match(depDir)) onDelete(depDir)
-        }
         changed = true
         return false
       }
