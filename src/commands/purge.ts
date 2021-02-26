@@ -20,6 +20,7 @@ import { loadPackage, Package } from '../core/Package'
 
 export default async (cfg: RootConfig) => {
   const args = slurm({
+    force: true,
     dry: true,
     n: 'dry',
   })
@@ -48,8 +49,10 @@ export default async (cfg: RootConfig) => {
     }
 
     // Confirm deletion
-    const ok = await confirm(`Delete ${log.yellow(displayName)} forever?`)
-    if (!ok) continue
+    if (!args.force) {
+      const ok = await confirm(`Delete ${log.yellow(displayName)} forever?`)
+      if (!ok) continue
+    }
 
     // Delete from disk
     if (!args.dry) {
