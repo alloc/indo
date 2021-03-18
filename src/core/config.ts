@@ -12,6 +12,7 @@ interface Config {
   repos: { [path: string]: RepoConfig }
   alias: { [name: string]: string }
   vendor: string[]
+  ignore: string[]
 }
 
 export interface RootConfig extends Config {
@@ -42,6 +43,7 @@ export function createConfig(props?: Partial<Config>): Config {
     repos: {},
     alias: {},
     vendor: ['vendor/**'],
+    ignore: [],
     ...props,
   }
 }

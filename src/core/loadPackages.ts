@@ -16,13 +16,13 @@ export function loadPackages(cfg: RootConfig) {
   }
 
   // Find packages in the root repository.
-  findPackages(cfg.root).forEach(addPackage)
+  findPackages(cfg.root, cfg.ignore).forEach(addPackage)
 
   const vendorRE = globRegex(cfg.vendor)
 
   // Find packages in nested repostories.
   Object.keys(cfg.repos).forEach(repoDir => {
-    findPackages(join(cfg.root, repoDir)).forEach(pkgPath => {
+    findPackages(join(cfg.root, repoDir), cfg.ignore).forEach(pkgPath => {
       pkgPath = join(repoDir, pkgPath)
       if (!vendorRE.test(pkgPath)) {
         addPackage(pkgPath)
@@ -33,7 +33,7 @@ export function loadPackages(cfg: RootConfig) {
   return packages
 }
 
-function findPackages(root: string) {
+function findPackages(root: string, skip: string[]) {
   if (!fs.isDir(root)) {
     return []
   }
@@ -43,7 +43,7 @@ function findPackages(root: string) {
   }
   return crawl(root, {
     only: ['**/package.json'],
-    skip: ['.git', 'node_modules'],
+    skip: ['.git', 'node_modules', ...skip],
     enter: notIgnored,
     filter: notIgnored,
   })
