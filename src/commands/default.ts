@@ -1,10 +1,11 @@
 import AsyncTaskGroup from 'async-task-group'
 import { join } from 'path'
 import slurm from 'slurm'
+import { startTask } from 'misty/task'
 import { RootConfig, saveConfig } from '../core/config'
 import { fs } from '../core/fs'
 import { git } from '../core/git'
-import { choose, cwdRelative, log, spin, time } from '../core/helpers'
+import { choose, cwdRelative, log, time } from '../core/helpers'
 import { installAndBuild } from '../core/installAndBuild'
 import { linkPackages } from '../core/linkPackages'
 import { loadPackages } from '../core/loadPackages'
@@ -41,15 +42,15 @@ export default async (cfg: RootConfig) => {
 async function cloneMissingRepos(cfg: RootConfig) {
   const repos = Object.entries(cfg.repos)
   if (repos.length) {
-    const spinner = spin('Cloning any missing repos...')
-
     const cloner = new AsyncTaskGroup(3)
     await cloner.map(repos, async ([path, repo]) => {
       if (!fs.exists(join(cfg.root, path))) {
         const repoId = repo.url + (repo.head ? '#' + repo.head : '')
+        const task = startTask('Cloning into ' + log.lcyan(cwdRelative(path)))
         try {
           await git.clone(cfg.root, repo, path)
-          spinner.log(
+          task.finish()
+          log(
             log.green('+'),
             `Cloned ${log.green(cwdRelative(path))} from`,
             log.gray(repoId.replace(/^.+:\/\//, ''))
@@ -59,12 +60,11 @@ async function cloneMissingRepos(cfg: RootConfig) {
             await installAndBuild([pkg])
           }
         } catch (err) {
-          spinner.error(err)
+          task.finish()
+          log.error(err)
         }
       }
     })
-
-    spinner.stop()
   }
 }
 

@@ -1,7 +1,9 @@
 import AsyncTaskGroup from 'async-task-group'
+import { formatElapsed, success } from 'misty'
+import { startTask } from 'misty/task'
 import { join } from 'path'
 import { fs } from './fs'
-import { cwdRelative, log, spin, time } from './helpers'
+import { cwdRelative, log, time } from './helpers'
 import { Package } from './Package'
 
 export async function installAndBuild(packages: Package[]) {
@@ -16,7 +18,7 @@ export async function installPackages(packages: Package[], force?: boolean) {
 
   if (packages.length)
     await time('install dependencies', async () => {
-      const spinner = spin('Installing dependencies...')
+      const startTime = Date.now()
 
       const installer = new AsyncTaskGroup(3)
       await installer.map(packages, async pkg => {
@@ -26,28 +28,30 @@ export async function installPackages(packages: Package[], force?: boolean) {
         }
         const nodeModulesPath = join(pkg.root, 'node_modules')
         if (force || !fs.isDir(nodeModulesPath)) {
+          const task = startTask(
+            `Installing ${log.lcyan(cwdRelative(pkg.root))} node_modules…`
+          )
           const npm = pkg.manager
           try {
             await npm.install(['--ignore-scripts'])
             installed.push(pkg)
-            spinner.log(
-              log.green('✓'),
-              'Installed',
-              log.green(cwdRelative(pkg.root)),
-              'dependencies using',
-              log.lcyan(pkg.manager.name)
-            )
+            task.finish()
           } catch {
-            spinner.log(
+            task.finish()
+            log(
               log.red('⨯'),
-              'Failed to install dependencies in',
+              'Installation failed:',
               log.lyellow(cwdRelative(pkg.path))
             )
           }
         }
       })
 
-      spinner.stop()
+      success(
+        `Installed node_modules of ${log.green(
+          '' + installed.length
+        )} packages ${log.gray(formatElapsed(startTime))}`
+      )
     })
 
   return installed
@@ -55,24 +59,22 @@ export async function installPackages(packages: Package[], force?: boolean) {
 
 export const buildPackages = (packages: Package[]) =>
   time('build packages', async () => {
-    const spinner = spin('Building packages...')
+    const startTime = Date.now()
+    let buildCount = 0
 
     const builder = new AsyncTaskGroup(3)
     await builder.map(packages, async pkg => {
       const npm = pkg.manager
       const promise = npm.run('build')
       if (promise) {
+        const task = startTask(`Building ${log.lcyan(cwdRelative(pkg.root))}…`)
+        buildCount++
         try {
           await promise
-          spinner.log(
-            log.green('✓'),
-            'Built',
-            log.green(cwdRelative(pkg.root)),
-            'with',
-            log.lcyan(npm.commands.run + ' build')
-          )
-        } catch (err) {
-          spinner.log(
+          task.finish()
+        } catch {
+          task.finish()
+          log(
             log.lred('⨯'),
             'Build script failed:',
             log.yellow(cwdRelative(pkg.root))
@@ -81,5 +83,9 @@ export const buildPackages = (packages: Package[]) =>
       }
     })
 
-    spinner.stop()
+    success(
+      `Built ${log.green('' + buildCount)} packages ${log.gray(
+        formatElapsed(startTime)
+      )}`
+    )
   })
