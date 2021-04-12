@@ -33,7 +33,7 @@ export async function installPackages(packages: Package[], force?: boolean) {
           )
           const npm = pkg.manager
           try {
-            await npm.install(['--ignore-scripts'])
+            await npm.install()
             installed.push(pkg)
             task.finish()
           } catch (e) {
@@ -66,6 +66,9 @@ export const buildPackages = (packages: Package[]) =>
     const builder = new AsyncTaskGroup(3)
     await builder.map(packages, async pkg => {
       const npm = pkg.manager
+      if (packageBuildsOnInstall(pkg)) {
+        return // Already built.
+      }
       const promise = npm.run('build')
       if (promise) {
         const task = startTask(`Building ${log.lcyan(cwdRelative(pkg.root))}…`)
@@ -91,3 +94,24 @@ export const buildPackages = (packages: Package[]) =>
       )}`
     )
   })
+
+/**
+ * Look for a package script that runs on `npm install` and either
+ * contains the word "build" or is identical to the build script.
+ */
+function packageBuildsOnInstall(pkg: Package) {
+  const scripts = pkg.scripts || {}
+  return [
+    'preinstall',
+    'install',
+    'postinstall',
+    'prepublish',
+    'preprepare',
+    'prepare',
+    'postprepare',
+  ].some(
+    name =>
+      name in scripts &&
+      (/\b(build)\b/.test(scripts[name]) || scripts[name] == scripts.build)
+  )
+}
