@@ -2,11 +2,16 @@ import exec from '@cush/exec'
 import { dirname, join, relative } from 'path'
 import { fs } from './fs'
 import { RepoConfig, RootConfig } from './config'
+import { sparseClone } from './sparseClone'
 import { isHomeDir } from './helpers'
 import { Package } from './Package'
 
 export const git = {
   clone(cwd: string, repo: RepoConfig, path: string) {
+    if (repo.head?.includes(':')) {
+      const [head, subpath] = repo.head!.split(':')
+      return sparseClone(path, repo.url, head, subpath)
+    }
     return exec(
       `git clone ${repo.url} ${path} --depth 1`,
       [repo.head ? ['-b', repo.head] : null],
