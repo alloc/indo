@@ -1,0 +1,8 @@
+{
+  "repos": {
+    "mdx": {
+      "url": "https://github.com/mdx-js/mdx",
+      "head": "main:packages/mdx"
+    }
+  }
+}

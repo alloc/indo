@@ -1,11 +1,9 @@
 module.exports = {
-  preset: 'ts-jest',
   collectCoverageFrom: ['src/**/*.ts'],
-  testEnvironment: 'jsdom',
-  setupFiles: ['<rootDir>/spec/.setup.ts'],
-  globals: {
-    'ts-jest': {
-      diagnostics: false,
-    },
+  setupFilesAfterEnv: ['<rootDir>/jest/setup.ts'],
+  watchPathIgnorePatterns: ['.+/__fixtures__/.+'],
+  testEnvironment: 'node',
+  transform: {
+    '\\.tsx?$': 'esbuild-jest',
   },
 }
