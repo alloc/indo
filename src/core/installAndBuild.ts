@@ -36,13 +36,14 @@ export async function installPackages(packages: Package[], force?: boolean) {
             await npm.install(['--ignore-scripts'])
             installed.push(pkg)
             task.finish()
-          } catch {
+          } catch (e) {
             task.finish()
             log(
               log.red('⨯'),
               'Installation failed:',
               log.lyellow(cwdRelative(pkg.path))
             )
+            log.error(e.message)
           }
         }
       })
@@ -72,13 +73,14 @@ export const buildPackages = (packages: Package[]) =>
         try {
           await promise
           task.finish()
-        } catch {
+        } catch (e) {
           task.finish()
           log(
             log.lred('⨯'),
             'Build script failed:',
             log.yellow(cwdRelative(pkg.root))
           )
+          log.error(e.message)
         }
       }
     })
