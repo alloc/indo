@@ -15,7 +15,10 @@ export function sparseClone(
     `git clone ${url} . -b ${branch} --no-checkout --depth 1
      git config core.sparseCheckout true
      echo "${subpath}" >> .git/info/sparse-checkout
-     git checkout`,
+     git checkout
+     git mv "${subpath}" .sparse-tmp
+     git mv .sparse-tmp/* .
+     rm -r .sparse-tmp`,
     { cwd: dest }
   )
 }
