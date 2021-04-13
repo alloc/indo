@@ -3,7 +3,7 @@ import Enquirer = require('enquirer')
 import { join, relative } from 'path'
 import { RootConfig, saveConfig } from '../core/config'
 import { git } from '../core/git'
-import { fatal, log } from '../core/helpers'
+import { fatal, gray, log, yellow } from '../core/helpers'
 import { loadVendors } from '../core/loadVendors'
 
 type RepoMap = {
@@ -37,8 +37,8 @@ export default async (cfg: RootConfig) => {
         choices.push({
           name: root,
           hint:
-            log.gray(' - ' + url.replace(/^https:\/\//, '')) +
-            (head == 'master' ? '' : log.lyellow(' ' + head)),
+            gray(' - ' + url.replace(/^https:\/\//, '')) +
+            (head == 'master' ? '' : yellow(' ' + head)),
         })
       }
     }

@@ -5,12 +5,12 @@ import { fatal } from '../core/helpers'
 export default async () => {
   const args = slurm()
   if (!args.length) {
-    throw fatal('Must give package names')
+    fatal('Must give package names')
   }
 
   const pkg = getNearestPackage(process.cwd())
   if (!pkg) {
-    throw fatal('Missing package.json')
+    fatal('Missing package.json')
   }
 
   const npm = pkg.manager

@@ -1,7 +1,7 @@
 import { isTest } from '@alloc/is-dev'
 import { join } from 'path'
 import { loadConfig, RootConfig } from './core/config'
-import { fatal, log } from './core/helpers'
+import { fatal, cyan } from './core/helpers'
 import { fs } from './core/fs'
 
 const helpArg = process.argv.find(
@@ -30,7 +30,7 @@ const cmdExt = isTest ? '.ts' : '.js'
 
 const cmdPath = join(__dirname, 'commands', cmd + cmdExt)
 if (helpArg !== 'help' && !fs.exists(cmdPath)) {
-  fatal('Unknown command:', log.lcyan('indo ' + cmd))
+  fatal('Unknown command:', cyan('indo ' + cmd))
 }
 
 export default (async () => {
@@ -40,10 +40,7 @@ export default (async () => {
   }
 
   const slurm = require('slurm')
-  slurm.error = reason => {
-    if (reason) log.error(reason)
-    process.exit(1)
-  }
+  slurm.error = fatal
 
   if (!process.env.DEBUG) {
     // tslint:disable-next-line

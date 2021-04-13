@@ -1,10 +1,21 @@
 import { dirname, join, relative, sep } from 'path'
 import slurm from 'slurm'
-import { RootConfig, saveConfig } from '../core/config'
 import { fs } from '../core/fs'
-import { getNearestPackage } from '../core/getNearestPackage'
 import { git } from '../core/git'
-import { cwdRelative, fatal, isPathEqual, log, tildify } from '../core/helpers'
+import {
+  cwdRelative,
+  cyan,
+  fatal,
+  green,
+  isPathEqual,
+  log,
+  success,
+  tildify,
+  yellow,
+} from '../core/helpers'
+
+import { saveConfig, RootConfig } from '../core/config'
+import { getNearestPackage } from '../core/getNearestPackage'
 import { linkPackages } from '../core/linkPackages'
 import { loadPackages } from '../core/loadPackages'
 import { registry } from '../core/registry'
@@ -20,7 +31,7 @@ export default (cfg: RootConfig | null) => {
   const name = args[0]
   if (name) {
     if (!cfg) {
-      fatal('Missing config. Did you run', log.lcyan('indo init'), 'yet?')
+      fatal('Missing config. Did you run', cyan('indo init'), 'yet?')
       return
     }
     if (!args.g) {
@@ -40,12 +51,11 @@ export default (cfg: RootConfig | null) => {
       const name = args[0] || args.g || pkg.name
       if (name) {
         registry.set(name, pkg.root)
-        log(
-          log.green('✓'),
+        success(
           'Global package',
-          log.lgreen(name),
+          green(name),
           'now points to',
-          log.gray(tildify(pkg.root))
+          tildify(pkg.root)
         )
       } else {
         fatal('Missing package name (-g)')
@@ -61,9 +71,9 @@ function getGlobalPackage(name: string) {
   if (!pkgPath) {
     fatal(
       'Global package',
-      log.lgreen(name),
+      green(name),
       'does not exist. Did you run',
-      log.lcyan('indo link'),
+      cyan('indo link'),
       'yet?'
     )
   }
@@ -86,7 +96,7 @@ async function linkGlobalPackage(cfg: RootConfig, opts: LinkOptions) {
     if (isPathEqual(link, target)) {
       fs.remove(link)
     } else {
-      fatal('Path already exists:', log.lgreen(cwdRelative(link)))
+      fatal('Path already exists:', green(cwdRelative(link)))
     }
   }
 
@@ -101,7 +111,7 @@ async function linkGlobalPackage(cfg: RootConfig, opts: LinkOptions) {
     if (!pkg) {
       return fatal(
         'Cannot find package.json in or above current directory:',
-        log.lyellow(cwd)
+        yellow(cwd)
       )
     }
 
@@ -117,24 +127,24 @@ async function linkGlobalPackage(cfg: RootConfig, opts: LinkOptions) {
       head: git.getActiveBranch(target),
     }
     saveConfig(cfg)
-    log(log.green('✓'), 'Updated the "repos" object')
+    success('Updated the "repos" object')
 
     fs.copy(target, link)
     log(
-      log.green('+'),
+      green('+'),
       'Created',
-      log.lgreen(cwdRelative(link)),
+      green(cwdRelative(link)),
       'by copying',
-      log.lyellow(tildify(target))
+      yellow(tildify(target))
     )
   } else {
     fs.link(link, target)
     log(
-      log.green('+'),
+      green('+'),
       'Linked',
-      log.lgreen(cwdRelative(link)),
+      green(cwdRelative(link)),
       'to',
-      log.lyellow(tildify(target))
+      yellow(tildify(target))
     )
   }
 

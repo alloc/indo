@@ -5,10 +5,15 @@ import { fs } from '../core/fs'
 import { getNearestPackage } from '../core/getNearestPackage'
 import {
   confirm,
+  cyan,
   fatal,
   getRelativeId,
+  gray,
+  green,
   isDescendant,
   log,
+  success,
+  yellow,
 } from '../core/helpers'
 import { registry } from '../core/registry'
 
@@ -16,7 +21,7 @@ export default async (cfg: RootConfig | null) => {
   const args = slurm()
   if (args.length) {
     if (!cfg) {
-      throw fatal('Missing config. Please run', log.lcyan('indo init'), 'first')
+      fatal('Missing config. Please run', cyan('indo init'), 'first')
     }
 
     const paths = args
@@ -28,7 +33,7 @@ export default async (cfg: RootConfig | null) => {
         try {
           target = fs.follow(path)
         } catch {
-          log.warn('Path named', log.yellow(path), 'does not exist')
+          log.warn('Path named', yellow(path), 'does not exist')
           return false
         }
         if (isDescendant(target, registry.packageDir)) {
@@ -36,9 +41,9 @@ export default async (cfg: RootConfig | null) => {
         }
         log.warn(
           'Path named',
-          log.yellow(path),
+          yellow(path),
           'exists but was not added with',
-          log.lcyan('indo link')
+          cyan('indo link')
         )
         return false
       })
@@ -52,27 +57,17 @@ export default async (cfg: RootConfig | null) => {
     if (pkg) {
       const root = registry.get(pkg.name)
       if (!root) {
-        throw fatal('Global package', log.lgreen(pkg.name), 'does not exist')
+        fatal('Global package', green(pkg.name), 'does not exist')
       }
       if (root !== pkg.root) {
-        log.warn(
-          'Global package',
-          log.lgreen(pkg.name),
-          'is linked to',
-          log.gray(root)
-        )
+        log.warn('Global package', green(pkg.name), 'is linked to', gray(root))
         const shouldRemove = await confirm('Remove it anyway?')
         if (!shouldRemove) {
           return
         }
       }
       registry.delete(pkg.name)
-      log(
-        log.green('✓'),
-        'Global package',
-        log.lgreen(pkg.name),
-        'has been unlinked'
-      )
+      success('Global package', green(pkg.name), 'has been unlinked')
     } else {
       fatal('Missing package.json')
     }

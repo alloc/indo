@@ -5,9 +5,12 @@ import { fs } from '../core/fs'
 import {
   confirm,
   cwdRelative,
+  cyan,
   fatal,
   getRelativeId,
-  log,
+  gray,
+  green,
+  success,
 } from '../core/helpers'
 import { linkPackages } from '../core/linkPackages'
 import { loadPackage } from '../core/Package'
@@ -22,7 +25,7 @@ export default async (cfg: RootConfig) => {
   const pkg = loadPackage(Path.join(oldName, 'package.json'))
   if (!pkg) {
     return fatal(
-      'Cannot move non-existent path: ' + log.green(cwdRelative(oldName))
+      'Cannot move non-existent path: ' + green(cwdRelative(oldName))
     )
   }
 
@@ -32,12 +35,11 @@ export default async (cfg: RootConfig) => {
 
   if (!shouldBail) {
     pkg.move(newName)
-    log(
-      log.green('✓'),
+    success(
       'Moved package:',
-      log.gray(cwdRelative(oldName)),
+      gray(cwdRelative(oldName)),
       '➝',
-      log.green(cwdRelative(newName))
+      green(cwdRelative(newName))
     )
 
     const oldId = getRelativeId(cfg.root, oldName)
@@ -47,7 +49,7 @@ export default async (cfg: RootConfig) => {
       cfg.repos[newId] = cfg.repos[oldId]
       delete cfg.repos[oldId]
       saveConfig(cfg)
-      log(log.green('✓'), 'Updated "repos" in', log.lcyan('.indo.json'))
+      success('Updated "repos" in', cyan('.indo.json'))
     }
 
     linkPackages(cfg)

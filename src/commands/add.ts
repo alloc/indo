@@ -18,12 +18,12 @@ export default async (cfg: RootConfig) => {
     E: 'exact',
   })
   if (!args.length) {
-    throw fatal('Must give package names')
+    fatal('Must give package names')
   }
 
   const pkg = getNearestPackage(process.cwd())
   if (!pkg) {
-    throw fatal('Missing package.json')
+    fatal('Missing package.json')
   }
 
   const npm = pkg.manager

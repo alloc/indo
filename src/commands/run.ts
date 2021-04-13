@@ -1,7 +1,17 @@
 import AsyncTaskGroup from 'async-task-group'
 import slurm from 'slurm'
+import {
+  cwdRelative,
+  fatal,
+  green,
+  log,
+  red,
+  startTask,
+  success,
+  yellow,
+} from '../core/helpers'
+
 import { RootConfig } from '../core/config'
-import { cwdRelative, fatal, log, spin } from '../core/helpers'
 import { loadPackages } from '../core/loadPackages'
 
 export default async (cfg: RootConfig) => {
@@ -13,7 +23,7 @@ export default async (cfg: RootConfig) => {
   }
 
   const packages = loadPackages(cfg)
-  const spinner = spin('Running...')
+  const task = startTask('Running...')
 
   const runner = new AsyncTaskGroup(args.concurrency)
   await runner.map(Object.values(packages), async pkg => {
@@ -21,19 +31,12 @@ export default async (cfg: RootConfig) => {
     if (script) {
       try {
         await script
-        spinner.log(
-          log.green('✓'),
-          'Run completed for',
-          log.green(cwdRelative(pkg.root))
-        )
+        success('Run completed for', green(cwdRelative(pkg.root)))
       } catch {
-        spinner.log(
-          log.red('⨯'),
-          'Build failed:',
-          log.yellow(cwdRelative(pkg.root))
-        )
+        log(red('⨯'), 'Build failed:', yellow(cwdRelative(pkg.root)))
       }
     }
   })
-  spinner.stop()
+
+  task.finish()
 }

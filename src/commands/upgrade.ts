@@ -9,9 +9,11 @@ import {
   choose,
   cwdRelative,
   fatal,
+  green,
   log,
-  spin,
   splitNameVersion,
+  startTask,
+  yellow,
 } from '../core/helpers'
 import { linkPackages } from '../core/linkPackages'
 import { loadPackages } from '../core/loadPackages'
@@ -79,8 +81,8 @@ export default async (cfg: RootConfig) => {
       }
       log(
         '\nFound %s required by %s',
-        log.lyellow(nameArg + '@' + version),
-        log.lgreen(cwdRelative(pkg.root))
+        yellow(nameArg + '@' + version),
+        green(cwdRelative(pkg.root))
       )
 
       // These choices are never printed.
@@ -145,16 +147,16 @@ export default async (cfg: RootConfig) => {
     let done = 0
     let count = 0
 
-    const spinner = spin('Upgrading dependencies [0/0]')
+    const task = startTask('Upgrading dependencies [0/0]')
     const promise = Promise.all(
       Array.from(upgradesByPkg, ([pkg, upgrades]) => {
-        spinner.start(
+        task.update(
           `Upgrading dependencies [${done}/${(count += upgrades.length)}]`
         )
         return pkg.manager
           .add(upgrades, { dev: !!args.dev })
           .then(() =>
-            spinner.start(
+            task.update(
               `Upgrading dependencies [${(done += upgrades.length)}/${count}]`
             )
           )
@@ -162,7 +164,7 @@ export default async (cfg: RootConfig) => {
     )
 
     await promise
-    spinner.stop()
+    task.finish()
 
     // Ensure the new dependencies are linked up.
     resetPackageCache()

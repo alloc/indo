@@ -1,10 +1,21 @@
 import exec from '@cush/exec'
 import { join, relative, resolve } from 'path'
 import slurm from 'slurm'
-import { RootConfig, saveConfig } from '../core/config'
 import { fs } from '../core/fs'
 import { git } from '../core/git'
-import { cwdRelative, fatal, log, randstr, spin } from '../core/helpers'
+import {
+  cwdRelative,
+  cyan,
+  fatal,
+  gray,
+  green,
+  log,
+  randstr,
+  startTask,
+  success,
+} from '../core/helpers'
+
+import { saveConfig, RootConfig } from '../core/config'
 import { installAndBuild } from '../core/installAndBuild'
 import { linkPackages } from '../core/linkPackages'
 import { loadPackage } from '../core/Package'
@@ -26,7 +37,7 @@ export default async (cfg: RootConfig) => {
     }
     const repo = JSON.parse(stdout)
     if (repo.type !== 'git') {
-      fatal(`Unsupported vcs: ${log.lred(repo.type)}`)
+      fatal('Unsupported vcs:', repo.type)
     }
     url = repo.url.replace(/^git\+/, '')
   }
@@ -40,12 +51,12 @@ export default async (cfg: RootConfig) => {
     dir = resolve(dir)
   }
 
-  const spinner = spin('Cloning...')
+  const task = startTask('Cloning...')
 
   const repo = { url, head: args.branch }
   await git.clone(cfg.root, repo, dir)
 
-  spinner.stop()
+  task.finish()
 
   const pkg = loadPackage(join(dir, 'package.json'))
   if (needsRename) {
@@ -59,11 +70,11 @@ export default async (cfg: RootConfig) => {
   }
 
   log(
-    log.green('+'),
+    green('+'),
     'Cloned',
-    log.green(cwdRelative(dir)),
+    green(cwdRelative(dir)),
     'from',
-    log.gray(url.replace(/^.+:\/\//, ''))
+    gray(url.replace(/^.+:\/\//, ''))
   )
 
   if (pkg) {
@@ -76,5 +87,5 @@ export default async (cfg: RootConfig) => {
   cfg.repos[dir] = repo
   saveConfig(cfg)
 
-  log(log.green('✓'), 'Updated "repos" in', log.lcyan('.indo.json'))
+  success('Updated "repos" in', cyan('.indo.json'))
 }

@@ -1,7 +1,7 @@
 import AsyncTaskGroup from 'async-task-group'
 import slurm from 'slurm'
 import { RootConfig } from '../core/config'
-import { fatal, log } from '../core/helpers'
+import { fatal, green } from '../core/helpers'
 import { loadPackages } from '../core/loadPackages'
 
 export default async (cfg: RootConfig) => {
@@ -11,9 +11,8 @@ export default async (cfg: RootConfig) => {
 
   const cmd = args['--']
   if (!cmd) {
-    throw fatal(
-      'No command given (eg:',
-      log.lgreen('"indo run -- echo \\$PACKAGE_NAME"') + ')'
+    fatal(
+      `No command given (eg: ${green('"indo run -- echo \\$PACKAGE_NAME"')})`
     )
   }
 

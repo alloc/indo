@@ -2,11 +2,19 @@ import { isTest } from '@alloc/is-dev'
 import AsyncTaskGroup from 'async-task-group'
 import { join } from 'path'
 import slurm from 'slurm'
-import { startTask } from 'misty/task'
-import { RepoConfig, RootConfig, saveConfig } from '../core/config'
 import { fs } from '../core/fs'
 import { git } from '../core/git'
-import { choose, cwdRelative, log, time } from '../core/helpers'
+import {
+  choose,
+  cwdRelative,
+  cyan,
+  green,
+  log,
+  startTask,
+  time,
+} from '../core/helpers'
+
+import { saveConfig, RootConfig } from '../core/config'
 import { installAndBuild } from '../core/installAndBuild'
 import { linkPackages } from '../core/linkPackages'
 import { loadPackages } from '../core/loadPackages'
@@ -46,14 +54,14 @@ async function cloneMissingRepos(cfg: RootConfig) {
     const cloner = new AsyncTaskGroup(3)
     await cloner.map(repos, async ([path, repo]) => {
       if (!fs.exists(join(cfg.root, path))) {
-        const task = startTask('Cloning into ' + log.lcyan(cwdRelative(path)))
+        const task = startTask('Cloning into ' + cyan(cwdRelative(path)))
         try {
           await git.clone(cfg.root, repo, path)
           task.finish()
           log(
-            log.green('+'),
-            `Cloned ${log.green(cwdRelative(path))} from`,
-            log.gray(getRepoId(repo))
+            green('+'),
+            `Cloned ${green(cwdRelative(path))} from`,
+            repo.url.replace(/^.+:\/\//, '')
           )
           const pkg = loadPackage(join(path, 'package.json'))
           if (pkg) {
@@ -71,13 +79,6 @@ async function cloneMissingRepos(cfg: RootConfig) {
   }
 }
 
-function getRepoId(repo: RepoConfig) {
-  return (
-    repo.url.replace(/^.+:\/\//, '') +
-    (repo.head ? '#' + repo.head.replace(/:[^:]+$/, '') : '')
-  )
-}
-
 async function findUnknownRepos(cfg: RootConfig, packages: PackageMap) {
   const gitRoots = git.findRoots(cfg, Object.values(packages))
 
@@ -88,7 +89,7 @@ async function findUnknownRepos(cfg: RootConfig, packages: PackageMap) {
     }
     const cwd = join(cfg.root, rootId)
     if (fs.isDir(join(cwd, '.git'))) {
-      log.warn('Found an untracked repository:', log.lcyan(rootId))
+      log.warn('Found an untracked repository:', cyan(rootId))
       const answer = await choose('Pick an action:', [
         { message: 'Add to repos', name: 'repos' },
         { message: 'Add to vendor', name: 'vendor' },

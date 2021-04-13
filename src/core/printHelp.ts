@@ -1,6 +1,7 @@
 import { basename, join, resolve } from 'path'
-import { fatal, log } from './helpers'
+import { fatal, log, cyan } from './helpers'
 import { fs } from './fs'
+import k from 'kleur'
 
 export function printHelp(cmdPath: string) {
   const helpPath = join(
@@ -16,16 +17,16 @@ export function printHelp(cmdPath: string) {
     let lastIndex = 0
     let match
     while ((match = tagRE.exec(rawHelp))) {
-      let [, close, name, lcyan, bold] = match
-      if (lcyan || bold) {
-        name = lcyan ? 'lcyan' : 'bold'
+      let [, close, name, isCyan, isBold] = match
+      if (isCyan || isBold) {
+        name = isCyan ? 'cyan' : 'bold'
         close = opened[name] ? '/' : ''
       }
       if (close) {
         const index = opened[name]
         if (index !== void 0) {
           delete opened[name]
-          help += log[name](rawHelp.slice(index, match.index))
+          help += k[name](rawHelp.slice(index, match.index))
           lastIndex = match.index + match[0].length
         }
       } else {
@@ -35,7 +36,7 @@ export function printHelp(cmdPath: string) {
     }
     help += rawHelp.slice(lastIndex)
     for (const name in opened) {
-      fatal('Forgot to close', log.lcyan(`<${name}>`))
+      fatal('Forgot to close', cyan(`<${name}>`))
     }
     log(help)
   }

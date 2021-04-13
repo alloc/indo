@@ -1,13 +1,14 @@
 /* tslint:disable:no-console */
 import crypto from 'crypto'
 import { prompt } from 'enquirer'
-import log from 'lodge'
-import ora from 'ora'
 import * as os from 'os'
 import { relative, resolve } from 'path'
 import realpath from 'realpath-native'
 
-export { default as log } from 'lodge'
+export { default as log } from 'shared-log'
+export { gray, green, red, yellow, cyan } from 'kleur'
+export * from 'misty'
+export { startTask } from 'misty/task'
 export { crawl, createMatcher } from 'recrawl-sync'
 
 export const time = <T>(label: string, action: () => T) => {
@@ -88,38 +89,6 @@ export const confirm = async (message: string) =>
     message,
   })).result
 
-export const fatal = (...args: any[]) => {
-  log.error(...args)
-  process.exit(1)
-}
-
 export const randstr = (len: number) => {
   return crypto.randomBytes(len).toString('hex')
-}
-
-export const spin = (text: string) => {
-  let spinner = ora(text).start()
-  return {
-    log(...args: any[]) {
-      this.stop()
-      log(...args)
-      this.start()
-    },
-    error(...args: any[]) {
-      this.stop()
-      log.error(...args)
-      this.start()
-    },
-    start(newText?: string) {
-      if (newText !== void 0) {
-        text = newText
-      }
-      spinner = ora(text).start()
-      return this
-    },
-    stop() {
-      spinner.stop()
-      return this
-    },
-  }
 }

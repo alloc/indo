@@ -1,14 +1,20 @@
 import { dirname, join, relative } from 'path'
 import semver from 'semver'
-import { RootConfig } from './config'
 import { fs } from './fs'
 import {
   cwdRelative,
   isPathEqual,
   log,
   splitNameVersion,
+  success,
   time,
+  cyan,
+  gray,
+  green,
+  yellow,
 } from './helpers'
+
+import { RootConfig } from './config'
 import { loadPackages } from './loadPackages'
 import { loadVendors } from './loadVendors'
 import { Package, StringMap } from './Package'
@@ -54,12 +60,12 @@ export function linkPackages(
           if (!valid) {
             log.warn(
               'Local package',
-              log.lgreen(cwdRelative(dep.root)),
+              green(cwdRelative(dep.root)),
               `(v${dep.version})`,
               'does not satisfy',
-              log.yellow(version),
+              yellow(version),
               'required by',
-              log.lgreen(cwdRelative(pkg.root))
+              green(cwdRelative(pkg.root))
             )
             continue
           }
@@ -91,11 +97,11 @@ export function linkPackages(
 
           if (linked) {
             log(
-              log.green('+'),
+              green('+'),
               'Linked',
-              log.gray(pkg.name + ':') + log.lgreen(alias),
+              gray(pkg.name + ':') + green(alias),
               'to',
-              log.lyellow(cwdRelative(dep.root))
+              yellow(cwdRelative(dep.root))
             )
           }
 
@@ -109,11 +115,11 @@ export function linkPackages(
                 fs.mkdir(dirname(link))
                 fs.link(link, target)
                 log(
-                  log.green('+'),
+                  green('+'),
                   'Linked',
-                  log.gray(pkg.name + ':') + log.lcyan(name),
+                  gray(pkg.name + ':') + cyan(name),
                   'to',
-                  log.lyellow(cwdRelative(bin))
+                  yellow(cwdRelative(bin))
                 )
               }
             }
@@ -129,7 +135,7 @@ export function linkPackages(
       }
     }
 
-    log(log.green('✓'), 'Local packages are linked!')
+    success('Local packages are linked!')
   })
 }
 

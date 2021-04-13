@@ -6,8 +6,11 @@ import {
   confirm,
   fatal,
   getRelativeId,
+  green,
   isDescendant,
   log,
+  success,
+  yellow,
 } from '../core/helpers'
 import { loadPackages } from '../core/loadPackages'
 import { loadVendors } from '../core/loadVendors'
@@ -21,7 +24,7 @@ export default async (cfg: RootConfig) => {
     n: 'dry',
   })
   if (!args.length) {
-    throw fatal('Must give one or more package names and/or relative paths')
+    fatal('Must give one or more package names and/or relative paths')
   }
 
   const packages = loadPackages(cfg)
@@ -38,13 +41,13 @@ export default async (cfg: RootConfig) => {
 
     const displayName = getRelativeId(process.cwd(), root)
     if (!fs.exists(root)) {
-      log.error(`Path named ${log.yellow(displayName)} does not exist`)
+      log.error('Path named', yellow(displayName), 'does not exist')
       continue
     }
 
     // Confirm deletion
     if (!args.force) {
-      const ok = await confirm(`Delete ${log.yellow(displayName)} forever?`)
+      const ok = await confirm(`Delete ${yellow(displayName)} forever?`)
       if (!ok) continue
     }
 
@@ -85,10 +88,9 @@ export default async (cfg: RootConfig) => {
   }
 
   if (deleted.size) {
-    log(
-      log.green('✓'),
+    success(
       'Purged',
-      log.lgreen('' + deleted.size),
+      green(deleted.size),
       'package' + (deleted.size == 1 ? '' : 's')
     )
     await repairNodeModules(cfg)

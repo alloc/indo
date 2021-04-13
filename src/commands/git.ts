@@ -1,5 +1,6 @@
 import exec from '@cush/exec'
 import bocks from 'bocks'
+import { bold, gray } from 'kleur'
 import { join } from 'path'
 import slurm from 'slurm'
 import { RootConfig } from '../core/config'
@@ -18,9 +19,9 @@ export default async (cfg: RootConfig) => {
 
   for (const rootId of Array.from(gitRoots)) {
     log(
-      bocks(log.bold(cwdRelative(join(cfg.root, rootId)))).replace(
+      bocks(bold(cwdRelative(join(cfg.root, rootId)))).replace(
         bocks.RE,
-        log.coal('$1')
+        gray('$1')
       )
     )
     log('')

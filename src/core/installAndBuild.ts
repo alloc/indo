@@ -1,10 +1,20 @@
 import { isTest } from '@alloc/is-dev'
 import AsyncTaskGroup from 'async-task-group'
-import { formatElapsed, success } from 'misty'
-import { startTask } from 'misty/task'
 import { join } from 'path'
 import { fs } from './fs'
-import { cwdRelative, log, time } from './helpers'
+import {
+  cwdRelative,
+  formatElapsed,
+  log,
+  startTask,
+  success,
+  time,
+  cyan,
+  gray,
+  green,
+  red,
+  yellow,
+} from './helpers'
 import { Package } from './Package'
 
 export async function installAndBuild(packages: Package[]) {
@@ -30,7 +40,7 @@ export async function installPackages(packages: Package[], force?: boolean) {
         const nodeModulesPath = join(pkg.root, 'node_modules')
         if (force || !fs.isDir(nodeModulesPath)) {
           const task = startTask(
-            `Installing ${log.lcyan(cwdRelative(pkg.root))} node_modules…`
+            `Installing ${cyan(cwdRelative(pkg.root))} node_modules…`
           )
           const npm = pkg.manager
           try {
@@ -39,11 +49,7 @@ export async function installPackages(packages: Package[], force?: boolean) {
             task.finish()
           } catch (e) {
             task.finish()
-            log(
-              log.red('⨯'),
-              'Installation failed:',
-              log.lyellow(cwdRelative(pkg.path))
-            )
+            log(red('⨯'), 'Installation failed:', yellow(cwdRelative(pkg.path)))
             if (isTest) {
               throw e
             }
@@ -54,9 +60,10 @@ export async function installPackages(packages: Package[], force?: boolean) {
 
       if (installed.length)
         success(
-          `Installed node_modules of ${log.green(
-            '' + installed.length
-          )} packages ${log.gray(formatElapsed(startTime))}`
+          'Installed node_modules of',
+          green(installed.length),
+          'package' + (installed.length == 1 ? '' : 's'),
+          gray(formatElapsed(startTime))
         )
     })
 
@@ -76,18 +83,14 @@ export const buildPackages = (packages: Package[]) =>
       }
       const promise = npm.run('build')
       if (promise) {
-        const task = startTask(`Building ${log.lcyan(cwdRelative(pkg.root))}…`)
+        const task = startTask(`Building ${cyan(cwdRelative(pkg.root))}…`)
         buildCount++
         try {
           await promise
           task.finish()
         } catch (e) {
           task.finish()
-          log(
-            log.lred('⨯'),
-            'Build script failed:',
-            log.yellow(cwdRelative(pkg.root))
-          )
+          log(red('⨯'), 'Build script failed:', yellow(cwdRelative(pkg.root)))
           if (isTest) {
             throw e
           }
@@ -98,9 +101,10 @@ export const buildPackages = (packages: Package[]) =>
 
     if (buildCount)
       success(
-        `Built ${log.green('' + buildCount)} packages ${log.gray(
-          formatElapsed(startTime)
-        )}`
+        'Built',
+        green(buildCount),
+        'package' + (buildCount == 1 ? '' : 's'),
+        gray(formatElapsed(startTime))
       )
   })
 
