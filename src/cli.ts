@@ -1,7 +1,7 @@
 import { isTest } from '@alloc/is-dev'
 import { join } from 'path'
 import { loadConfig, RootConfig } from './core/config'
-import { fatal, cyan, log } from './core/helpers'
+import { fatal, cyan, log, red } from './core/helpers'
 import { fs } from './core/fs'
 
 const helpArg = process.argv.find(
@@ -47,6 +47,12 @@ export default (async () => {
   } else {
     // tslint:disable-next-line
     console.time = console.timeEnd = () => {}
+  }
+  if (!isTest) {
+    log.on('error', args => {
+      const fmt = typeof args[0] == 'string' ? ' ' + args.splice(0, 1)[0] : ''
+      console.error(red('[!]') + fmt, ...args)
+    })
   }
 
   let config: RootConfig | null = null
