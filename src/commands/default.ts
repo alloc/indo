@@ -10,6 +10,7 @@ import {
   cyan,
   green,
   log,
+  red,
   startTask,
   time,
 } from '../core/helpers'
@@ -66,6 +67,7 @@ async function cloneMissingRepos(cfg: RootConfig) {
           )
         } catch (err) {
           task.finish()
+          log.error('Failed to clone %s into %s', red(repo.url), cyan(path))
           if (isTest) throw err
           return log.error(err)
         }
