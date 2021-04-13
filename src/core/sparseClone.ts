@@ -17,6 +17,7 @@ export function sparseClone(
      echo "${subpath}" >> .git/info/sparse-checkout
      git checkout
      git mv "${subpath}" .sparse-tmp
+     rm -rf "${subpath.split('/')[0]}"
      git mv .sparse-tmp/* .
      rm -r .sparse-tmp`,
     { cwd: dest }
