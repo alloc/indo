@@ -1,6 +1,6 @@
 /* tslint:disable:no-console */
 import crypto from 'crypto'
-import { prompt } from 'enquirer'
+import prompt, { Choice } from 'prompts'
 import * as os from 'os'
 import { relative, resolve } from 'path'
 import realpath from 'realpath-native'
@@ -63,27 +63,21 @@ export const tildify = (path: string) => {
   return path.startsWith(home) ? path.replace(home, '~/') : path
 }
 
-export type Choice<T = string> = {
-  name: string
-  message?: string
-  value?: T
-}
-
 export const choose = async <T = string>(
   message: string,
-  choices: Array<string | Choice<T>>,
-  initial?: T
-) =>
-  (await prompt<{ result: T }>({
+  choices: Choice[],
+  initial?: number
+): Promise<T> =>
+  (await prompt({
     type: 'select',
     name: 'result',
     message,
-    choices: choices as any,
-    initial: initial as any,
+    choices,
+    initial,
   })).result
 
-export const confirm = async (message: string) =>
-  (await prompt<{ result: boolean }>({
+export const confirm = async (message: string): Promise<boolean> =>
+  (await prompt({
     type: 'confirm',
     name: 'result',
     message,

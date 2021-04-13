@@ -103,8 +103,8 @@ async function findUnknownRepos(cfg: RootConfig, packages: PackageMap) {
     if (fs.isDir(join(cwd, '.git'))) {
       log.warn('Found an untracked repository:', cyan(rootId))
       const answer = await choose('Pick an action:', [
-        { message: 'Add to repos', name: 'repos' },
-        { message: 'Add to vendor', name: 'vendor' },
+        { title: 'Add to repos', value: 'repos' },
+        { title: 'Add to vendor', value: 'vendor' },
       ])
 
       changed = true

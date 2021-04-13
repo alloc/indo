@@ -1,6 +1,5 @@
-import { prompt } from 'enquirer'
-import Enquirer = require('enquirer')
 import { join, relative } from 'path'
+import prompt, { Choice } from 'prompts'
 import { RootConfig, saveConfig } from '../core/config'
 import { git } from '../core/git'
 import { fatal, gray, log, yellow } from '../core/helpers'
@@ -16,7 +15,7 @@ type RepoMap = {
 
 export default async (cfg: RootConfig) => {
   const repos: RepoMap = {}
-  const choices: Enquirer.Prompt.Choice[] = []
+  const choices: Choice[] = []
 
   const packages = loadVendors(cfg)
   for (const pkg of Object.values(packages)) {
@@ -35,8 +34,9 @@ export default async (cfg: RootConfig) => {
         const head = git.getActiveBranch(gitRoot)
         repos[root] = { root, url, head }
         choices.push({
-          name: root,
-          hint:
+          title: root,
+          value: root,
+          description:
             gray(' - ' + url.replace(/^https:\/\//, '')) +
             (head == 'master' ? '' : yellow(' ' + head)),
         })
@@ -48,21 +48,26 @@ export default async (cfg: RootConfig) => {
     return fatal('No vendor packages were found.')
   }
 
-  const { selected } = await prompt<{ selected: string[] }>({
+  type Answer = { selected: string[] }
+  const { selected }: Answer = await prompt({
     name: 'selected',
-    type: 'autocomplete',
+    type: 'autocompleteMultiselect',
     message: 'Choose which repos to share',
     choices,
-    multiple: true,
   })
 
   for (const root of selected) {
     const remotes = git.getRemotes(join(cfg.root, root))
-    const { url } = await prompt<{ url: string }>({
+
+    type Answer = { url: string }
+    const { url }: Answer = await prompt({
       name: 'url',
       type: 'select',
       message: 'Choose the fetch url',
-      choices: remotes.map(remote => remote.url),
+      choices: remotes.map(remote => ({
+        title: remote.url,
+        value: remote.url,
+      })),
     })
 
     const { head } = repos[root]

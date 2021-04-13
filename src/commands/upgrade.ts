@@ -1,5 +1,5 @@
-import { prompt } from 'enquirer'
 import { join } from 'path'
+import prompt from 'prompts'
 import semver from 'semver'
 import slurm from 'slurm'
 import { RootConfig } from '../core/config'
@@ -89,25 +89,25 @@ export default async (cfg: RootConfig) => {
       const CHOOSE = { toString: () => '' }
       const SKIP = { toString: () => '' }
 
-      type Choice = string | 1 | 0
-      let { choice } = await prompt<{ choice: Choice }>({
+      let { choice } = await prompt({
         name: 'choice',
         type: 'autocomplete',
         message: 'What should we do?',
         choices: [
-          { value: versionArg, message: 'Upgrade to ' + versionArg },
-          { value: CHOOSE, message: 'Upgrade to...' },
-          { value: SKIP, message: 'Skip' },
-        ] as any,
+          { value: versionArg, title: 'Upgrade to ' + versionArg },
+          { value: CHOOSE, title: 'Upgrade to...' },
+          { value: SKIP, title: 'Skip' },
+        ],
       })
       if (choice == SKIP) {
         return
       }
       if (choice == CHOOSE) {
+        const choices = getVersionRanges(greaterVersions)
         prevChoice = choice = await choose(
           'Select a version',
-          getVersionRanges(greaterVersions),
-          prevChoice
+          choices.map(value => ({ title: value, value })),
+          prevChoice ? choices.indexOf(prevChoice) : undefined
         )
       }
       let upgrades = upgradesByPkg.get(pkg)
