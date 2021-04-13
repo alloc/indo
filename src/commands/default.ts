@@ -2,7 +2,7 @@ import AsyncTaskGroup from 'async-task-group'
 import { join } from 'path'
 import slurm from 'slurm'
 import { startTask } from 'misty/task'
-import { RootConfig, saveConfig } from '../core/config'
+import { RepoConfig, RootConfig, saveConfig } from '../core/config'
 import { fs } from '../core/fs'
 import { git } from '../core/git'
 import { choose, cwdRelative, log, time } from '../core/helpers'
@@ -45,7 +45,6 @@ async function cloneMissingRepos(cfg: RootConfig) {
     const cloner = new AsyncTaskGroup(3)
     await cloner.map(repos, async ([path, repo]) => {
       if (!fs.exists(join(cfg.root, path))) {
-        const repoId = repo.url + (repo.head ? '#' + repo.head : '')
         const task = startTask('Cloning into ' + log.lcyan(cwdRelative(path)))
         try {
           await git.clone(cfg.root, repo, path)
@@ -53,7 +52,7 @@ async function cloneMissingRepos(cfg: RootConfig) {
           log(
             log.green('+'),
             `Cloned ${log.green(cwdRelative(path))} from`,
-            log.gray(repoId.replace(/^.+:\/\//, ''))
+            log.gray(getRepoId(repo))
           )
           const pkg = loadPackage(join(path, 'package.json'))
           if (pkg) {
@@ -66,6 +65,13 @@ async function cloneMissingRepos(cfg: RootConfig) {
       }
     })
   }
+}
+
+function getRepoId(repo: RepoConfig) {
+  return (
+    repo.url.replace(/^.+:\/\//, '') +
+    (repo.head ? '#' + repo.head.replace(/:[^:]+$/, '') : '')
+  )
 }
 
 async function findUnknownRepos(cfg: RootConfig, packages: PackageMap) {
