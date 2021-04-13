@@ -64,19 +64,13 @@ async function cloneMissingRepos(cfg: RootConfig) {
             `Cloned ${green(cwdRelative(dest))} from`,
             repo.url.replace(/^.+:\/\//, '')
           )
-          await recursiveClone(dest)
-          const pkg = loadPackage(join(dest, 'package.json'))
-          if (pkg) {
-            await installAndBuild([pkg])
-          }
         } catch (err) {
           task.finish()
-          if (isTest) {
-            throw err
-          }
-          log.error(err)
+          if (isTest) throw err
+          return log.error(err)
         }
       }
+      await recursiveClone(dest)
     })
   }
 }
@@ -88,6 +82,10 @@ async function recursiveClone(root: string) {
   const cfg = loadConfig(join(root, dotIndoId))
   if (cfg) {
     await cloneMissingRepos(cfg)
+  }
+  const pkg = loadPackage(join(root, 'package.json'))
+  if (pkg) {
+    await installAndBuild([pkg])
   }
 }
 
