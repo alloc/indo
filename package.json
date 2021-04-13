@@ -17,7 +17,7 @@
   "scripts": {
     "build": "tsc -p .",
     "prepare": "npm run build && bin/indo",
-    "test": "uvu"
+    "test": "jest"
   },
   "dependencies": {
     "@cush/exec": "^1.5.1",

@@ -7,6 +7,10 @@ import fs from 'saxon/sync'
 const fixtureDir = path.resolve(__dirname, '../spec/__fixtures__')
 process.chdir(fixtureDir)
 
+process.exit = (code = 0) => {
+  throw Error('Process exited with code ' + code)
+}
+
 afterEach(() => {
   process.chdir(fixtureDir)
   const stdout = shell.sync(`
@@ -25,17 +29,14 @@ afterEach(() => {
 
 Object.assign(global, {
   fs,
-  exec(cmd: string) {
-    if (!cmd.startsWith('indo ')) {
-      return exec.sync(cmd)
-    }
-
-    cmd = cmd.slice(5)
+  indo(cmd: string) {
     const argv = quotes.parse(cmd) as string[]
     process.argv = ['', ''].concat(argv)
 
+    let promise: any
     jest.isolateModules(() => {
-      jest.requireActual('../src/cli.ts')
+      promise = jest.requireActual('../src/cli.ts')
     })
+    return promise
   },
 })

@@ -1,2 +1,2 @@
 declare const fs: typeof import('saxon/sync')
-declare const exec: (cmd: string) => string
+declare const indo: (cmd?: string) => Promise<void>

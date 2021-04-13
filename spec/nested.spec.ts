@@ -1,6 +1,6 @@
-test('nested indo', () => {
+test('nested indo', async () => {
   process.chdir('nested')
-  exec('indo')
+  await indo()
 
   expect(fs.isDir('gist')).toBeTruthy()
   expect(fs.isDir('gist/mixpa')).toBeTruthy()
