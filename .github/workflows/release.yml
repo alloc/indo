@@ -1,0 +1,36 @@
+name: CI
+on: [push]
+jobs:
+  test:
+    name: Test on node ${{ matrix.node_version }} and ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        node_version: [10, 12, 14]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node_version }}
+
+      - name: Install
+        uses: pnpm/action-setup@v1.2.1
+        with:
+          version: 5
+          run_install: |
+            args: [--frozen-lockfile]
+
+      - name: Test
+        run: yarn test --coverage
+
+      - name: Reset fixtures
+        run: git clean -df
+
+      - name: Upload coverage
+        run: npx codecov
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
