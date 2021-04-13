@@ -14,7 +14,7 @@ import {
   time,
 } from '../core/helpers'
 
-import { saveConfig, RootConfig } from '../core/config'
+import { saveConfig, RootConfig, loadConfig, dotIndoId } from '../core/config'
 import { installAndBuild } from '../core/installAndBuild'
 import { linkPackages } from '../core/linkPackages'
 import { loadPackages } from '../core/loadPackages'
@@ -53,17 +53,19 @@ async function cloneMissingRepos(cfg: RootConfig) {
   if (repos.length) {
     const cloner = new AsyncTaskGroup(3)
     await cloner.map(repos, async ([path, repo]) => {
-      if (!fs.exists(join(cfg.root, path))) {
-        const task = startTask('Cloning into ' + cyan(cwdRelative(path)))
+      const dest = join(cfg.root, path)
+      if (!fs.exists(dest)) {
+        const task = startTask('Cloning into ' + cyan(cwdRelative(dest)))
         try {
           await git.clone(cfg.root, repo, path)
           task.finish()
           log(
             green('+'),
-            `Cloned ${green(cwdRelative(path))} from`,
+            `Cloned ${green(cwdRelative(dest))} from`,
             repo.url.replace(/^.+:\/\//, '')
           )
-          const pkg = loadPackage(join(path, 'package.json'))
+          await recursiveClone(dest)
+          const pkg = loadPackage(join(dest, 'package.json'))
           if (pkg) {
             await installAndBuild([pkg])
           }
@@ -76,6 +78,16 @@ async function cloneMissingRepos(cfg: RootConfig) {
         }
       }
     })
+  }
+}
+
+/**
+ * Clone any repos that cloned repos depend on.
+ */
+async function recursiveClone(root: string) {
+  const cfg = loadConfig(join(root, dotIndoId))
+  if (cfg) {
+    await cloneMissingRepos(cfg)
   }
 }
 
