@@ -11,7 +11,7 @@ export function sparseClone(
   subpath: string
 ) {
   fs.mkdir(dest)
-  shell.sync(
+  return shell(
     `git clone ${url} . -b ${branch} --no-checkout --depth 1
      git config core.sparseCheckout true
      echo "${subpath}" >> .git/info/sparse-checkout
