@@ -49,6 +49,7 @@
     "prettier": "~1.17.0",
     "prettier-tslint": "^0.4.2",
     "shell-quote": "^1.7.2",
+    "strip-ansi": "^6.0.0",
     "tslint": "^5.20.0",
     "tslint-mango": "^0.1.12",
     "typescript": "^3.6.4"

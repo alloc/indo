@@ -1,3 +1,4 @@
+import stripAnsi from 'strip-ansi'
 import quotes from 'shell-quote'
 import shell from '@cush/shell'
 import exec from '@cush/exec'
@@ -10,6 +11,10 @@ process.chdir(fixtureDir)
 process.exit = (code = 0) => {
   throw Error('Process exited with code ' + code)
 }
+
+beforeEach(() => {
+  logs.length = 0
+})
 
 afterEach(() => {
   process.chdir(fixtureDir)
@@ -29,6 +34,7 @@ afterEach(() => {
 
 Object.assign(global, {
   fs,
+  logs: [],
   indo(cmd: string) {
     const argv = quotes.parse(cmd) as string[]
     process.argv = ['', ''].concat(argv)
@@ -39,4 +45,11 @@ Object.assign(global, {
     })
     return promise
   },
+})
+
+// Track logs for testing purposes.
+import sharedLog from 'shared-log'
+sharedLog.on('all', (_, args) => {
+  // Strip ansi colors and elapsed time.
+  logs.push(stripAnsi(args.join(' ')).replace(/\s+[0-9]+(\.[0-9]+)(s|ms)$/, ''))
 })
