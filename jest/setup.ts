@@ -36,13 +36,13 @@ afterEach(() => {
 Object.assign(global, {
   fs,
   logs: [],
-  indo(cmd: string) {
+  indo(cmd = '') {
     const argv = quotes.parse(cmd) as string[]
     process.argv = ['', ''].concat(argv)
 
     let promise: any
     jest.isolateModules(() => {
-      promise = jest.requireActual('../src/cli.ts')
+      promise = jest.requireActual('../src/cli.ts').default
     })
     return promise
   },
