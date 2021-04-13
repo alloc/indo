@@ -1,3 +1,4 @@
+import { isTest } from '@alloc/is-dev'
 import { join } from 'path'
 import { loadConfig, RootConfig } from './core/config'
 import { fatal, log } from './core/helpers'
@@ -25,7 +26,6 @@ if (cmd && cmd[0] !== '-') {
   cmd = 'default'
 }
 
-const isTest = process.env.NODE_ENV == 'test'
 const cmdExt = isTest ? '.ts' : '.js'
 
 const cmdPath = join(__dirname, 'commands', cmd + cmdExt)
@@ -62,6 +62,9 @@ export default (async () => {
     await require(cmdPath).default(config)
     !isTest && process.exit()
   } catch (err) {
+    if (isTest) {
+      throw err
+    }
     slurm.error(err)
   }
 })()

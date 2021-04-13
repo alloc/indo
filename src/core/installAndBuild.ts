@@ -1,3 +1,4 @@
+import { isTest } from '@alloc/is-dev'
 import AsyncTaskGroup from 'async-task-group'
 import { formatElapsed, success } from 'misty'
 import { startTask } from 'misty/task'
@@ -43,6 +44,9 @@ export async function installPackages(packages: Package[], force?: boolean) {
               'Installation failed:',
               log.lyellow(cwdRelative(pkg.path))
             )
+            if (isTest) {
+              throw e
+            }
             log.error(e.message)
           }
         }
@@ -83,6 +87,9 @@ export const buildPackages = (packages: Package[]) =>
             'Build script failed:',
             log.yellow(cwdRelative(pkg.root))
           )
+          if (isTest) {
+            throw e
+          }
           log.error(e.message)
         }
       }

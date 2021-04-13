@@ -1,3 +1,4 @@
+import { isTest } from '@alloc/is-dev'
 import AsyncTaskGroup from 'async-task-group'
 import { join } from 'path'
 import slurm from 'slurm'
@@ -60,6 +61,9 @@ async function cloneMissingRepos(cfg: RootConfig) {
           }
         } catch (err) {
           task.finish()
+          if (isTest) {
+            throw err
+          }
           log.error(err)
         }
       }
