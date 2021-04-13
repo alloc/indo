@@ -1,7 +1,6 @@
 import stripAnsi from 'strip-ansi'
 import quotes from 'shell-quote'
 import shell from '@cush/shell'
-import exec from '@cush/exec'
 import path from 'path'
 import fs from 'saxon/sync'
 
@@ -28,9 +27,11 @@ afterEach(() => {
   `)
 
   // Remove untracked git submodules.
-  stdout
-    .split('\n')
-    .forEach(name => !name.startsWith('../') && fs.remove(name, true))
+  stdout.split('\n').forEach(name => {
+    if (!name.startsWith('../')) {
+      fs.remove(name, true)
+    }
+  })
 })
 
 Object.assign(global, {
