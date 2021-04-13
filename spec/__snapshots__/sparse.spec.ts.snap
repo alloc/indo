@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`sparse checkout 1`] = `
+Array [
+  "+ Cloned mdx from github.com/mdx-js/mdx",
+  "✔︎ Installed node_modules of 1 package",
+  "✔︎ Local packages are linked!",
+]
+`;
