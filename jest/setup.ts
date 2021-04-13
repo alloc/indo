@@ -8,15 +8,16 @@ import fs from 'saxon/sync'
 const fixtureDir = path.resolve(__dirname, '../spec/__fixtures__')
 process.chdir(fixtureDir)
 
-process.exit = (code = 0) => {
-  throw Error('Process exited with code ' + code)
-}
-
+const { exit } = process
 beforeEach(() => {
   logs.length = 0
+  process.exit = (code = 0) => {
+    throw Error('Process exited with code ' + code)
+  }
 })
 
 afterEach(() => {
+  process.exit = exit
   process.chdir(fixtureDir)
   const stdout = shell.sync(`
     git checkout HEAD . &>/dev/null
