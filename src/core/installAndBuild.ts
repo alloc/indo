@@ -52,11 +52,12 @@ export async function installPackages(packages: Package[], force?: boolean) {
         }
       })
 
-      success(
-        `Installed node_modules of ${log.green(
-          '' + installed.length
-        )} packages ${log.gray(formatElapsed(startTime))}`
-      )
+      if (installed.length)
+        success(
+          `Installed node_modules of ${log.green(
+            '' + installed.length
+          )} packages ${log.gray(formatElapsed(startTime))}`
+        )
     })
 
   return installed
@@ -95,11 +96,12 @@ export const buildPackages = (packages: Package[]) =>
       }
     })
 
-    success(
-      `Built ${log.green('' + buildCount)} packages ${log.gray(
-        formatElapsed(startTime)
-      )}`
-    )
+    if (buildCount)
+      success(
+        `Built ${log.green('' + buildCount)} packages ${log.gray(
+          formatElapsed(startTime)
+        )}`
+      )
   })
 
 /**
