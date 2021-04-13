@@ -1,7 +1,7 @@
 import { isTest } from '@alloc/is-dev'
 import { join } from 'path'
 import { loadConfig, RootConfig } from './core/config'
-import { fatal, cyan } from './core/helpers'
+import { fatal, cyan, log } from './core/helpers'
 import { fs } from './core/fs'
 
 const helpArg = process.argv.find(
@@ -42,9 +42,11 @@ export default (async () => {
   const slurm = require('slurm')
   slurm.error = fatal
 
-  if (!process.env.DEBUG) {
+  if (process.env.DEBUG) {
+    log.on('debug', console.debug)
+  } else {
     // tslint:disable-next-line
-    console.debug = console.time = console.timeEnd = () => {}
+    console.time = console.timeEnd = () => {}
   }
 
   let config: RootConfig | null = null
