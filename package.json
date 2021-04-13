@@ -16,7 +16,7 @@
   ],
   "scripts": {
     "build": "tsc -p .",
-    "prepare": "npm run build && bin/indo",
+    "prepare": "npm run build",
     "test": "jest"
   },
   "dependencies": {
