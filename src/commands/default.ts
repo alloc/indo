@@ -73,7 +73,7 @@ async function cloneMissingRepos(cfg: RootConfig) {
   const repos = Object.entries(cfg.repos)
   if (repos.length) {
     const cloner = new AsyncTaskGroup(3)
-    await cloner.map(repos, async ([path, repo]) => {
+    await cloner.map(repos, ([path, repo]) => async () => {
       const dest = join(cfg.root, path)
       if (!fs.exists(dest)) {
         const task = startTask('Cloning into ' + cyan(cwdRelative(dest)))
