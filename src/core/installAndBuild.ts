@@ -30,13 +30,14 @@ export async function installPackages(packages: Package[], force?: boolean) {
         for (const [name, spec] of Object.entries(deps)) {
           if (!spec.startsWith('link:')) continue
           const depPath = resolve(pkg.root, spec.slice(5))
-          if (depPath != pkg.root) {
-            if (depPath.includes('node_modules')) {
-              fs.link(join(pkg.root, 'node_modules', name), depPath)
-            } else {
-              const dep = loadPackage(join(depPath, 'package.json'))
-              dep && localDeps.push(dep)
-            }
+          if (depPath == pkg.root) continue
+          if (depPath.includes('node_modules')) {
+            const dest = join(pkg.root, 'node_modules', name)
+            fs.remove(dest, true)
+            fs.link(dest, depPath)
+          } else {
+            const dep = loadPackage(join(depPath, 'package.json'))
+            dep && localDeps.push(dep)
           }
         }
 
