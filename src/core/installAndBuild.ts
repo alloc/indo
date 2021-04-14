@@ -73,17 +73,19 @@ export async function installPackages(packages: Package[], force?: boolean) {
   return installed
 }
 
+/**
+ * For the given `packages` map, run the build script of every package used
+ * as a key. The dependency array of each package is used to ensure dependencies
+ * are built first.
+ */
 export const buildPackages = (packages: Map<Package, Package[]>) =>
   time('build packages', async () => {
     const built = new Set<Package>()
     const builds = new AsyncTaskGroup(cpuCount, async (pkg: Package) => {
       let shouldBuild = true
       for (const dep of packages.get(pkg) || []) {
-        if (built.has(dep)) continue
+        if (built.has(dep) || !builds.queue.includes(dep)) continue
         shouldBuild = false
-        if (!builds.queue.includes(dep)) {
-          builds.push(dep)
-        }
       }
 
       if (shouldBuild) {
@@ -123,6 +125,7 @@ export const buildPackages = (packages: Map<Package, Package[]>) =>
       }
     }
 
+    packages.forEach((_, pkg) => builds.push(pkg))
     await builds
   })
 
