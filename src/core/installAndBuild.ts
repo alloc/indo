@@ -3,7 +3,7 @@ import AsyncTaskGroup from 'async-task-group'
 import { join, resolve } from 'path'
 import { cpuCount, requestCPU } from './cpu'
 import { fs } from './fs'
-import { cwdRelative, log, startTask, time, cyan, red, yellow } from './helpers'
+import { cwdRelative, log, startTask, time, cyan, yellow } from './helpers'
 import { loadPackage, Package } from './Package'
 
 export async function installAndBuild(packages: Package[]) {
@@ -55,7 +55,7 @@ export async function installPackages(packages: Package[], force?: boolean) {
             log.events.emit('install', pkg)
           } catch (e) {
             task.finish()
-            log(red('⨯'), 'Installation failed:', yellow(cwdRelative(pkg.path)))
+            log.error('Installation failed:', yellow(cwdRelative(pkg.path)))
             if (isTest) {
               throw e
             }
@@ -108,7 +108,7 @@ export const buildPackages = (packages: Map<Package, Package[]>) =>
             log.events.emit('build', pkg)
           } catch (e) {
             task.finish()
-            log(red('⨯'), 'Build script failed:', yellow(cwdRelative(pkg.root)))
+            log.error('Build script failed:', yellow(cwdRelative(pkg.root)))
             if (isTest) {
               throw e
             }
