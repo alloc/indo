@@ -76,20 +76,24 @@ export const choose = async <T = string>(
   choices: Choice[],
   initial?: number
 ): Promise<T> =>
-  (await prompt({
-    type: 'select',
-    name: 'result',
-    message,
-    choices,
-    initial,
-  })).result
+  (
+    await prompt({
+      type: 'select',
+      name: 'result',
+      message,
+      choices,
+      initial,
+    })
+  ).result
 
 export const confirm = async (message: string): Promise<boolean> =>
-  (await prompt({
-    type: 'confirm',
-    name: 'result',
-    message,
-  })).result
+  (
+    await prompt({
+      type: 'confirm',
+      name: 'result',
+      message,
+    })
+  ).result
 
 export const randstr = (len: number) => {
   return crypto.randomBytes(len).toString('hex')
