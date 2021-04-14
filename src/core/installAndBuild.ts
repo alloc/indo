@@ -1,6 +1,6 @@
 import { isTest } from '@alloc/is-dev'
 import AsyncTaskGroup from 'async-task-group'
-import { join, resolve } from 'path'
+import { dirname, join, resolve } from 'path'
 import { cpuCount, requestCPU } from './cpu'
 import { fs } from './fs'
 import { cwdRelative, log, startTask, time, cyan, yellow } from './helpers'
@@ -21,9 +21,8 @@ export async function installPackages(packages: Package[], force?: boolean) {
       const installer = new AsyncTaskGroup(cpuCount)
       await installer.map(packages, pkg => async () => {
         const deps = { ...pkg.dependencies, ...pkg.devDependencies }
-        if (!Object.keys(deps).length) {
-          return
-        }
+        if (!Object.keys(deps).length) return
+        const nodeModulesPath = join(pkg.root, 'node_modules')
 
         // Find dependencies in the same repository.
         const localDeps: Package[] = []
@@ -32,8 +31,9 @@ export async function installPackages(packages: Package[], force?: boolean) {
           const depPath = resolve(pkg.root, spec.slice(5))
           if (depPath == pkg.root) continue
           if (depPath.includes('node_modules')) {
-            const dest = join(pkg.root, 'node_modules', name)
+            const dest = join(nodeModulesPath, name)
             fs.remove(dest, true)
+            fs.mkdir(dirname(dest))
             fs.link(dest, depPath)
           } else {
             const dep = loadPackage(join(depPath, 'package.json'))
@@ -47,7 +47,6 @@ export async function installPackages(packages: Package[], force?: boolean) {
           installed.set(pkg, localDeps)
         }
 
-        const nodeModulesPath = join(pkg.root, 'node_modules')
         if (force || !fs.isDir(nodeModulesPath)) {
           const cpu = await requestCPU()
           const task = startTask(
