@@ -2,7 +2,7 @@ dependencies:
   '@alloc/is-dev': 1.2.2
   '@cush/exec': 1.7.1
   '@cush/shell': 1.0.0
-  async-task-group: 1.3.2
+  async-task-group: 1.3.3
   bocks: 1.0.0
   dequals: 1.0.0
   find-dependency: 1.2.0
@@ -907,12 +907,12 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-WWZ/QfrdTyDMvCu5a41Pf3jsA2c=
-  /async-task-group/1.3.2:
+  /async-task-group/1.3.3:
     dev: false
     engines:
       node: '>= 7.6.0'
     resolution:
-      integrity: sha512-3bqceWd2Br7nZA64wdshDSILO75Nyu1Qj/vvwIw+B+TW0q7tRmR01rUphE0Pn7cRbetxeZ0Xgetc1W1FelVZTw==
+      integrity: sha512-71j50vth/KLbeypHdb5v/nZs37eAcbs8C/MvPwqyAnXOHGg/dvB3Qv4yV7B/IVLIpZ8ZVew3l6hc4edwnjm1Nw==
   /asynckit/0.4.0:
     dev: true
     resolution:
@@ -4919,7 +4919,7 @@ specifiers:
   '@types/prompts': ^2.0.10
   '@types/semver': ^6.0.2
   '@types/shell-quote': ^1.7.0
-  async-task-group: ^1.3.2
+  async-task-group: ^1.3.3
   bocks: ^1.0.0
   dequals: ^1.0.0
   esbuild: ^0.11.9
