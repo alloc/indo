@@ -18,7 +18,11 @@ import {
 } from '../core/helpers'
 
 import { saveConfig, RootConfig, loadConfig, dotIndoId } from '../core/config'
-import { installAndBuild } from '../core/installAndBuild'
+import {
+  buildPackages,
+  installAndBuild,
+  installPackages,
+} from '../core/installAndBuild'
 import { linkPackages } from '../core/linkPackages'
 import { loadPackages } from '../core/loadPackages'
 import { loadPackage, Package, PackageMap } from '../core/Package'
@@ -48,8 +52,18 @@ export default async (cfg: RootConfig) => {
   )
 
   // Skip the install step if the root package uses Lerna or Yarn workspaces.
+  let installed: Map<Package, Package[]> | undefined
   if (!rootPkg || (!rootPkg.workspaces && !rootPkg.lerna)) {
-    await installAndBuild(Object.values(packages))
+    installed = await installPackages(Object.values(packages))
+  }
+
+  // Link packages before the build step.
+  linkPackages(cfg, packages, {
+    force: args.force,
+  })
+
+  if (installed?.size) {
+    await buildPackages(installed)
   }
 
   if (installCount)
@@ -63,10 +77,6 @@ export default async (cfg: RootConfig) => {
       yellow(buildCount),
       `package${buildCount == 1 ? '' : 's'} were built`
     )
-
-  linkPackages(cfg, packages, {
-    force: args.force,
-  })
 }
 
 async function cloneMissingRepos(cfg: RootConfig) {
