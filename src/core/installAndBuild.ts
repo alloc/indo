@@ -42,7 +42,10 @@ export async function installPackages(packages: Package[], force?: boolean) {
         }
 
         // Install their dependencies first.
-        await installPackages(localDeps)
+        const installing = installPackages(localDeps)
+        for (const [pkg, localDeps] of await installing) {
+          installed.set(pkg, localDeps)
+        }
 
         const nodeModulesPath = join(pkg.root, 'node_modules')
         if (force || !fs.isDir(nodeModulesPath)) {
