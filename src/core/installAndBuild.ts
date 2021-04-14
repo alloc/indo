@@ -99,38 +99,38 @@ export const buildPackages = (packages: Map<Package, Package[]>) =>
       }
     })
 
-    async function buildPackage(pkg: Package) {
-      if (packageBuildsOnInstall(pkg)) {
-        return // Already built.
-      }
-      const cpu = await requestCPU()
-      try {
-        const npm = pkg.manager
-        const promise = npm.run('build')
-        if (promise) {
-          const task = startTask(`Building ${cyan(cwdRelative(pkg.root))}…`)
-          try {
-            await promise
-            task.finish()
-            log.debug('Build completed:', cwdRelative(pkg.root))
-            log.events.emit('build', pkg)
-          } catch (e) {
-            task.finish()
-            log.error('Build script failed:', yellow(cwdRelative(pkg.root)))
-            if (isTest) {
-              throw e
-            }
-            log.error(e.message)
-          }
-        }
-      } finally {
-        cpu.release()
-      }
-    }
-
     packages.forEach((_, pkg) => builds.push(pkg))
     await builds
   })
+
+export async function buildPackage(pkg: Package) {
+  if (packageBuildsOnInstall(pkg)) {
+    return // Already built.
+  }
+  const cpu = await requestCPU()
+  try {
+    const npm = pkg.manager
+    const promise = npm.run('build')
+    if (promise) {
+      const task = startTask(`Building ${cyan(cwdRelative(pkg.root))}…`)
+      try {
+        await promise
+        task.finish()
+        log.debug('Build completed:', cwdRelative(pkg.root))
+        log.events.emit('build', pkg)
+      } catch (e) {
+        task.finish()
+        log.error('Build script failed:', yellow(cwdRelative(pkg.root)))
+        if (isTest) {
+          throw e
+        }
+        log.error(e.message)
+      }
+    }
+  } finally {
+    cpu.release()
+  }
+}
 
 /**
  * Look for a package script that runs on `npm install` and either
