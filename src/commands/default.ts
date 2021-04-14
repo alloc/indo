@@ -14,6 +14,7 @@ import {
   startTask,
   success,
   time,
+  yellow,
 } from '../core/helpers'
 
 import { saveConfig, RootConfig, loadConfig, dotIndoId } from '../core/config'
@@ -29,10 +30,10 @@ export default async (cfg: RootConfig) => {
     f: 'force',
   })
 
-  const builds = new Set<Package>()
-  const installed = new Set<Package>()
-  log.events.on('build', (pkg: Package) => builds.add(pkg))
-  log.events.on('install', (pkg: Package) => installed.add(pkg))
+  let buildCount = 0
+  let installCount = 0
+  log.events.on('build', () => buildCount++)
+  log.events.on('install', () => installCount++)
 
   await time('clone missing repos', () => cloneMissingRepos(cfg))
 
@@ -51,18 +52,16 @@ export default async (cfg: RootConfig) => {
     await installAndBuild(Object.values(packages))
   }
 
-  if (installed.size)
+  if (installCount)
     success(
-      'Installed node_modules of',
-      green(installed.size),
-      'package' + (installed.size == 1 ? '' : 's')
+      yellow(installCount),
+      `package${installCount == 1 ? '' : 's'} had node_modules installed`
     )
 
-  if (builds.size)
+  if (buildCount)
     success(
-      'Built',
-      green(builds.size),
-      'package' + (builds.size == 1 ? '' : 's')
+      yellow(buildCount),
+      `package${buildCount == 1 ? '' : 's'} were built`
     )
 
   linkPackages(cfg, packages, {
