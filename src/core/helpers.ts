@@ -16,7 +16,13 @@ export { crawl, createMatcher } from 'recrawl-sync'
 export const time = <T>(label: string, action: () => T) => {
   const start = Date.now()
   const result = action()
-  log.debug(label + ':', formatElapsed(start))
+  if (result instanceof Promise) {
+    result.finally(() => {
+      log.debug(label + ':', formatElapsed(start))
+    })
+  } else {
+    log.debug(label + ':', formatElapsed(start))
+  }
   return result
 }
 
