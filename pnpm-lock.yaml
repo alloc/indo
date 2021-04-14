@@ -15,7 +15,7 @@ dependencies:
   recrawl-sync: 2.0.2
   saxon: 0.2.8
   semver: 6.3.0
-  shared-log: 1.2.3
+  shared-log: 1.2.4
   slurm: 0.5.10
 devDependencies:
   '@types/jest': 26.0.22
@@ -1128,22 +1128,6 @@ packages:
     dev: true
     resolution:
       integrity: sha1-JtII6onje1y95gJQoV8DHBak1ms=
-  /caller-callsite/4.1.0:
-    dependencies:
-      callsites: 3.1.0
-    dev: false
-    engines:
-      node: '>=8'
-    resolution:
-      integrity: sha512-99nnnGlJexTc41xwQTr+mWl15OI5PPczUJzM4YRE7QjkefMKCXGa5gfQjCOuVrD+1TjI/fevIDHg2nz3iYN5Ig==
-  /caller-path/3.0.0:
-    dependencies:
-      caller-callsite: 4.1.0
-    dev: false
-    engines:
-      node: '>=8'
-    resolution:
-      integrity: sha512-8nvMBmBgTmEfAXywJf27jbPZlURi5xUWLwkTXa3hZFcEZa5iRnMP4sF0p00CstWNHKBENVyYWDRSByNRdshdgQ==
   /callsites/3.1.0:
     engines:
       node: '>=6'
@@ -3215,7 +3199,7 @@ packages:
     dependencies:
       is-interactive: 1.0.0
       kleur: 4.1.4
-      shared-log: 1.2.3
+      shared-log: 1.2.4
     dev: false
     resolution:
       integrity: sha512-PHRFdUE0NzztsR+IZFLxOWiQMd9/D1la7rByXQJ+vZokLhG5qOP3tXa55Hk9NP5YXMTuUyBX4XHNScWvOoxKtw==
@@ -3978,13 +3962,13 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha512-JxHc1weCN68wRY0fhCoXpyK55m/XPHafOmK4UWD7m2CI14GMcFypt4w/0+NV5f/ZMby2F6S2wwA7fgynh9gWSw==
-  /shared-log/1.2.3:
+  /shared-log/1.2.4:
     dependencies:
       '@types/node': 14.14.37
-      caller-path: 3.0.0
+      callsites: 3.1.0
     dev: false
     resolution:
-      integrity: sha512-dwdtXA1l0587gupeJmyLFYl9gCQK78n1FU27Bt33hDHhiXJQvBkqxE97pZGZnuQn4UcNWFad6rAe0FJJjlNgtQ==
+      integrity: sha512-s4DnLejD7jj0iynRbzMCOqraSGDoZQgkNjX2phhSTLTtEhzlrwNISpjOxIVM1pLp3CwSNL1gQaZnlMgl6gmEpg==
   /shebang-command/1.2.0:
     dependencies:
       shebang-regex: 1.0.0
@@ -4948,7 +4932,7 @@ specifiers:
   recrawl-sync: ^2.0.2
   saxon: ^0.2.0
   semver: ^6.3.0
-  shared-log: ^1.2.3
+  shared-log: ^1.2.4
   shell-quote: ^1.7.2
   slurm: ^0.5.10
   strip-ansi: ^6.0.0

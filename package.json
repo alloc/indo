@@ -36,7 +36,7 @@
     "recrawl-sync": "^2.0.2",
     "saxon": "^0.2.0",
     "semver": "^6.3.0",
-    "shared-log": "^1.2.3",
+    "shared-log": "^1.2.4",
     "slurm": "^0.5.10"
   },
   "devDependencies": {
