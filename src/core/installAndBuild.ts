@@ -22,8 +22,6 @@ export async function installPackages(packages: Package[], force?: boolean) {
       await installer.map(packages, pkg => async () => {
         const deps = { ...pkg.dependencies, ...pkg.devDependencies }
         if (!Object.keys(deps).length) return
-        const nodeModulesPath = join(pkg.root, 'node_modules')
-        const needsInstall = force || !fs.isDir(nodeModulesPath)
 
         // Find dependencies in the same repository.
         const localDeps: Package[] = []
@@ -31,12 +29,7 @@ export async function installPackages(packages: Package[], force?: boolean) {
           if (!spec.startsWith('link:')) continue
           const depPath = resolve(pkg.root, spec.slice(5))
           if (depPath == pkg.root) continue
-          if (depPath.includes('node_modules')) {
-            const dest = join(nodeModulesPath, name)
-            fs.remove(dest, true)
-            fs.mkdir(dirname(dest))
-            fs.link(dest, depPath)
-          } else {
+          if (!depPath.includes('node_modules')) {
             const dep = loadPackage(join(depPath, 'package.json'))
             dep && localDeps.push(dep)
           }
@@ -48,7 +41,8 @@ export async function installPackages(packages: Package[], force?: boolean) {
           installed.set(pkg, localDeps)
         }
 
-        if (needsInstall) {
+        const nodeModulesPath = join(pkg.root, 'node_modules')
+        if (force || !fs.isDir(nodeModulesPath)) {
           const cpu = await requestCPU()
           const task = startTask(
             `Installing ${cyan(cwdRelative(pkg.root))} node_modules…`
