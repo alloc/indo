@@ -1,6 +1,6 @@
 import { isTest } from '@alloc/is-dev'
 import AsyncTaskGroup from 'async-task-group'
-import { dirname, join, resolve } from 'path'
+import { join, resolve } from 'path'
 import { cpuCount, requestCPU } from './cpu'
 import { fs } from './fs'
 import { cwdRelative, log, startTask, time, cyan, yellow } from './helpers'
@@ -25,7 +25,7 @@ export async function installPackages(packages: Package[], force?: boolean) {
 
         // Find dependencies in the same repository.
         const localDeps: Package[] = []
-        for (const [name, spec] of Object.entries(deps)) {
+        for (const spec of Object.values(deps)) {
           if (!spec.startsWith('link:')) continue
           const depPath = resolve(pkg.root, spec.slice(5))
           if (depPath == pkg.root) continue
