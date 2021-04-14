@@ -12,6 +12,7 @@ import {
   log,
   red,
   startTask,
+  success,
   time,
 } from '../core/helpers'
 
@@ -19,13 +20,18 @@ import { saveConfig, RootConfig, loadConfig, dotIndoId } from '../core/config'
 import { installAndBuild } from '../core/installAndBuild'
 import { linkPackages } from '../core/linkPackages'
 import { loadPackages } from '../core/loadPackages'
-import { loadPackage, PackageMap } from '../core/Package'
+import { loadPackage, Package, PackageMap } from '../core/Package'
 
 export default async (cfg: RootConfig) => {
   const args = slurm({
     force: { type: 'boolean' },
     f: 'force',
   })
+
+  const builds = new Set<Package>()
+  const installed = new Set<Package>()
+  log.events.on('build', (pkg: Package) => builds.add(pkg))
+  log.events.on('install', (pkg: Package) => installed.add(pkg))
 
   await time('clone missing repos', () => cloneMissingRepos(cfg))
 
@@ -43,6 +49,20 @@ export default async (cfg: RootConfig) => {
   if (!rootPkg || (!rootPkg.workspaces && !rootPkg.lerna)) {
     await installAndBuild(Object.values(packages))
   }
+
+  if (installed.size)
+    success(
+      'Installed node_modules of',
+      green(installed.size),
+      'package' + (installed.size == 1 ? '' : 's')
+    )
+
+  if (builds.size)
+    success(
+      'Built',
+      green(builds.size),
+      'package' + (builds.size == 1 ? '' : 's')
+    )
 
   linkPackages(cfg, packages, {
     force: args.force,
