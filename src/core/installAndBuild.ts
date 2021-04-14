@@ -27,13 +27,14 @@ export async function installPackages(packages: Package[], force?: boolean) {
 
         // Find dependencies in the same repository.
         const localDeps: Package[] = []
-        for (const spec of Object.values(deps)) {
+        for (const [name, spec] of Object.entries(deps)) {
           if (!spec.startsWith('link:')) continue
-          const dep = loadPackage(
-            resolve(pkg.root, spec.slice(5), 'package.json')
-          )
-          if (dep) {
-            localDeps.push(dep)
+          const depPath = resolve(pkg.root, spec.slice(5))
+          if (depPath != pkg.root) {
+            if (!depPath.includes('node_modules')) {
+              const dep = loadPackage(join(depPath, 'package.json'))
+              dep && localDeps.push(dep)
+            }
           }
         }
 
