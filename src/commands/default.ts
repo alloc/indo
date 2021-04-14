@@ -18,11 +18,7 @@ import {
 } from '../core/helpers'
 
 import { saveConfig, RootConfig, loadConfig, dotIndoId } from '../core/config'
-import {
-  buildPackages,
-  installAndBuild,
-  installPackages,
-} from '../core/installAndBuild'
+import { buildPackages, installPackages } from '../core/installAndBuild'
 import { linkPackages } from '../core/linkPackages'
 import { loadPackages } from '../core/loadPackages'
 import { loadPackage, Package, PackageMap } from '../core/Package'
@@ -39,31 +35,34 @@ export default async (cfg: RootConfig) => {
   log.events.on('build', () => buildCount++)
   log.events.on('install', () => installCount++)
 
+  const configs: RootConfig[] = [cfg]
+  log.events.on('config', (cfg: RootConfig) => configs.push(cfg))
+
+  // Clone repos and find nested indo configs.
   await time('clone missing repos', () => cloneMissingRepos(cfg))
 
-  const packages = time('load non-vendor packages into memory', () =>
-    loadPackages(cfg)
-  )
+  for (const cfg of configs.reverse()) {
+    const rootPkg = loadPackage(join(cfg.root, 'package.json'))
+    const packages = time('load non-vendor packages into memory', () =>
+      loadPackages(cfg)
+    )
 
-  await time('find unknown repos', () => findUnknownRepos(cfg, packages))
+    // Skip the install step if the root package uses Lerna or Yarn workspaces.
+    let installed: Map<Package, Package[]> | undefined
+    if (!rootPkg || (!rootPkg.workspaces && !rootPkg.lerna)) {
+      installed = await installPackages(Object.values(packages))
+    }
 
-  const rootPkg = time('load root package', () =>
-    loadPackage(join(cfg.root, 'package.json'))
-  )
+    // Link packages before the build step.
+    linkPackages(cfg, packages, {
+      force: args.force,
+    })
 
-  // Skip the install step if the root package uses Lerna or Yarn workspaces.
-  let installed: Map<Package, Package[]> | undefined
-  if (!rootPkg || (!rootPkg.workspaces && !rootPkg.lerna)) {
-    installed = await installPackages(Object.values(packages))
-  }
+    if (installed?.size) {
+      await buildPackages(installed)
+    }
 
-  // Link packages before the build step.
-  linkPackages(cfg, packages, {
-    force: args.force,
-  })
-
-  if (installed?.size) {
-    await buildPackages(installed)
+    await findUnknownRepos(cfg, packages)
   }
 
   if (installCount)
@@ -116,11 +115,8 @@ async function cloneMissingRepos(cfg: RootConfig) {
 async function recursiveClone(root: string) {
   const cfg = loadConfig(join(root, dotIndoId))
   if (cfg) {
+    log.events.emit('config', cfg)
     await cloneMissingRepos(cfg)
-  }
-  const pkg = loadPackage(join(root, 'package.json'))
-  if (pkg) {
-    await installAndBuild([pkg])
   }
 }
 
