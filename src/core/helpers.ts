@@ -4,6 +4,8 @@ import prompt, { Choice } from 'prompts'
 import * as os from 'os'
 import { relative, resolve } from 'path'
 import realpath from 'realpath-native'
+import { formatElapsed } from 'misty'
+import log from 'shared-log'
 
 export { default as log } from 'shared-log'
 export { gray, green, red, yellow, cyan } from 'kleur'
@@ -12,9 +14,9 @@ export { startTask } from 'misty/task'
 export { crawl, createMatcher } from 'recrawl-sync'
 
 export const time = <T>(label: string, action: () => T) => {
-  console.time(label)
+  const start = Date.now()
   const result = action()
-  console.timeEnd(label)
+  log.debug(label + ':', formatElapsed(start))
   return result
 }
 
