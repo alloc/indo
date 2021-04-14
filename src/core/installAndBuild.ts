@@ -1,28 +1,45 @@
 import { isTest } from '@alloc/is-dev'
 import AsyncTaskGroup from 'async-task-group'
-import { join } from 'path'
+import { join, resolve } from 'path'
 import { fs } from './fs'
 import { cwdRelative, log, startTask, time, cyan, red, yellow } from './helpers'
-import { Package } from './Package'
+import { loadPackage, Package } from './Package'
 
 export async function installAndBuild(packages: Package[]) {
   const installed = await installPackages(packages)
-  if (installed.length) {
+  if (installed.size) {
     return buildPackages(installed)
   }
 }
 
 export async function installPackages(packages: Package[], force?: boolean) {
-  const installed: Package[] = []
+  const installed = new Map<Package, Package[]>()
 
   if (packages.length)
     await time('install dependencies', async () => {
       const installer = new AsyncTaskGroup(3)
-      await installer.map(packages, async pkg => {
+      await installer.map(packages, pkg => async () => {
         const deps = { ...pkg.dependencies, ...pkg.devDependencies }
         if (!Object.keys(deps).length) {
           return
         }
+
+        // Find dependencies in the same repository.
+        const localDeps: Package[] = []
+        for (const spec of Object.values(deps)) {
+          if (!spec.startsWith('link:')) continue
+          const dep = loadPackage(
+            resolve(pkg.root, spec.slice(5), 'package.json')
+          )
+          if (dep) {
+            localDeps.push(dep)
+          }
+        }
+
+        // Install their dependencies first.
+        await installPackages(localDeps)
+        installed.set(pkg, localDeps)
+
         const nodeModulesPath = join(pkg.root, 'node_modules')
         if (force || !fs.isDir(nodeModulesPath)) {
           const task = startTask(
@@ -31,7 +48,6 @@ export async function installPackages(packages: Package[], force?: boolean) {
           const npm = pkg.manager
           try {
             await npm.install()
-            installed.push(pkg)
             task.finish()
             log.events.emit('install', pkg)
           } catch (e) {
@@ -49,15 +65,32 @@ export async function installPackages(packages: Package[], force?: boolean) {
   return installed
 }
 
-export const buildPackages = (packages: Package[]) =>
+export const buildPackages = (packages: Map<Package, Package[]>) =>
   time('build packages', async () => {
+    const built = new Set<Package>()
+    const builds = new AsyncTaskGroup(3, async (pkg: Package) => {
+      let shouldBuild = true
+      for (const dep of packages.get(pkg) || []) {
+        if (built.has(dep)) continue
+        shouldBuild = false
+        if (!builds.queue.includes(dep)) {
+          builds.push(dep)
+        }
+      }
 
-    const builder = new AsyncTaskGroup(3)
-    await builder.map(packages, async pkg => {
-      const npm = pkg.manager
+      if (shouldBuild) {
+        await buildPackage(pkg)
+        built.add(pkg)
+      } else {
+        builds.push(pkg)
+      }
+    })
+
+    async function buildPackage(pkg: Package) {
       if (packageBuildsOnInstall(pkg)) {
         return // Already built.
       }
+      const npm = pkg.manager
       const promise = npm.run('build')
       if (promise) {
         const task = startTask(`Building ${cyan(cwdRelative(pkg.root))}…`)
@@ -74,8 +107,9 @@ export const buildPackages = (packages: Package[]) =>
           log.error(e.message)
         }
       }
-    })
+    }
 
+    await builds
   })
 
 /**

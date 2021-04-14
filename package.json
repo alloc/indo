@@ -23,7 +23,7 @@
     "@alloc/is-dev": "^1.2.2",
     "@cush/exec": "^1.7.1",
     "@cush/shell": "^1.0.0",
-    "async-task-group": "^1.3.2",
+    "async-task-group": "^1.3.3",
     "bocks": "^1.0.0",
     "dequals": "^1.0.0",
     "find-dependency": "^1.1.0",
