@@ -42,7 +42,6 @@ export async function installPackages(packages: Package[], force?: boolean) {
 
         // Install their dependencies first.
         await installPackages(localDeps)
-        installed.set(pkg, localDeps)
 
         const nodeModulesPath = join(pkg.root, 'node_modules')
         if (force || !fs.isDir(nodeModulesPath)) {
@@ -53,6 +52,7 @@ export async function installPackages(packages: Package[], force?: boolean) {
           const npm = pkg.manager
           try {
             await npm.install()
+            installed.set(pkg, localDeps)
             task.finish()
             log.debug('install completed: ' + pkg.root)
             log.events.emit('install', pkg)
