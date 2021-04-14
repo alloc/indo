@@ -30,6 +30,7 @@
     "glob-regex": "^0.3.2",
     "kleur": "^4.1.4",
     "misty": "^1.3.1",
+    "physical-cpu-count": "^2.0.0",
     "prompts": "^2.4.1",
     "realpath-native": "^1.1.0",
     "recrawl-sync": "^2.0.2",
@@ -41,6 +42,7 @@
   "devDependencies": {
     "@types/jest": "^26.0.22",
     "@types/node": "^12.11.1",
+    "@types/physical-cpu-count": "^2.0.0",
     "@types/prompts": "^2.0.10",
     "@types/semver": "^6.0.2",
     "@types/shell-quote": "^1.7.0",

@@ -1,6 +1,7 @@
 import { isTest } from '@alloc/is-dev'
 import AsyncTaskGroup from 'async-task-group'
 import { join, resolve } from 'path'
+import { cpuCount, requestCPU } from './cpu'
 import { fs } from './fs'
 import { cwdRelative, log, startTask, time, cyan, red, yellow } from './helpers'
 import { loadPackage, Package } from './Package'
@@ -17,7 +18,7 @@ export async function installPackages(packages: Package[], force?: boolean) {
 
   if (packages.length)
     await time('install dependencies', async () => {
-      const installer = new AsyncTaskGroup(3)
+      const installer = new AsyncTaskGroup(cpuCount)
       await installer.map(packages, pkg => async () => {
         const deps = { ...pkg.dependencies, ...pkg.devDependencies }
         if (!Object.keys(deps).length) {
@@ -42,6 +43,7 @@ export async function installPackages(packages: Package[], force?: boolean) {
 
         const nodeModulesPath = join(pkg.root, 'node_modules')
         if (force || !fs.isDir(nodeModulesPath)) {
+          const cpu = await requestCPU()
           const task = startTask(
             `Installing ${cyan(cwdRelative(pkg.root))} node_modules…`
           )
@@ -57,6 +59,8 @@ export async function installPackages(packages: Package[], force?: boolean) {
               throw e
             }
             log.error(e.message)
+          } finally {
+            cpu.release()
           }
         }
       })
@@ -68,7 +72,7 @@ export async function installPackages(packages: Package[], force?: boolean) {
 export const buildPackages = (packages: Map<Package, Package[]>) =>
   time('build packages', async () => {
     const built = new Set<Package>()
-    const builds = new AsyncTaskGroup(3, async (pkg: Package) => {
+    const builds = new AsyncTaskGroup(cpuCount, async (pkg: Package) => {
       let shouldBuild = true
       for (const dep of packages.get(pkg) || []) {
         if (built.has(dep)) continue
@@ -90,22 +94,27 @@ export const buildPackages = (packages: Map<Package, Package[]>) =>
       if (packageBuildsOnInstall(pkg)) {
         return // Already built.
       }
-      const npm = pkg.manager
-      const promise = npm.run('build')
-      if (promise) {
-        const task = startTask(`Building ${cyan(cwdRelative(pkg.root))}…`)
-        try {
-          await promise
-          task.finish()
-          log.events.emit('build', pkg)
-        } catch (e) {
-          task.finish()
-          log(red('⨯'), 'Build script failed:', yellow(cwdRelative(pkg.root)))
-          if (isTest) {
-            throw e
+      const cpu = await requestCPU()
+      try {
+        const npm = pkg.manager
+        const promise = npm.run('build')
+        if (promise) {
+          const task = startTask(`Building ${cyan(cwdRelative(pkg.root))}…`)
+          try {
+            await promise
+            task.finish()
+            log.events.emit('build', pkg)
+          } catch (e) {
+            task.finish()
+            log(red('⨯'), 'Build script failed:', yellow(cwdRelative(pkg.root)))
+            if (isTest) {
+              throw e
+            }
+            log.error(e.message)
           }
-          log.error(e.message)
         }
+      } finally {
+        cpu.release()
       }
     }
 

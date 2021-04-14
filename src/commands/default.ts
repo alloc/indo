@@ -21,6 +21,7 @@ import { installAndBuild } from '../core/installAndBuild'
 import { linkPackages } from '../core/linkPackages'
 import { loadPackages } from '../core/loadPackages'
 import { loadPackage, Package, PackageMap } from '../core/Package'
+import { cpuCount, requestCPU } from '../core/cpu'
 
 export default async (cfg: RootConfig) => {
   const args = slurm({
@@ -72,10 +73,11 @@ export default async (cfg: RootConfig) => {
 async function cloneMissingRepos(cfg: RootConfig) {
   const repos = Object.entries(cfg.repos)
   if (repos.length) {
-    const cloner = new AsyncTaskGroup(3)
+    const cloner = new AsyncTaskGroup(cpuCount)
     await cloner.map(repos, ([path, repo]) => async () => {
       const dest = join(cfg.root, path)
       if (!fs.exists(dest)) {
+        const cpu = await requestCPU()
         const task = startTask('Cloning into ' + cyan(cwdRelative(dest)))
         try {
           await git.clone(cfg.root, repo, path)
@@ -90,6 +92,8 @@ async function cloneMissingRepos(cfg: RootConfig) {
           log.error('Failed to clone %s into %s', red(repo.url), cyan(path))
           if (isTest) throw err
           return log.error(err)
+        } finally {
+          cpu.release()
         }
       }
       await recursiveClone(dest)
