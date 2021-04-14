@@ -23,6 +23,7 @@ export async function installPackages(packages: Package[], force?: boolean) {
         const deps = { ...pkg.dependencies, ...pkg.devDependencies }
         if (!Object.keys(deps).length) return
         const nodeModulesPath = join(pkg.root, 'node_modules')
+        const needsInstall = force || !fs.isDir(nodeModulesPath)
 
         // Find dependencies in the same repository.
         const localDeps: Package[] = []
@@ -47,7 +48,7 @@ export async function installPackages(packages: Package[], force?: boolean) {
           installed.set(pkg, localDeps)
         }
 
-        if (force || !fs.isDir(nodeModulesPath)) {
+        if (needsInstall) {
           const cpu = await requestCPU()
           const task = startTask(
             `Installing ${cyan(cwdRelative(pkg.root))} node_modules…`
