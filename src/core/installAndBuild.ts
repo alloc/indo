@@ -31,7 +31,9 @@ export async function installPackages(packages: Package[], force?: boolean) {
           if (!spec.startsWith('link:')) continue
           const depPath = resolve(pkg.root, spec.slice(5))
           if (depPath != pkg.root) {
-            if (!depPath.includes('node_modules')) {
+            if (depPath.includes('node_modules')) {
+              fs.link(join(pkg.root, 'node_modules', name), depPath)
+            } else {
               const dep = loadPackage(join(depPath, 'package.json'))
               dep && localDeps.push(dep)
             }
