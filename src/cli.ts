@@ -47,11 +47,16 @@ export default (async () => {
   }
   if (!isTest) {
     process.env.FORCE_COLOR = '1'
+
     log.on('error', args => {
-      const fmt =
-        typeof args[0] == 'string'
-          ? args.splice(0, 1)[0].replace(/(^|\n)/g, red('$1[!] '))
-          : red('[!]')
+      let fmt = typeof args[0] == 'string' ? args.splice(0, 1)[0] : ''
+
+      // Add the prefix to lines without it.
+      const prefix = red('[!]')
+      fmt = fmt.replace(
+        fmt.startsWith(prefix) ? /(\n)/g : /(^|\n)/g,
+        `$1${prefix} `
+      )
 
       console.error(fmt, ...args)
     })
@@ -72,7 +77,7 @@ export default (async () => {
     if (isTest) {
       throw err
     }
-    slurm.error(err)
+    fatal(err)
   }
 })()
 
