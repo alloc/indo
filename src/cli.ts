@@ -48,8 +48,12 @@ export default (async () => {
   if (!isTest) {
     process.env.FORCE_COLOR = '1'
     log.on('error', args => {
-      const fmt = typeof args[0] == 'string' ? ' ' + args.splice(0, 1)[0] : ''
-      console.error(red('[!]') + fmt, ...args)
+      const fmt =
+        typeof args[0] == 'string'
+          ? args.splice(0, 1)[0].replace(/(^|\n)/g, red('$1[!] '))
+          : red('[!]')
+
+      console.error(fmt, ...args)
     })
   }
 
