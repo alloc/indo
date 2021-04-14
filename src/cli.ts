@@ -43,10 +43,7 @@ export default (async () => {
   slurm.error = fatal
 
   if (process.env.DEBUG) {
-    log.on('debug', console.debug)
-  } else {
-    // tslint:disable-next-line
-    console.time = console.timeEnd = () => {}
+    log.on('debug', args => console.debug(...args))
   }
   if (!isTest) {
     log.on('error', args => {
