@@ -65,6 +65,8 @@ export default async (cfg: RootConfig) => {
     await findUnknownRepos(cfg, packages)
   }
 
+  success('Local packages are linked!')
+
   if (installCount)
     success(
       yellow(installCount),

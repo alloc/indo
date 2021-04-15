@@ -1,7 +1,7 @@
 import slurm from 'slurm'
 import { RootConfig } from '../core/config'
 import { getNearestPackage } from '../core/getNearestPackage'
-import { fatal, log } from '../core/helpers'
+import { fatal, log, success } from '../core/helpers'
 import { linkPackages } from '../core/linkPackages'
 import { resetPackageCache } from '../core/Package'
 
@@ -39,4 +39,5 @@ export default async (cfg: RootConfig) => {
   log('')
   resetPackageCache()
   linkPackages(cfg)
+  success('Local packages are linked!')
 }

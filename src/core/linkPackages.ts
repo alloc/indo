@@ -6,7 +6,6 @@ import {
   isPathEqual,
   log,
   splitNameVersion,
-  success,
   time,
   cyan,
   gray,
@@ -134,8 +133,6 @@ export function linkPackages(
         }
       }
     }
-
-    success('Local packages are linked!')
   })
 }
 

@@ -13,6 +13,7 @@ import {
   log,
   splitNameVersion,
   startTask,
+  success,
   yellow,
 } from '../core/helpers'
 import { linkPackages } from '../core/linkPackages'
@@ -169,6 +170,7 @@ export default async (cfg: RootConfig) => {
     // Ensure the new dependencies are linked up.
     resetPackageCache()
     linkPackages(cfg)
+    success('Local packages are linked!')
   }
 }
 

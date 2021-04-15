@@ -82,6 +82,7 @@ export default async (cfg: RootConfig) => {
   }
 
   linkPackages(cfg)
+  success('Local packages are linked!')
 
   dir = relative(cfg.root, dir)
   cfg.repos[dir] = repo

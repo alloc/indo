@@ -149,4 +149,5 @@ async function linkGlobalPackage(cfg: RootConfig, opts: LinkOptions) {
   }
 
   linkPackages(cfg, packages)
+  success('Local packages are linked!')
 }
