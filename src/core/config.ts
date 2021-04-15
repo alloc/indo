@@ -1,7 +1,7 @@
 import isDeepEqual from 'dequals'
 import { dirname, join, resolve } from 'path'
 import { fs } from './fs'
-import { isHomeDir, time } from './helpers'
+import { isHomeDir } from './helpers'
 
 export interface RepoConfig {
   url: string
@@ -23,23 +23,29 @@ export interface RootConfig extends Config {
 /** The basename of an Indo config */
 export const dotIndoId = '.indo.json'
 
-export const findConfig = (root = process.cwd()) =>
-  time('find config', () => {
-    while (true) {
-      const configPath = join(root, dotIndoId)
-      if (fs.isFile(configPath)) {
-        return configPath
-      }
-      if (isHomeDir(root)) {
-        return null
-      }
-      root = dirname(root)
+export function findConfig(root = process.cwd()) {
+  while (true) {
+    const configPath = join(root, dotIndoId)
+    if (fs.isFile(configPath)) {
+      return configPath
     }
-  })
+    if (isHomeDir(root)) {
+      return null
+    }
+    root = dirname(root)
+  }
+}
 
-export function loadConfig(configPath = findConfig()) {
+const configCache: { [configPath: string]: RootConfig } = {}
+
+export function loadConfig(configPath = findConfig(), force?: boolean) {
   if (!configPath) return null
   configPath = resolve(configPath)
+
+  let config = configCache[configPath]
+  if (config && !force) {
+    return config
+  }
 
   let rawConfig: any
   try {
@@ -49,11 +55,10 @@ export function loadConfig(configPath = findConfig()) {
     throw err
   }
 
-  const config = createConfig(rawConfig)
-  return Object.defineProperties(config, {
-    path: { value: configPath },
-    root: { value: dirname(configPath) },
-  }) as RootConfig
+  config = createConfig(rawConfig) as RootConfig
+  config.root = dirname(configPath)
+  config.path = configPath
+  return config
 }
 
 export function createConfig(props?: Partial<Config>): Config {
