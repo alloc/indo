@@ -4,6 +4,9 @@ import { loadConfig, RootConfig } from './core/config'
 import { fatal, cyan, log, red } from './core/helpers'
 import { fs } from './core/fs'
 
+// Avoid leaking NODE_OPTIONS into other processes.
+process.env.NODE_OPTIONS = ''
+
 const helpArg = process.argv.find(
   arg => arg == 'help' || arg == '--help' || arg == '-h'
 )
