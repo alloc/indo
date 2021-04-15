@@ -18,6 +18,29 @@ import { loadPackages } from './loadPackages'
 import { loadVendors } from './loadVendors'
 import { Package, StringMap } from './Package'
 
+export interface VersionError {
+  /** The dependent package */
+  pkg: Package
+  /** The desired version */
+  version: string
+  /** The unfit dependency */
+  dep: Package
+}
+
+export function collectVersionErrors() {
+  const errors: VersionError[] = []
+  log.events.on('version-error', (err: VersionError) => {
+    errors.push(err)
+    err.toString = () =>
+      `Local package ${green(cwdRelative(err.dep.root))} (v${
+        err.dep.version
+      }) does not satisfy ${yellow(err.version)} required by ${green(
+        cwdRelative(err.pkg.root)
+      )}`
+  })
+  return errors
+}
+
 export function linkPackages(
   cfg: RootConfig,
   packages = loadPackages(cfg),
@@ -57,15 +80,7 @@ export function linkPackages(
             /^https?:\/\//.test(version)
 
           if (!valid) {
-            log.warn(
-              'Local package',
-              green(cwdRelative(dep.root)),
-              `(v${dep.version})`,
-              'does not satisfy',
-              yellow(version),
-              'required by',
-              green(cwdRelative(pkg.root))
-            )
+            log.events.emit('version-error', { dep, version, pkg })
             continue
           }
 

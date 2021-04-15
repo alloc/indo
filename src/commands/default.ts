@@ -19,7 +19,7 @@ import {
 
 import { saveConfig, RootConfig, loadConfig, dotIndoId } from '../core/config'
 import { buildPackages, installPackages } from '../core/installAndBuild'
-import { linkPackages } from '../core/linkPackages'
+import { collectVersionErrors, linkPackages } from '../core/linkPackages'
 import { loadPackages } from '../core/loadPackages'
 import { loadPackage, Package, PackageMap } from '../core/Package'
 import { cpuCount, requestCPU } from '../core/cpu'
@@ -40,6 +40,8 @@ export default async (cfg: RootConfig) => {
 
   // Clone repos and find nested indo configs.
   await time('clone missing repos', () => cloneMissingRepos(cfg))
+
+  const versionErrors = collectVersionErrors()
 
   for (const cfg of configs.reverse()) {
     const rootPkg = loadPackage(join(cfg.root, 'package.json'))
@@ -68,6 +70,10 @@ export default async (cfg: RootConfig) => {
 
     await findUnknownRepos(cfg, packages)
   }
+
+  versionErrors.forEach(err => {
+    log.error(err.toString())
+  })
 
   success('Local packages are linked!')
 
