@@ -18,6 +18,7 @@ interface Config {
 export interface RootConfig extends Config {
   path: string
   root: string
+  parent?: RootConfig
 }
 
 /** The basename of an Indo config */
@@ -58,7 +59,20 @@ export function loadConfig(configPath = findConfig(), force?: boolean) {
   config = createConfig(rawConfig) as RootConfig
   config.root = dirname(configPath)
   config.path = configPath
+  config.parent = getParentConfig(config)
+
+  configCache[configPath] = config
   return config
+}
+
+function getParentConfig({ root }: RootConfig) {
+  while (!isHomeDir((root = dirname(root)))) {
+    const configPath = join(root, dotIndoId)
+    const config = configCache[configPath]
+    if (config) {
+      return config
+    }
+  }
 }
 
 export function createConfig(props?: Partial<Config>): Config {

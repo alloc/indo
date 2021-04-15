@@ -1,4 +1,4 @@
-import { dirname, join, relative } from 'path'
+import { dirname, join, relative, resolve } from 'path'
 import semver from 'semver'
 import { fs } from './fs'
 import {
@@ -16,7 +16,7 @@ import {
 import { RootConfig } from './config'
 import { loadPackages } from './loadPackages'
 import { loadVendors } from './loadVendors'
-import { Package, StringMap } from './Package'
+import { getPackage, Package, StringMap } from './Package'
 
 export interface VersionError {
   /** The dependent package */
@@ -47,6 +47,10 @@ export function linkPackages(
   opts: { force?: boolean } = {}
 ) {
   const vendor = time('load vendors', () => loadVendors(cfg))
+  log.debug(
+    'vendor packages:',
+    Object.values(vendor).map(pkg => cwdRelative(pkg.root))
+  )
 
   time('link packages', () => {
     for (const pkg of Object.values(packages)) {
@@ -61,7 +65,15 @@ export function linkPackages(
 
       const nodeModulesPath = join(pkg.root, 'node_modules')
       for (let [alias, version] of Object.entries(deps)) {
-        if (/^(link|file):/.test(version)) continue
+        if (version.startsWith('file:')) continue
+        if (version.startsWith('link:')) {
+          if (!version.includes('node_modules')) {
+            const depPath = resolve(pkg.root, version.slice(5))
+            const dep = getPackage(join(depPath, 'package.json'))
+            dep && pkg.localDependencies.add(dep)
+          }
+          continue
+        }
 
         let name = alias
         if (version.startsWith('npm:')) {
@@ -71,7 +83,9 @@ export function linkPackages(
           name = cfg.alias[name]
         }
 
-        const dep = packages[name] || vendor[name]
+        // Vendor packages take precedence, since they might
+        // be inherited from higher roots.
+        const dep = vendor[name] || packages[name]
         if (dep) {
           const valid =
             !version ||
@@ -83,6 +97,8 @@ export function linkPackages(
             log.events.emit('version-error', { dep, version, pkg })
             continue
           }
+
+          pkg.localDependencies.add(dep)
 
           // If the dependencies were installed with pnpm, we need to
           // update the ".pnpm" cache so "peerDependencies" are linked

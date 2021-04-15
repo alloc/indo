@@ -20,6 +20,9 @@ export class Package {
   devDependencies?: StringMap
   peerDependencies?: StringMap
 
+  /** Local packages used by this one */
+  localDependencies = new Set<Package>()
+
   /** The scripts available to `npm run` */
   scripts?: StringMap
 
@@ -98,6 +101,11 @@ export class Package {
     fs.rename(this.root, root)
     this.path = join(root, 'package.json')
   }
+}
+
+/** Get a cached package by its `package.json` path */
+export function getPackage(pkgPath: string) {
+  return packageCache[pkgPath]
 }
 
 /** Always pass an absolute path to `package.json` */

@@ -6,10 +6,13 @@ import { fs } from './fs'
 import { GitIgnore } from './gitignore'
 import { loadPackage, PackageMap } from './Package'
 
-export function loadPackages(cfg: RootConfig, packages: PackageMap = {}) {
+export function loadPackages(cfg: RootConfig) {
+  const packages: PackageMap = {}
   const addPackage = (pkgPath: string) => {
     const pkg = loadPackage(join(cfg.root, pkgPath))!
     if (pkg.name && pkg.version) {
+      // Packages from the root repository take precedence
+      // over packages from cloned repos.
       packages[pkg.name] ??= pkg
     }
   }
@@ -18,36 +21,24 @@ export function loadPackages(cfg: RootConfig, packages: PackageMap = {}) {
   findPackages(cfg.root, cfg.ignore).forEach(addPackage)
 
   const vendorRE = globRegex(cfg.vendor)
-  const nestedConfigs: RootConfig[] = []
 
   // Find packages in nested repostories.
   Object.keys(cfg.repos).forEach(repoDir => {
     const absRepoDir = join(cfg.root, repoDir)
 
-    let ignoreRE = vendorRE
-    if (vendorRE.test(repoDir)) {
-      // Linked repos are skipped.
-      if (fs.isLink(absRepoDir)) return
-      // Nested configs are recursively handled.
-      const cfg = loadConfig(join(absRepoDir, dotIndoId))
-      if (cfg) {
-        return nestedConfigs.push(cfg)
-      }
-      // Cloned repos are crawled even if considered a vendor.
-      ignoreRE = /^$/
-    }
+    // Nested roots are skipped.
+    if (loadConfig(join(absRepoDir, dotIndoId))) return
+    // Linked repos are skipped.
+    if (fs.isLink(absRepoDir)) return
 
     findPackages(absRepoDir, cfg.ignore).forEach(pkgPath => {
-      pkgPath = join(repoDir, pkgPath)
-      if (!ignoreRE.test(pkgPath)) {
-        addPackage(pkgPath)
+      // The `repoDir` is intentionally not tested,
+      // so cloned repos are always crawled for packages.
+      if (!vendorRE.test(pkgPath)) {
+        addPackage(join(repoDir, pkgPath))
       }
     })
   })
-
-  // Nested configs don't inherit our `ignore` array.
-  // Duplicate package names are skipped.
-  nestedConfigs.forEach(cfg => loadPackages(cfg, packages))
 
   return packages
 }

@@ -1,7 +1,7 @@
 import { join } from 'path'
 import { RootConfig } from './config'
 import { fs } from './fs'
-import { installPackages } from './installAndBuild'
+import { installPackages } from './installPackages'
 import { loadPackages } from './loadPackages'
 import { Package } from './Package'
 

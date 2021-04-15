@@ -18,11 +18,12 @@ import {
 } from '../core/helpers'
 
 import { saveConfig, RootConfig, loadConfig, dotIndoId } from '../core/config'
-import { buildPackages, installPackages } from '../core/installAndBuild'
 import { collectVersionErrors, linkPackages } from '../core/linkPackages'
 import { loadPackages } from '../core/loadPackages'
 import { loadPackage, Package, PackageMap } from '../core/Package'
 import { cpuCount, requestCPU } from '../core/cpu'
+import { installPackages } from '../core/installPackages'
+import { buildPackages } from '../core/buildPackages'
 
 export default async (cfg: RootConfig) => {
   const args = slurm({
@@ -43,7 +44,14 @@ export default async (cfg: RootConfig) => {
 
   const versionErrors = collectVersionErrors()
 
-  for (const cfg of configs.reverse()) {
+  const installed = new Set<Package>()
+  const installer = new AsyncTaskGroup()
+
+  // If all packages have their node_modules, this promise will
+  // ensure the installer does not stall the process.
+  installer.push(new Promise(done => setImmediate(done)))
+
+  const linking = configs.reverse().map(async cfg => {
     const rootPkg = loadPackage(join(cfg.root, 'package.json'))
     const packages = time('find packages', () => loadPackages(cfg))
 
@@ -54,27 +62,35 @@ export default async (cfg: RootConfig) => {
     )
 
     // Skip the install step if the root package uses Lerna or Yarn workspaces.
-    let installed: Map<Package, Package[]> | undefined
-    if (!rootPkg || (!rootPkg.workspaces && !rootPkg.lerna)) {
-      installed = await installPackages(Object.values(packages))
-    }
+    if (!rootPkg || (!rootPkg.workspaces && !rootPkg.lerna))
+      installer.push(async () => {
+        for (const pkg of await installPackages(Object.values(packages)))
+          installed.add(pkg)
+      })
+
+    // Wait for dependencies before linking.
+    await installer
+
+    log.debug('link packages:', yellow(cwdRelative(cfg.root)))
 
     // Link packages before the build step.
     linkPackages(cfg, packages, {
       force: args.force,
     })
 
-    if (installed?.size) {
-      await buildPackages(installed)
-    }
-
     await findUnknownRepos(cfg, packages)
+  })
+
+  await Promise.all(linking)
+  if (installed.size) {
+    await buildPackages(Array.from(installed))
   }
 
   versionErrors.forEach(err => {
     log.error(err.toString())
   })
 
+  log('')
   success('Local packages are linked!')
 
   if (installCount)

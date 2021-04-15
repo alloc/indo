@@ -6,12 +6,12 @@ import { loadPackage, PackageMap } from './Package'
 
 const NODE_MODULES = /\/node_modules$/
 
-export function loadVendors(cfg: RootConfig) {
-  const packages: PackageMap = {}
+export function loadVendors(cfg: RootConfig, packages: PackageMap = {}) {
   const addPackage = (dir: string) => {
     const pkgPath = join(cfg.root, dir, 'package.json')
     const pkg = loadPackage(pkgPath)
     if (pkg && pkg.name && pkg.version) {
+      // Packages from higher roots take precedence.
       packages[pkg.name] = pkg
     }
     return pkg
@@ -55,6 +55,10 @@ export function loadVendors(cfg: RootConfig) {
       })
     }
   })
+
+  if (cfg.parent) {
+    loadVendors(cfg.parent, packages)
+  }
 
   return packages
 }
