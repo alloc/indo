@@ -5,6 +5,7 @@ import * as os from 'os'
 import { relative, resolve } from 'path'
 import realpath from 'realpath-native'
 import { formatElapsed } from 'misty'
+import { gray } from 'kleur'
 import log from 'shared-log'
 
 export { default as log } from 'shared-log'
@@ -18,10 +19,10 @@ export const time = <T>(label: string, action: () => T) => {
   const result = action()
   if (result instanceof Promise) {
     result.finally(() => {
-      log.debug(label + ':', formatElapsed(start))
+      log.debug(gray(label + ': ' + formatElapsed(start)))
     })
   } else {
-    log.debug(label + ':', formatElapsed(start))
+    log.debug(gray(label + ': ' + formatElapsed(start)))
   }
   return result
 }

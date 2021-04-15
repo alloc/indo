@@ -43,8 +43,12 @@ export default async (cfg: RootConfig) => {
 
   for (const cfg of configs.reverse()) {
     const rootPkg = loadPackage(join(cfg.root, 'package.json'))
-    const packages = time('load non-vendor packages into memory', () =>
-      loadPackages(cfg)
+    const packages = time('find packages', () => loadPackages(cfg))
+
+    log.debug('config found:', yellow(cwdRelative(cfg.path)))
+    log.debug(
+      'packages found:',
+      Object.values(packages).map(pkg => cwdRelative(pkg.root))
     )
 
     // Skip the install step if the root package uses Lerna or Yarn workspaces.

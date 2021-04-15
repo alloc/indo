@@ -52,7 +52,7 @@ export async function installPackages(packages: Package[], force?: boolean) {
             await npm.install()
             installed.set(pkg, localDeps)
             task.finish()
-            log.debug('Install completed:', cwdRelative(pkg.root))
+            log.debug('install completed:', yellow(cwdRelative(pkg.root)))
             log.events.emit('install', pkg)
           } catch (e) {
             task.finish()
@@ -111,7 +111,7 @@ export async function buildPackage(pkg: Package) {
       try {
         await promise
         task.finish()
-        log.debug('Build completed:', cwdRelative(pkg.root))
+        log.debug('build completed:', yellow(cwdRelative(pkg.root)))
         log.events.emit('build', pkg)
       } catch (e) {
         task.finish()
