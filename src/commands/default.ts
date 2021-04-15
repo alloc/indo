@@ -31,6 +31,10 @@ export default async (cfg: RootConfig) => {
     f: 'force',
   })
 
+  return indo(cfg, args.force)
+}
+
+export async function indo(cfg: RootConfig, force?: boolean) {
   let buildCount = 0
   let installCount = 0
   log.events.on('build', () => buildCount++)
@@ -74,9 +78,7 @@ export default async (cfg: RootConfig) => {
     log.debug('link packages:', yellow(cwdRelative(cfg.root)))
 
     // Link packages before the build step.
-    linkPackages(cfg, packages, {
-      force: args.force,
-    })
+    linkPackages(cfg, packages, { force })
 
     await findUnknownRepos(cfg, packages)
   })

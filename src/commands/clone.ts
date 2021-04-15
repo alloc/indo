@@ -15,10 +15,9 @@ import {
   success,
 } from '../core/helpers'
 
-import { saveConfig, RootConfig } from '../core/config'
-import { installAndBuild } from '../core/installAndBuild'
-import { linkPackages } from '../core/linkPackages'
+import { saveConfig, RootConfig, loadConfig, dotIndoId } from '../core/config'
 import { loadPackage } from '../core/Package'
+import { indo } from './default'
 
 export default async (cfg: RootConfig) => {
   const args = slurm({
@@ -77,16 +76,12 @@ export default async (cfg: RootConfig) => {
     gray(url.replace(/^.+:\/\//, ''))
   )
 
-  if (pkg) {
-    await installAndBuild([pkg])
-  }
-
-  linkPackages(cfg)
-  success('Local packages are linked!')
+  const nestedConfig = loadConfig(join(dir, dotIndoId))
+  await indo(nestedConfig || cfg)
 
   dir = relative(cfg.root, dir)
   cfg.repos[dir] = repo
   saveConfig(cfg)
 
-  success('Updated "repos" in', cyan('.indo.json'))
+  success('Updated "repos" in', cyan(cwdRelative(cfg.path)))
 }
