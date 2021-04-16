@@ -18,6 +18,7 @@
   "scripts": {
     "build": "tsc -p .",
     "prepare": "npm run build",
+    "prepublishOnly": "rm -rf dist",
     "test": "jest"
   },
   "dependencies": {
