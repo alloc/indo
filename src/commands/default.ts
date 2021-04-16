@@ -104,7 +104,7 @@ export async function indo(cfg: RootConfig, force?: boolean) {
   if (buildCount)
     success(
       yellow(buildCount),
-      `package${buildCount == 1 ? '' : 's'} were built`
+      `package${buildCount == 1 ? ' was' : 's were'} built`
     )
 }
 
