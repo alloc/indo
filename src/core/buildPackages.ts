@@ -12,17 +12,24 @@ import { Package } from './Package'
 export const buildPackages = (packages: Package[]) =>
   time('build packages', async () => {
     const built = new Set<Package>()
+    const failed = new Set<Package>()
     const builds = new AsyncTaskGroup(cpuCount, async (pkg: Package) => {
       let shouldBuild = true
       for (const dep of pkg.localDependencies) {
-        if (built.has(dep) || !builds.queue.includes(dep)) continue
+        if (built.has(dep) || !packages.includes(dep)) continue
+        if (failed.has(dep)) return
         shouldBuild = false
       }
 
       if (shouldBuild) {
-        await buildPackage(pkg)
-        built.add(pkg)
+        if (await buildPackage(pkg)) {
+          built.add(pkg)
+        } else {
+          failed.add(pkg)
+        }
       } else {
+        // Avoid infinite recursion.
+        await new Promise(done => setTimeout(done, 10))
         builds.push(pkg)
       }
     })
@@ -35,32 +42,35 @@ export const buildPackages = (packages: Package[]) =>
 
 export async function buildPackage(pkg: Package) {
   if (packageBuildsOnInstall(pkg)) {
-    return // Already built.
+    return true // Already built.
   }
   const cpu = await requestCPU()
   try {
     const npm = pkg.manager
     const promise = npm.run('build')
-    if (promise) {
-      log.debug('build start:', yellow(cwdRelative(pkg.root)))
-      const task = startTask(`Building ${cyan(cwdRelative(pkg.root))}…`)
-      try {
-        await promise
-        task.finish()
-        log.debug('build completed:', yellow(cwdRelative(pkg.root)))
-        log.events.emit('build', pkg)
-      } catch (e) {
-        task.finish()
-        log.error('Build script failed:', yellow(cwdRelative(pkg.root)))
-        if (isTest) {
-          throw e
-        }
-        log.error(e.message)
-      }
+    if (!promise) {
+      return true // No build script.
     }
+    log.debug('build start:', yellow(cwdRelative(pkg.root)))
+    const task = startTask(`Building ${cyan(cwdRelative(pkg.root))}…`)
+    try {
+      await promise
+    } catch (e) {
+      task.finish()
+      log.error('Build script failed:', yellow(cwdRelative(pkg.root)))
+      if (isTest) {
+        throw e
+      }
+      log.error(e.message)
+      return false
+    }
+    task.finish()
+    log.debug('build completed:', yellow(cwdRelative(pkg.root)))
   } finally {
     cpu.release()
   }
+  log.events.emit('build', pkg)
+  return true
 }
 
 /**
