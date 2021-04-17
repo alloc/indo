@@ -8,12 +8,10 @@ import {
   cyan,
   fatal,
   getRelativeId,
-  gray,
   green,
   isDescendant,
-  log,
   success,
-  yellow,
+  warn,
 } from '../core/helpers'
 import { registry } from '../core/registry'
 
@@ -33,18 +31,13 @@ export default async (cfg: RootConfig | null) => {
         try {
           target = fs.follow(path)
         } catch {
-          log.warn('Path named', yellow(path), 'does not exist')
+          warn(`Path named "${path}" does not exist`)
           return false
         }
         if (isDescendant(target, registry.packageDir)) {
           return true
         }
-        log.warn(
-          'Path named',
-          yellow(path),
-          'exists but was not added with',
-          cyan('indo link')
-        )
+        warn(`Path named "${path}" exists but was not added with \`indo link\``)
         return false
       })
 
@@ -60,7 +53,7 @@ export default async (cfg: RootConfig | null) => {
         fatal('Global package', green(pkg.name), 'does not exist')
       }
       if (root !== pkg.root) {
-        log.warn('Global package', green(pkg.name), 'is linked to', gray(root))
+        warn(`Global package "${pkg.name}" is linked to "${root}"`)
         const shouldRemove = await confirm('Remove it anyway?')
         if (!shouldRemove) {
           return

@@ -2,7 +2,7 @@ import findDependency from 'find-dependency'
 import { join } from 'path'
 import realpath from 'realpath-native'
 import { fs } from './fs'
-import { log } from './helpers'
+import { warn } from './helpers'
 import { Package } from './Package'
 
 export type LernaConfig = {
@@ -26,8 +26,8 @@ export function loadLernaConfig(pkg: Package) {
       return project.config
     }
 
-    log.warn('Failed to find "@lerna/project" from %O', lernaPath)
+    warn(`Failed to find "@lerna/project" from "${lernaPath}"`)
   } else {
-    log.warn('Failed to find "lerna" from %O', pkg.root)
+    warn(`Failed to find "lerna" from "${pkg.root}"`)
   }
 }

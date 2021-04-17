@@ -1,7 +1,7 @@
 import exec from '@cush/exec'
 import { dirname, join } from 'path'
 import { fs } from './fs'
-import { fatal, log } from './helpers'
+import { cwdRelative, fatal, warn } from './helpers'
 import { hasLernaConfig, LernaConfig, loadLernaConfig } from './lerna'
 import { getPackageManager, PackageManager } from './npm'
 
@@ -43,7 +43,7 @@ export class Package {
     try {
       Object.assign(this, fs.readJson(path))
     } catch (err) {
-      log.warn('Failed to read:', path)
+      warn(`Failed to read: ${cwdRelative(path)}`)
       fatal(err)
     }
     if (hasLernaConfig(this)) {

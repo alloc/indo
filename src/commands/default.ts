@@ -129,7 +129,9 @@ async function cloneMissingRepos(cfg: RootConfig) {
         } catch (err) {
           task.finish()
           if (/ not found/.test(err.message)) {
-            return warn(`Repository not found or access denied: ${repo.url}`)
+            return warn(
+              `Repository not found or access denied:\n    ${repo.url}`
+            )
           }
           log.error('Failed to clone %s into %s', red(repo.url), cyan(path))
           if (isTest) throw err
@@ -164,7 +166,7 @@ async function findUnknownRepos(cfg: RootConfig, packages: PackageMap) {
     }
     const cwd = join(cfg.root, rootId)
     if (fs.isDir(join(cwd, '.git'))) {
-      log.warn('Found an untracked repository:', cyan(rootId))
+      warn(`Found an untracked repository: ${rootId}`)
       const answer = await choose('Pick an action:', [
         { title: 'Add to repos', value: 'repos' },
         { title: 'Add to vendor', value: 'vendor' },
