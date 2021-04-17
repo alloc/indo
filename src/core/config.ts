@@ -2,7 +2,7 @@ import isDeepEqual from 'dequals'
 import os from 'os'
 import { dirname, join, relative, resolve } from 'path'
 import { fs } from './fs'
-import { isHomeDir } from './helpers'
+import { isDescendant, isHomeDir } from './helpers'
 
 export interface RepoConfig {
   url: string
@@ -61,6 +61,7 @@ export function loadConfig(configPath = findConfig(), force?: boolean) {
   config.root = dirname(configPath)
   config.path = configPath
   config.parent = getParentConfig(config)
+  linkChildConfigs(config)
 
   configCache[configPath] = config
   return config
@@ -72,6 +73,16 @@ function getParentConfig({ root }: RootConfig) {
     const config = configCache[configPath]
     if (config) {
       return config
+    }
+  }
+}
+
+function linkChildConfigs(parent: RootConfig) {
+  for (const configPath in configCache) {
+    const config = configCache[configPath]
+    if (!isDescendant(config.root, parent.root)) continue
+    if (!config.parent || config.parent == parent.parent) {
+      config.parent = parent
     }
   }
 }
