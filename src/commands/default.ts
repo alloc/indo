@@ -14,6 +14,7 @@ import {
   startTask,
   success,
   time,
+  warn,
   yellow,
 } from '../core/helpers'
 
@@ -127,6 +128,9 @@ async function cloneMissingRepos(cfg: RootConfig) {
           )
         } catch (err) {
           task.finish()
+          if (/ not found/.test(err.message)) {
+            return warn(`Repository not found or access denied: ${repo.url}`)
+          }
           log.error('Failed to clone %s into %s', red(repo.url), cyan(path))
           if (isTest) throw err
           return log.error(err)
