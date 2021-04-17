@@ -15,7 +15,7 @@ import {
   success,
 } from '../core/helpers'
 
-import { saveConfig, RootConfig, loadConfig, dotIndoId } from '../core/config'
+import { saveConfig, RootConfig } from '../core/config'
 import { loadPackage } from '../core/Package'
 import { indo } from './default'
 
@@ -76,12 +76,11 @@ export default async (cfg: RootConfig) => {
     gray(url.replace(/^.+:\/\//, ''))
   )
 
-  const nestedConfig = loadConfig(join(dir, dotIndoId))
-  await indo(nestedConfig || cfg)
-
   dir = relative(cfg.root, dir)
   cfg.repos[dir] = repo
   saveConfig(cfg)
 
   success('Updated "repos" in', cyan(cwdRelative(cfg.path)))
+
+  await indo(cfg.root)
 }

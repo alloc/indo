@@ -1,9 +1,9 @@
 import slurm from 'slurm'
 import { RootConfig } from '../core/config'
 import { getNearestPackage } from '../core/getNearestPackage'
-import { fatal, log, success } from '../core/helpers'
-import { linkPackages } from '../core/linkPackages'
+import { fatal, log } from '../core/helpers'
 import { resetPackageCache } from '../core/Package'
+import { indo } from './default'
 
 export default async (cfg: RootConfig) => {
   const args = slurm({
@@ -38,6 +38,5 @@ export default async (cfg: RootConfig) => {
 
   log('')
   resetPackageCache()
-  linkPackages(cfg)
-  success('Local packages are linked!')
+  await indo(cfg.root)
 }

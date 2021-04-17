@@ -16,9 +16,9 @@ import {
 
 import { saveConfig, RootConfig } from '../core/config'
 import { getNearestPackage } from '../core/getNearestPackage'
-import { linkPackages } from '../core/linkPackages'
 import { loadPackages } from '../core/loadPackages'
 import { registry } from '../core/registry'
+import { indo } from './default'
 
 export default (cfg: RootConfig | null) => {
   const args = slurm({
@@ -148,6 +148,5 @@ async function linkGlobalPackage(cfg: RootConfig, opts: LinkOptions) {
     )
   }
 
-  linkPackages(cfg, packages)
-  success('Local packages are linked!')
+  await indo(cfg.root)
 }

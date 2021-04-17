@@ -18,7 +18,13 @@ import {
   yellow,
 } from '../core/helpers'
 
-import { saveConfig, RootConfig, loadConfig, dotIndoId } from '../core/config'
+import {
+  saveConfig,
+  RootConfig,
+  loadConfig,
+  dotIndoId,
+  loadTopConfig,
+} from '../core/config'
 import { collectVersionErrors, linkPackages } from '../core/linkPackages'
 import { loadPackages } from '../core/loadPackages'
 import { loadPackage, Package, PackageMap } from '../core/Package'
@@ -32,10 +38,13 @@ export default async (cfg: RootConfig) => {
     f: 'force',
   })
 
-  return indo(cfg, args.force)
+  return indo(cfg.root, args.force)
 }
 
-export async function indo(cfg: RootConfig, force?: boolean) {
+export async function indo(cwd: string, force?: boolean) {
+  const cfg = loadTopConfig(cwd)
+  if (!cfg) return
+
   let buildCount = 0
   let installCount = 0
   log.events.on('build', () => buildCount++)

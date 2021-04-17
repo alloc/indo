@@ -12,8 +12,8 @@ import {
   green,
   success,
 } from '../core/helpers'
-import { linkPackages } from '../core/linkPackages'
 import { loadPackage } from '../core/Package'
+import { indo } from './default'
 
 export default async (cfg: RootConfig) => {
   const args = slurm()
@@ -52,7 +52,6 @@ export default async (cfg: RootConfig) => {
       success('Updated "repos" in', cyan('.indo.json'))
     }
 
-    linkPackages(cfg)
-    success('Local packages are linked!')
+    await indo(cfg.root)
   }
 }

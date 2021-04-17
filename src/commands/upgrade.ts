@@ -13,12 +13,11 @@ import {
   log,
   splitNameVersion,
   startTask,
-  success,
   yellow,
 } from '../core/helpers'
-import { linkPackages } from '../core/linkPackages'
 import { loadPackages } from '../core/loadPackages'
 import { loadPackage, Package, resetPackageCache } from '../core/Package'
+import { indo } from './default'
 
 const NODE_MODULES = 'node_modules'
 const PJ = 'package.json'
@@ -167,10 +166,8 @@ export default async (cfg: RootConfig) => {
     await promise
     task.finish()
 
-    // Ensure the new dependencies are linked up.
     resetPackageCache()
-    linkPackages(cfg)
-    success('Local packages are linked!')
+    await indo(cfg.root)
   }
 }
 

@@ -1,5 +1,6 @@
 import isDeepEqual from 'dequals'
-import { dirname, join, resolve } from 'path'
+import os from 'os'
+import { dirname, join, relative, resolve } from 'path'
 import { fs } from './fs'
 import { isHomeDir } from './helpers'
 
@@ -94,4 +95,15 @@ export function saveConfig(cfg: RootConfig) {
     }
   }
   fs.write(cfg.path, JSON.stringify(copy, null, 2))
+}
+
+export function loadTopConfig(from: string) {
+  const pathComponents = relative(os.homedir(), from).split(/[\\/]/)
+  let root = os.homedir()
+  for (let i = 0; i < pathComponents.length; i++) {
+    if (fs.isFile(join(root, dotIndoId))) break
+    root = join(root, pathComponents[i])
+    if (root == from) break
+  }
+  return loadConfig(join(root, dotIndoId))
 }
