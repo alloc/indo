@@ -1,4 +1,3 @@
-import globRegex from 'glob-regex'
 import { join } from 'path'
 import { crawl } from 'recrawl-sync'
 import { dotIndoId, loadConfig, RootConfig } from './config'
@@ -19,23 +18,17 @@ export function loadPackages(cfg: RootConfig, packages: PackageMap = {}) {
   // Find packages in the root repository.
   findPackages(cfg.root, cfg.ignore).forEach(addPackage)
 
-  const vendorRE = globRegex(cfg.vendor)
-
   // Find packages in nested repostories.
   Object.keys(cfg.repos).forEach(repoDir => {
     const absRepoDir = join(cfg.root, repoDir)
 
-    // Nested roots are skipped.
+    // Nested roots are skipped since they load themselves.
     if (loadConfig(join(absRepoDir, dotIndoId))) return
-    // Linked repos are skipped.
+    // Linked repos are skipped since they are readonly.
     if (fs.isLink(absRepoDir)) return
 
     findPackages(absRepoDir, cfg.ignore).forEach(pkgPath => {
-      // The `repoDir` is intentionally not tested,
-      // so cloned repos are always crawled for packages.
-      if (!vendorRE.test(pkgPath)) {
-        addPackage(join(repoDir, pkgPath))
-      }
+      addPackage(join(repoDir, pkgPath))
     })
   })
 
