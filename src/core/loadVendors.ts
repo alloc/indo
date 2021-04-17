@@ -3,6 +3,7 @@ import { crawl, createMatcher } from 'recrawl-sync'
 import { fs } from './fs'
 import { RootConfig } from './config'
 import { loadPackage, PackageMap } from './Package'
+import { loadPackages } from './loadPackages'
 
 const NODE_MODULES = /\/node_modules$/
 
@@ -58,6 +59,7 @@ export function loadVendors(cfg: RootConfig, packages: PackageMap = {}) {
 
   if (cfg.parent) {
     loadVendors(cfg.parent, packages)
+    loadPackages(cfg.parent, packages)
   }
 
   return packages

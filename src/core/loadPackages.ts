@@ -6,8 +6,7 @@ import { fs } from './fs'
 import { GitIgnore } from './gitignore'
 import { loadPackage, PackageMap } from './Package'
 
-export function loadPackages(cfg: RootConfig) {
-  const packages: PackageMap = {}
+export function loadPackages(cfg: RootConfig, packages: PackageMap = {}) {
   const addPackage = (pkgPath: string) => {
     const pkg = loadPackage(join(cfg.root, pkgPath))!
     if (pkg.name && pkg.version) {
