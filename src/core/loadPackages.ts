@@ -28,7 +28,12 @@ export function loadPackages(cfg: RootConfig, packages: PackageMap = {}) {
     // Linked repos are skipped since they are readonly.
     if (fs.isLink(absRepoDir)) return
 
-    findPackages(absRepoDir, cfg.ignore).forEach(pkgPath => {
+    // Ensure globs targeting a specific repo can be used.
+    const ignore = cfg.ignore.map(glob =>
+      glob.startsWith(repoDir + '/') ? glob.slice(repoDir.length + 1) : glob
+    )
+
+    findPackages(absRepoDir, ignore).forEach(pkgPath => {
       addPackage(join(repoDir, pkgPath))
     })
   })
