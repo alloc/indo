@@ -3,6 +3,7 @@ import { crawl } from 'recrawl-sync'
 import { dotIndoId, loadConfig, RootConfig } from './config'
 import { fs } from './fs'
 import { GitIgnore } from './gitignore'
+import { log } from './helpers'
 import { loadPackage, PackageMap } from './Package'
 
 export function loadPackages(cfg: RootConfig, packages: PackageMap = {}) {
@@ -43,6 +44,7 @@ function findPackages(root: string, skip: string[]) {
   const notIgnored = (path: string) => {
     return !gitignore.test(join(root, path))
   }
+  log.debug('findPackages:', { root, skip })
   return crawl(root, {
     only: ['**/package.json'],
     skip: ['.git', 'node_modules', ...skip],
