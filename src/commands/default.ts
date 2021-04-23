@@ -141,7 +141,7 @@ async function cloneMissingRepos(cfg: RootConfig) {
           )
         } catch (err) {
           task.finish()
-          if (/ not found/.test(err.message)) {
+          if (/\bnot (read|found)\b/.test(err.message)) {
             return warn(
               `Repository not found or access denied:\n    ${repo.url}`
             )
