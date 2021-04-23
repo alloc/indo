@@ -70,7 +70,7 @@ export function linkPackages(
           if (!version.includes('node_modules')) {
             const depPath = resolve(pkg.root, version.slice(5))
             const dep = getPackage(join(depPath, 'package.json'))
-            if (dep) {
+            if (dep && dep !== pkg) {
               dep.localDependents.add(pkg)
               pkg.localDependencies.add(dep)
             }
@@ -101,8 +101,10 @@ export function linkPackages(
             continue
           }
 
-          dep.localDependents.add(pkg)
-          pkg.localDependencies.add(dep)
+          if (dep !== pkg) {
+            dep.localDependents.add(pkg)
+            pkg.localDependencies.add(dep)
+          }
 
           // If the dependencies were installed with pnpm, we need to
           // update the ".pnpm" cache so "peerDependencies" are linked
