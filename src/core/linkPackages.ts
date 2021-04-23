@@ -70,7 +70,10 @@ export function linkPackages(
           if (!version.includes('node_modules')) {
             const depPath = resolve(pkg.root, version.slice(5))
             const dep = getPackage(join(depPath, 'package.json'))
-            dep && pkg.localDependencies.add(dep)
+            if (dep) {
+              dep.localDependents.add(pkg)
+              pkg.localDependencies.add(dep)
+            }
           }
           continue
         }
@@ -98,6 +101,7 @@ export function linkPackages(
             continue
           }
 
+          dep.localDependents.add(pkg)
           pkg.localDependencies.add(dep)
 
           // If the dependencies were installed with pnpm, we need to

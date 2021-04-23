@@ -23,6 +23,9 @@ export class Package {
   /** Local packages used by this one */
   localDependencies = new Set<Package>()
 
+  /** Local packages using this one */
+  localDependents = new Set<Package>()
+
   /** The scripts available to `npm run` */
   scripts?: StringMap
 

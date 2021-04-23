@@ -95,7 +95,11 @@ export async function indo(cwd: string, force?: boolean) {
 
   await Promise.all(linking)
   if (installed.size) {
-    await buildPackages(Array.from(installed))
+    // Build packages needed by other local packages.
+    const packages = Array.from(installed).filter(
+      pkg => pkg.localDependents.size > 0
+    )
+    await buildPackages(packages)
   }
 
   versionErrors.forEach(err => {
