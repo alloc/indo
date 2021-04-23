@@ -22,9 +22,13 @@ export async function installPackages(packages: Package[], force?: boolean) {
           const task = startTask(
             `Installing ${cyan(cwdRelative(pkg.root))} node_modules`
           )
+          const logs: string[] = []
           const npm = pkg.manager
           try {
-            await npm.install()
+            await npm.install((err, log) => {
+              logs.push(err || log)
+            })
+
             installed.push(pkg)
             task.finish()
             log.debug('install completed:', yellow(cwdRelative(pkg.root)))
@@ -35,7 +39,8 @@ export async function installPackages(packages: Package[], force?: boolean) {
             if (isTest) {
               throw e
             }
-            log.error(e.message)
+            if (logs.length) log.error(logs.join('\n').trim())
+            else log.error(e.message)
           } finally {
             cpu.release()
           }
