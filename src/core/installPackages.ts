@@ -20,7 +20,7 @@ export async function installPackages(packages: Package[], force?: boolean) {
         if (force || !fs.isDir(nodeModulesPath)) {
           const cpu = await requestCPU()
           const task = startTask(
-            `Installing ${cyan(cwdRelative(pkg.root))} node_modules…`
+            `Installing ${cyan(cwdRelative(pkg.root))} node_modules`
           )
           const npm = pkg.manager
           try {

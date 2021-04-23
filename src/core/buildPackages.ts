@@ -54,7 +54,7 @@ export async function buildPackage(pkg: Package) {
       return true // No build script.
     }
     log.debug('build start:', yellow(cwdRelative(pkg.root)))
-    const task = startTask(`Building ${cyan(cwdRelative(pkg.root))}…`)
+    const task = startTask(`Building ${cyan(cwdRelative(pkg.root))}`)
     try {
       await promise
     } catch (e) {
