@@ -9,8 +9,9 @@ import { Package } from './Package'
  * as a key. The dependency array of each package is used to ensure dependencies
  * are built first.
  */
-export const buildPackages = (packages: Package[]) =>
-  time('build packages', async () => {
+export async function buildPackages(packages: Package[]) {
+  if (!packages.length) return
+  await time('build packages', async () => {
     const built = new Set<Package>()
     const failed = new Set<Package>()
     const builds = new AsyncTaskGroup(cpuCount, async (pkg: Package) => {
@@ -39,6 +40,7 @@ export const buildPackages = (packages: Package[]) =>
     )
     await builds.concat(packages)
   })
+}
 
 export async function buildPackage(pkg: Package) {
   if (packageBuildsOnInstall(pkg)) {
