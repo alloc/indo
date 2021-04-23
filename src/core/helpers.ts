@@ -31,16 +31,16 @@ export const time = <T>(label: string, action: () => T) => {
 export const isDescendant = (path: string, parent: string) =>
   path === parent || path.startsWith(parent + '/')
 
-export const getRelativeId = (root: string, path: string) => {
-  path = relative(root, resolve(path))
-  if (/^\.\//.test(path)) {
-    path = path.slice(2)
-  }
-  return path.replace(/\/$/, '') || '.'
-}
+export const getRelativeId = (root: string, path: string) =>
+  relative(root, resolve(path)) || '.'
 
 export const cwdRelative = (path: string) => {
-  return getRelativeId(process.cwd(), path)
+  path = getRelativeId(process.cwd(), path)
+  return path.endsWith('.')
+    ? path + '/'
+    : path.startsWith('../')
+    ? path
+    : './' + path
 }
 
 const NPM_URI_RE = /^(?:(@?[^@]+)@npm:)?(@?[^@]+)(?:@(.+))?$/
