@@ -1,57 +1,21 @@
-import { join } from 'path'
-import { crawl } from 'recrawl-sync'
-import { dotIndoId, loadConfig, RootConfig } from './config'
-import { fs } from './fs'
-import { GitIgnore } from './gitignore'
 import { loadPackage, PackageMap } from './Package'
 
-export function loadPackages(cfg: RootConfig, packages: PackageMap = {}) {
-  const addPackage = (pkgPath: string) => {
-    const pkg = loadPackage(join(cfg.root, pkgPath))!
-    if (pkg.name && pkg.version) {
-      // Packages from the root repository take precedence
-      // over packages from cloned repos.
+/**
+ * Load an array of `package.json` paths and deduplicate
+ * packages with the same name. Packages earlier in the
+ * given array take precedence.
+ */
+export function loadPackages(
+  packagePaths: string[],
+  packages: PackageMap = {}
+) {
+  packagePaths.forEach(pkgPath => {
+    const pkg = loadPackage(pkgPath)
+
+    // Ignore unnamed and unversioned packages.
+    if (pkg && pkg.name && pkg.version) {
       packages[pkg.name] ??= pkg
     }
-  }
-
-  // Find packages in the root repository.
-  findPackages(cfg.root, cfg.ignore).forEach(addPackage)
-
-  // Find packages in nested repostories.
-  Object.keys(cfg.repos).forEach(repoDir => {
-    const absRepoDir = join(cfg.root, repoDir)
-
-    // Nested roots are skipped since they load themselves.
-    if (loadConfig(join(absRepoDir, dotIndoId))) return
-    // Linked repos are skipped since they are readonly.
-    if (fs.isLink(absRepoDir)) return
-
-    // Ensure globs targeting a specific repo can be used.
-    const ignore = cfg.ignore.map(glob =>
-      glob.startsWith(repoDir + '/') ? glob.slice(repoDir.length) : glob
-    )
-
-    findPackages(absRepoDir, ignore).forEach(pkgPath => {
-      addPackage(join(repoDir, pkgPath))
-    })
   })
-
   return packages
-}
-
-function findPackages(root: string, skip: string[]) {
-  if (!fs.isDir(root)) {
-    return []
-  }
-  const gitignore = new GitIgnore(root)
-  const notIgnored = (path: string) => {
-    return !gitignore.test(join(root, path))
-  }
-  return crawl(root, {
-    only: ['**/package.json'],
-    skip: ['.git', 'node_modules', ...skip],
-    enter: notIgnored,
-    filter: notIgnored,
-  })
 }
