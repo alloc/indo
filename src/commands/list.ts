@@ -1,16 +1,15 @@
 import os from 'os'
-import { join } from 'path'
 import slurm from 'slurm'
 import { RootConfig } from '../core/config'
 import { cwdRelative, cyan, gray, log } from '../core/helpers'
 import { loadAllPackages } from '../core/loadAllPackages'
-import { loadPackage, Package } from '../core/Package'
+import { loadPackage, Package, toPackagePath } from '../core/Package'
 import { registry } from '../core/registry'
 
 const loadGlobalPackages = () =>
   Object.entries(registry.packages)
     .map(([alias, dir]) => {
-      let pkg = loadPackage(join(dir, 'package.json'))
+      let pkg = loadPackage(toPackagePath(dir))
       if (pkg && alias) {
         pkg = pkg.clone()
         pkg.name = alias

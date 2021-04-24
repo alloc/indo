@@ -16,7 +16,7 @@ import {
 } from '../core/helpers'
 
 import { saveConfig, RootConfig } from '../core/config'
-import { loadPackage } from '../core/Package'
+import { loadPackage, toPackagePath } from '../core/Package'
 import { indo } from './default'
 
 export default async (cfg: RootConfig) => {
@@ -57,7 +57,7 @@ export default async (cfg: RootConfig) => {
 
   task.finish()
 
-  const pkg = loadPackage(join(dir, 'package.json'))
+  const pkg = loadPackage(toPackagePath(dir))
   if (needsRename) {
     if (pkg && pkg.name) {
       dir = join(cfg.root, 'vendor', pkg.name)

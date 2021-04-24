@@ -1,10 +1,10 @@
-import { dirname, join } from 'path'
+import { dirname } from 'path'
 import { isHomeDir } from './helpers'
-import { loadPackage } from './Package'
+import { loadPackage, toPackagePath } from './Package'
 
 export const getNearestPackage = (root: string) => {
   while (!isHomeDir(root)) {
-    const pkg = loadPackage(join(root, 'package.json'))
+    const pkg = loadPackage(toPackagePath(root))
     if (pkg) {
       return pkg
     }

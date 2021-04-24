@@ -16,7 +16,7 @@ import {
 import { RootConfig } from './config'
 import { loadPackages } from './loadPackages'
 import { loadVendors } from './loadVendors'
-import { getPackage, Package, StringMap } from './Package'
+import { getPackage, Package, StringMap, toPackagePath } from './Package'
 
 export interface VersionError {
   /** The dependent package */
@@ -69,7 +69,7 @@ export function linkPackages(
         if (version.startsWith('link:')) {
           if (!version.includes('node_modules')) {
             const depPath = resolve(pkg.root, version.slice(5))
-            const dep = getPackage(join(depPath, 'package.json'))
+            const dep = getPackage(toPackagePath(depPath))
             if (dep && dep !== pkg) {
               dep.localDependents.add(pkg)
               pkg.localDependencies.add(dep)

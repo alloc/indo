@@ -12,7 +12,7 @@ import {
   green,
   success,
 } from '../core/helpers'
-import { loadPackage } from '../core/Package'
+import { loadPackage, toPackagePath } from '../core/Package'
 import { indo } from './default'
 
 export default async (cfg: RootConfig) => {
@@ -22,7 +22,7 @@ export default async (cfg: RootConfig) => {
   oldName = Path.resolve(oldName)
   newName = Path.resolve(newName)
 
-  const pkg = loadPackage(Path.join(oldName, 'package.json'))
+  const pkg = loadPackage(toPackagePath(oldName))
   if (!pkg) {
     return fatal(
       'Cannot move non-existent path: ' + green(cwdRelative(oldName))

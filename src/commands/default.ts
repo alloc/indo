@@ -27,7 +27,12 @@ import {
 } from '../core/config'
 import { collectVersionErrors, linkPackages } from '../core/linkPackages'
 import { loadPackages } from '../core/loadPackages'
-import { loadPackage, Package, PackageMap } from '../core/Package'
+import {
+  loadPackage,
+  Package,
+  PackageMap,
+  toPackagePath,
+} from '../core/Package'
 import { cpuCount, requestCPU } from '../core/cpu'
 import { installPackages } from '../core/installPackages'
 import { buildPackages } from '../core/buildPackages'
@@ -66,7 +71,7 @@ export async function indo(cwd: string, force?: boolean) {
   installer.push(new Promise(done => setImmediate(done)))
 
   const linking = configs.reverse().map(async cfg => {
-    const rootPkg = loadPackage(join(cfg.root, 'package.json'))
+    const rootPkg = loadPackage(toPackagePath(cfg.root))
     const packages = time('find packages', () => loadPackages(cfg))
 
     log.debug('config found:', yellow(cwdRelative(cfg.path)))

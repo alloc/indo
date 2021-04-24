@@ -102,8 +102,12 @@ export class Package {
   /** Move the entire package, updating its path */
   move(root: string) {
     fs.rename(this.root, root)
-    this.path = join(root, 'package.json')
+    this.path = toPackagePath(root)
   }
+}
+
+export function toPackagePath(...paths: string[]) {
+  return join(...paths, 'package.json')
 }
 
 /** Get a cached package by its `package.json` path */

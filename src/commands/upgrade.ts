@@ -1,4 +1,3 @@
-import { join } from 'path'
 import prompt from 'prompts'
 import semver from 'semver'
 import slurm from 'slurm'
@@ -16,11 +15,15 @@ import {
   yellow,
 } from '../core/helpers'
 import { loadPackages } from '../core/loadPackages'
-import { loadPackage, Package, resetPackageCache } from '../core/Package'
+import {
+  loadPackage,
+  Package,
+  resetPackageCache,
+  toPackagePath,
+} from '../core/Package'
 import { indo } from './default'
 
 const NODE_MODULES = 'node_modules'
-const PJ = 'package.json'
 
 export default async (cfg: RootConfig) => {
   const args = slurm({
@@ -33,7 +36,7 @@ export default async (cfg: RootConfig) => {
 
   const packages = loadPackages(cfg)
 
-  const rootPkg = loadPackage(join(cfg.root, 'package.json'))
+  const rootPkg = loadPackage(toPackagePath(cfg.root))
   if (rootPkg) {
     packages[rootPkg.name] = rootPkg
   }
@@ -71,7 +74,7 @@ export default async (cfg: RootConfig) => {
         }
       }
 
-      const pkgPath = join(pkg.root, NODE_MODULES, alias, PJ)
+      const pkgPath = toPackagePath(pkg.root, NODE_MODULES, alias)
       const { version } = fs.readJson(pkgPath)
 
       const versionIdx = knownVersions.indexOf(version)
