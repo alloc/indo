@@ -3,6 +3,7 @@ import os from 'os'
 import { dirname, join, relative, resolve } from 'path'
 import { fs } from './fs'
 import { isDescendant, isHomeDir } from './helpers'
+import { searchParents } from './searchParents'
 
 export interface RepoConfig {
   url: string
@@ -68,13 +69,10 @@ export function loadConfig(configPath = findConfig(), force?: boolean) {
 }
 
 function getParentConfig({ root }: RootConfig) {
-  while (!isHomeDir((root = dirname(root)))) {
-    const configPath = join(root, dotIndoId)
-    const config = configCache[configPath]
-    if (config) {
-      return config
-    }
-  }
+  return searchParents(root, dir => {
+    const configPath = join(dir, dotIndoId)
+    return configCache[configPath]
+  })
 }
 
 function linkChildConfigs(parent: RootConfig) {
