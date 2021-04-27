@@ -12,7 +12,7 @@ dependencies:
   physical-cpu-count: 2.0.0
   prompts: 2.4.1
   realpath-native: 1.1.0
-  recrawl-sync: 2.0.2
+  recrawl-sync: 2.2.1
   saxon: 0.2.8
   semver: 6.3.0
   shared-log: 1.2.4
@@ -370,10 +370,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-VhUZ39FqmWhXqMiKKsV1XzcNt0jTnc/vYYCn1TYHttrW1QGYWweD+f7MlgPABfLsAQDhYLVTvOjPdfY+1o0nsA==
-  /@cush/relative/0.1.0:
+  /@cush/relative/1.0.0:
     dev: false
     resolution:
-      integrity: sha512-pnF2c2hhHyC520CmYYKq3hGOS0kipkGBgRnp3z7wx7lDzykaUwQW3wPQmiX9YtbHUcgUu1qQtzstixmeYMwQoA==
+      integrity: sha512-RpfLEtTlyIxeNPGKcokS+p3BZII/Q3bYxryFRglh5H3A3T8q9fsLYm72VYAMEOOIBLEa8o93kFLiBDUWKrwXZA==
   /@cush/shell/1.0.0:
     dependencies:
       '@cush/exec': 1.7.1
@@ -3331,14 +3331,15 @@ packages:
       node: '>=4'
     resolution:
       integrity: sha512-wlgPA6cCIIg9gKz0fgAPjnzh4yR/LnXovwuo9hvyGvx3h8nX4+/iLZplfUWasXpqD8BdnGnP5njOFjkUwPzvjA==
-  /recrawl-sync/2.0.2:
+  /recrawl-sync/2.2.1:
     dependencies:
-      '@cush/relative': 0.1.0
+      '@cush/relative': 1.0.0
       glob-regex: 0.3.2
+      slash: 3.0.0
       tslib: 1.14.1
     dev: false
     resolution:
-      integrity: sha512-8qprPoeIB7k9r1AoMNcW4lKVBLRyETJsODYB5/tGJtOrU/8Tw4DHRmvPfwjKa/2AP2Kzc/6QHtj+imeeJXP0MQ==
+      integrity: sha512-A2yLDgeXNaduJJMlqyUdIN7fewopnNm/mVeeGytS1d2HLXKpS5EthQ0j8tWeX+as9UXiiwQRwfoslKC+/gjqxg==
   /regex-not/1.0.2:
     dependencies:
       extend-shallow: 3.0.2
@@ -3611,7 +3612,6 @@ packages:
     resolution:
       integrity: sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==
   /slash/3.0.0:
-    dev: true
     engines:
       node: '>=8'
     resolution:
@@ -4310,7 +4310,7 @@ specifiers:
   prettier: ~2.2.1
   prompts: ^2.4.1
   realpath-native: ^1.1.0
-  recrawl-sync: ^2.0.2
+  recrawl-sync: ^2.2.1
   saxon: ^0.2.0
   semver: ^6.3.0
   shared-log: ^1.2.4
