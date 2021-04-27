@@ -48,6 +48,9 @@ export default async (cfg: RootConfig | null) => {
   } else {
     const pkg = getNearestPackage(process.cwd())
     if (pkg) {
+      if (!pkg.name) {
+        fatal('Package is missing a "name" field')
+      }
       const root = registry.get(pkg.name)
       if (!root) {
         fatal('Global package', green(pkg.name), 'does not exist')
