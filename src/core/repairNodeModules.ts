@@ -1,5 +1,6 @@
 import { join } from 'path'
 import { RootConfig } from './config'
+import { findLocalPackages } from './findLocalPackages'
 import { fs } from './fs'
 import { installPackages } from './installPackages'
 import { loadPackages } from './loadPackages'
@@ -7,7 +8,7 @@ import { Package } from './Package'
 
 export function repairNodeModules(
   cfg: RootConfig,
-  packages = loadPackages(cfg)
+  packages = loadPackages(findLocalPackages(cfg))
 ) {
   const repairQueue: Package[] = []
   for (const pkg of Object.values(packages)) {

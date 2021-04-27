@@ -4,6 +4,7 @@ import { bold, gray } from 'kleur'
 import { join } from 'path'
 import slurm from 'slurm'
 import { RootConfig } from '../core/config'
+import { findLocalPackages } from '../core/findLocalPackages'
 import { git } from '../core/git'
 import { cwdRelative, log } from '../core/helpers'
 import { loadPackages } from '../core/loadPackages'
@@ -11,7 +12,7 @@ import { loadPackages } from '../core/loadPackages'
 export default async (cfg: RootConfig) => {
   const cmd = slurm('*')._
 
-  const packages = loadPackages(cfg)
+  const packages = loadPackages(findLocalPackages(cfg))
   const gitRoots = Array.from(git.findRoots(cfg, Object.values(packages)))
 
   // Assume "cfg.root" is a git repo

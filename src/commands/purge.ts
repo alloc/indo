@@ -1,6 +1,7 @@
 import { dirname, relative, resolve } from 'path'
 import slurm from 'slurm'
 import { RootConfig, saveConfig } from '../core/config'
+import { findLocalPackages } from '../core/findLocalPackages'
 import { fs } from '../core/fs'
 import {
   confirm,
@@ -27,7 +28,7 @@ export default async (cfg: RootConfig) => {
     fatal('Must give one or more package names and/or relative paths')
   }
 
-  const packages = loadPackages(cfg)
+  const packages = loadPackages(findLocalPackages(cfg))
   const vendors = loadVendors(cfg)
 
   // The packages within the deleted root.

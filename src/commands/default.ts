@@ -26,6 +26,7 @@ import {
   loadTopConfig,
 } from '../core/config'
 import { collectVersionErrors, linkPackages } from '../core/linkPackages'
+import { findLocalPackages } from '../core/findLocalPackages'
 import { loadPackages } from '../core/loadPackages'
 import {
   loadPackage,
@@ -72,7 +73,9 @@ export async function indo(cwd: string, force?: boolean) {
 
   const linking = configs.reverse().map(async cfg => {
     const rootPkg = loadPackage(toPackagePath(cfg.root))
-    const packages = time('find packages', () => loadPackages(cfg))
+    const packages = time('find packages', () =>
+      loadPackages(findLocalPackages(cfg))
+    )
 
     log.debug('config found:', yellow(cwdRelative(cfg.path)))
     log.debug(
