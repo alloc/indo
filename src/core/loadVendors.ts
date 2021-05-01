@@ -28,5 +28,10 @@ function loadAncestorPackages(
   if (cfg.parent) {
     loadAncestorPackages(cfg.parent, findPackages, packages)
   }
-  loadPackages(findPackages(cfg), packages)
+  loadPackages(
+    findPackages(cfg),
+    packages,
+    // Ignore unversioned packages.
+    pkg => pkg.version && pkg.name
+  )
 }

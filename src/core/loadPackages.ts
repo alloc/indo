@@ -1,4 +1,4 @@
-import { loadPackage, PackageMap } from './Package'
+import { loadPackage, Package, PackageMap } from './Package'
 
 /**
  * Load an array of `package.json` paths and deduplicate
@@ -7,14 +7,16 @@ import { loadPackage, PackageMap } from './Package'
  */
 export function loadPackages(
   packagePaths: string[],
-  packages: PackageMap = {}
+  packages: PackageMap = {},
+  getName: (pkg: Package) => string | false | null | undefined = pkg => pkg.name
 ) {
   packagePaths.forEach(pkgPath => {
     const pkg = loadPackage(pkgPath)
-
-    // Ignore unnamed and unversioned packages.
-    if (pkg && pkg.name && pkg.version) {
-      packages[pkg.name] ??= pkg
+    if (pkg) {
+      const name = getName(pkg)
+      if (name) {
+        packages[name] ??= pkg
+      }
     }
   })
   return packages
