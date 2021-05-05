@@ -16,7 +16,13 @@ import {
 import { RootConfig } from './config'
 import { loadPackages } from './loadPackages'
 import { loadVendors } from './loadVendors'
-import { getPackage, Package, StringMap, toPackagePath } from './Package'
+import {
+  getPackage,
+  loadPackage,
+  Package,
+  StringMap,
+  toPackagePath,
+} from './Package'
 import { findLocalPackages } from './findLocalPackages'
 
 export interface VersionError {
@@ -83,13 +89,23 @@ export function linkPackages(
         if (version.startsWith('npm:')) {
           ;({ name, version } = splitNameVersion(version.slice(4)))
         }
+
+        let dep!: Package
         if (name in cfg.alias) {
-          name = cfg.alias[name]
+          const target = cfg.alias[name]
+
+          // The alias can use a relative path.
+          if (/^\.\.?(\/|$)/.test(target)) {
+            dep = loadPackage(toPackagePath(resolve(cfg.root, target)))!
+          } else {
+            name = target
+          }
         }
 
         // Vendor packages take precedence, since they might
         // be inherited from higher roots.
-        const dep = vendor[name] || packages[name]
+        dep ||= vendor[name] || packages[name]
+
         if (dep) {
           const valid =
             !version ||
