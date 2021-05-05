@@ -1,4 +1,4 @@
-import { dirname, join, relative, resolve } from 'path'
+import { dirname, isAbsolute, join, relative, resolve } from 'path'
 import semver from 'semver'
 import { fs } from './fs'
 import {
@@ -24,6 +24,7 @@ import {
   toPackagePath,
 } from './Package'
 import { findLocalPackages } from './findLocalPackages'
+import { resolveAlias } from './resolveAlias'
 
 export interface VersionError {
   /** The dependent package */
@@ -91,12 +92,11 @@ export function linkPackages(
         }
 
         let dep!: Package
-        if (name in cfg.alias) {
-          const target = cfg.alias[name]
 
-          // The alias can use a relative path.
-          if (/^\.\.?(\/|$)/.test(target)) {
-            dep = loadPackage(toPackagePath(resolve(cfg.root, target)))!
+        const target = resolveAlias(cfg, name)
+        if (target) {
+          if (isAbsolute(target)) {
+            dep = loadPackage(toPackagePath(target))!
           } else {
             name = target
           }
