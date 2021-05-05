@@ -11,8 +11,10 @@ export async function installPackages(packages: Package[], force?: boolean) {
 
   if (packages.length)
     await time('install dependencies', async () => {
-      const installer = new AsyncTaskGroup(cpuCount)
-      await installer.map(packages, pkg => async () => {
+      const installer = new AsyncTaskGroup(cpuCount, install)
+      await installer.concat(packages)
+
+      async function install(pkg: Package) {
         const deps = { ...pkg.dependencies, ...pkg.devDependencies }
         if (!Object.keys(deps).length) return
 
@@ -45,7 +47,7 @@ export async function installPackages(packages: Package[], force?: boolean) {
             cpu.release()
           }
         }
-      })
+      }
     })
 
   return installed
