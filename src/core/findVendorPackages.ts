@@ -4,7 +4,7 @@ import { fs } from './fs'
 import { RootConfig } from './config'
 import { loadPackage, toPackagePath } from './Package'
 
-const NODE_MODULES = /\/node_modules$/
+const NODE_MODULES = /(^|\/)node_modules$/
 
 export function findVendorPackages(cfg: RootConfig) {
   const packagePaths: string[] = []
