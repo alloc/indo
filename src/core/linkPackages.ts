@@ -52,7 +52,7 @@ export function collectVersionErrors() {
 export function linkPackages(
   cfg: RootConfig,
   packages = loadPackages(findLocalPackages(cfg)),
-  opts: { force?: boolean } = {}
+  opts: { force?: boolean; dryRun?: boolean } = {}
 ) {
   const vendor = time('load vendors', () => loadVendors(cfg))
   log.debug(
@@ -121,6 +121,10 @@ export function linkPackages(
           if (dep !== pkg) {
             dep.localDependents.add(pkg)
             pkg.localDependencies.add(dep)
+          }
+
+          if (opts.dryRun) {
+            continue
           }
 
           // If the dependencies were installed with pnpm, we need to
