@@ -9,6 +9,9 @@ const NODE_MODULES = /(^|\/)node_modules$/
 export function findVendorPackages(cfg: RootConfig) {
   const packagePaths: string[] = []
 
+  // The "ignore" setting affects vendor packages since v0.6
+  const skip = createMatcher(cfg.ignore) || (() => false)
+
   // Note: Only basic globs are supported (eg: "vendor/*" or "app/src/components")
   cfg.vendor.forEach(function findVendors(glob) {
     const isExact = !/[*.?]/.test(glob)
@@ -22,13 +25,13 @@ export function findVendorPackages(cfg: RootConfig) {
     }
 
     const root = join(cfg.root, rootId)
-    if (rootId && fs.isDir(root)) {
+    if (rootId && fs.isDir(root) && !skip(rootId)) {
       glob = glob.slice(rootId.length)
-      const match = createMatcher([glob])!
+      const only = createMatcher([glob])!
       crawl(root, {
         filter: () => false,
         enter(dir) {
-          if (!match(dir) || NODE_MODULES.test(dir)) {
+          if (!only(dir) || NODE_MODULES.test(dir) || skip(dir)) {
             return false
           }
           const pkgPath = toPackagePath(cfg.root, rootId, dir)
