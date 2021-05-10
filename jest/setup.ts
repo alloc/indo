@@ -2,6 +2,7 @@ import stripAnsi from 'strip-ansi'
 import quotes from 'shell-quote'
 import shell from '@cush/shell'
 import path from 'path'
+import util from 'util'
 import fs from 'saxon/sync'
 
 const fixtureDir = path.resolve(__dirname, '../spec/__fixtures__')
@@ -51,7 +52,11 @@ Object.assign(global, {
 
 // Track logs for testing purposes.
 import sharedLog from 'shared-log'
-sharedLog.on('all', (_, args) => {
-  // Strip ansi colors and elapsed time.
-  logs.push(stripAnsi(args.join(' ')).replace(/\s+[0-9]+(\.[0-9]+)(s|ms)$/, ''))
+sharedLog.on('all', (level, args) => {
+  if (level == 'debug') return
+  args = args.map(arg => (typeof arg == 'string' ? arg : util.inspect(arg)))
+  logs.push(
+    // Strip ansi colors and elapsed time.
+    stripAnsi(args.join(' ')).replace(/:?\s+[0-9]+(\.[0-9]+)?(s|ms)$/, '')
+  )
 })
