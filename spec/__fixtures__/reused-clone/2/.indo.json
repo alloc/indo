@@ -1,0 +1,8 @@
+{
+  "repos": {
+    "empty": {
+      "url": "https://github.com/aleclarson/empty",
+      "head": "foo"
+    }
+  }
+}
