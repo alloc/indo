@@ -1,6 +1,6 @@
 import { isTest } from '@alloc/is-dev'
 import AsyncTaskGroup from 'async-task-group'
-import { join } from 'path'
+import { join, resolve } from 'path'
 import slurm from 'slurm'
 import { fs } from '../core/fs'
 import { git } from '../core/git'
@@ -40,15 +40,34 @@ import { buildPackages } from '../core/buildPackages'
 
 export default async (cfg: RootConfig) => {
   const args = slurm({
+    config: { type: 'string' },
     force: { type: 'boolean' },
+    c: 'config',
     f: 'force',
   })
 
-  return indo(cfg.root, args.force)
+  // The --config argument lets you override the `loadTopConfig` call.
+  const configPath = args.config != null && resolve(args.config)
+  const config =
+    !!configPath &&
+    loadConfig(
+      configPath.endsWith(dotIndoId) ? configPath : join(configPath, dotIndoId)
+    )
+
+  return indo(cfg.root, {
+    force: args.force,
+    config,
+  })
 }
 
-export async function indo(cwd: string, force?: boolean) {
-  const cfg = loadTopConfig(cwd)
+export async function indo(
+  cwd: string,
+  opts: {
+    force?: boolean
+    config?: RootConfig | false | null
+  } = {}
+) {
+  const cfg = opts.config || loadTopConfig(cwd)
   if (!cfg) return
 
   let buildCount = 0
@@ -96,7 +115,9 @@ export async function indo(cwd: string, force?: boolean) {
     log.debug('link packages:', yellow(cwdRelative(cfg.root)))
 
     // Link packages before the build step.
-    linkPackages(cfg, packages, { force })
+    linkPackages(cfg, packages, {
+      force: opts.force,
+    })
 
     await findUnknownRepos(cfg, packages)
   })
