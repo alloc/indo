@@ -3,8 +3,7 @@ import { crawl, createMatcher } from 'recrawl-sync'
 import { fs } from './fs'
 import { RootConfig } from './config'
 import { loadPackage, toPackagePath } from './Package'
-
-const NODE_MODULES = /(^|\/)node_modules$/
+import { isNodeModules } from './helpers'
 
 export function findVendorPackages(cfg: RootConfig) {
   const packagePaths: string[] = []
@@ -31,7 +30,7 @@ export function findVendorPackages(cfg: RootConfig) {
       crawl(root, {
         filter: () => false,
         enter(dir) {
-          if (!only(dir) || NODE_MODULES.test(dir) || skip(dir)) {
+          if (!only(dir) || isNodeModules(dir) || skip(dir)) {
             return false
           }
           const pkgPath = toPackagePath(cfg.root, rootId, dir)

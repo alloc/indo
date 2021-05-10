@@ -63,6 +63,12 @@ export const getRealPath = (path: string) => {
 export const isPathEqual = (a: string, b: string) =>
   getRealPath(a) === getRealPath(b)
 
+const NODE_MODULES_RE = /(^|\/)node_modules(\/|$)/
+
+export const isNodeModules = (path: string) => {
+  return NODE_MODULES_RE.test(path)
+}
+
 export const isHomeDir = (path: string) => {
   return path === '/' || path === os.homedir()
 }
