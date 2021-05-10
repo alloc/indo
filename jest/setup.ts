@@ -28,11 +28,12 @@ afterEach(() => {
   `)
 
   // Remove untracked git submodules.
-  stdout.split('\n').forEach(name => {
-    if (!name.startsWith('../')) {
-      fs.remove(name, true)
-    }
-  })
+  if (stdout)
+    stdout.split('\n').forEach(name => {
+      if (!name.startsWith('../')) {
+        fs.remove(name, true)
+      }
+    })
 })
 
 Object.assign(global, {
