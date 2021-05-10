@@ -170,10 +170,10 @@ async function cloneMissingRepos(cfg: RootConfig) {
       // Reuse identical clones from other indo roots.
       const repoHash = getRepoHash(repo)
       if (repoPaths[repoHash]) {
-        return (
-          fs.exists(dest) ||
-          fs.link(dest, relative(dirname(dest), repoPaths[repoHash]))
-        )
+        if (fs.exists(dest)) return
+        fs.mkdir(dirname(dest))
+        fs.link(dest, relative(dirname(dest), repoPaths[repoHash]))
+        return
       }
       // Currently, indo does not support nested .indo.json files that don't
       // have their own repository. As a workaround for testing purposes,
