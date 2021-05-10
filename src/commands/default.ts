@@ -1,6 +1,6 @@
 import { isTest } from '@alloc/is-dev'
 import AsyncTaskGroup from 'async-task-group'
-import { join, resolve } from 'path'
+import { dirname, join, relative, resolve } from 'path'
 import slurm from 'slurm'
 import { fs } from '../core/fs'
 import { git } from '../core/git'
@@ -24,6 +24,7 @@ import {
   loadConfig,
   dotIndoId,
   loadTopConfig,
+  RepoConfig,
 } from '../core/config'
 import { collectVersionErrors, linkPackages } from '../core/linkPackages'
 import { findLocalPackages } from '../core/findLocalPackages'
@@ -151,12 +152,36 @@ export async function indo(
     )
 }
 
+function getRepoHash(repo: RepoConfig) {
+  return repo.url ? repo.url + '#' + (repo.head || 'master') : ''
+}
+
 async function cloneMissingRepos(cfg: RootConfig) {
   const repos = Object.entries(cfg.repos)
   if (repos.length) {
-    const cloner = new AsyncTaskGroup(cpuCount)
-    await cloner.map(repos, ([path, repo]) => async () => {
+    const repoPaths: { [hash: string]: string } = {}
+
+    const cloner = new AsyncTaskGroup(cpuCount, clone)
+    await cloner.concat(repos)
+
+    async function clone([path, repo]: [string, RepoConfig]) {
       const dest = join(cfg.root, path)
+
+      // Reuse identical clones from other indo roots.
+      const repoHash = getRepoHash(repo)
+      if (repoPaths[repoHash]) {
+        fs.link(dest, relative(dirname(dest), repoPaths[repoHash]))
+        return
+      }
+      // Currently, indo does not support nested .indo.json files that don't
+      // have their own repository. As a workaround for testing purposes,
+      // you can use an empty `repo` object to tell Indo to process the
+      // nested .indo.json file anyway. In that case, the `repoHash` will
+      // be an empty string, which should not be cached in `repoPaths`.
+      if (repoHash) {
+        repoPaths[repoHash] = dest
+      }
+
       if (!fs.exists(dest)) {
         const cpu = await requestCPU()
         const task = startTask('Cloning into ' + cyan(cwdRelative(dest)))
@@ -182,19 +207,24 @@ async function cloneMissingRepos(cfg: RootConfig) {
           cpu.release()
         }
       }
-      await recursiveClone(dest)
-    })
-  }
-}
+      // Linked repos are managed manually.
+      else if (fs.isLink(dest)) return
 
-/**
- * Clone any repos that cloned repos depend on.
- */
-async function recursiveClone(root: string) {
-  const cfg = loadConfig(join(root, dotIndoId))
-  if (cfg) {
-    log.events.emit('config', cfg)
-    await cloneMissingRepos(cfg)
+      // Ensure breadth-first processing is done.
+      await 0
+
+      const destCfg = loadConfig(join(dest, dotIndoId))
+      if (destCfg) {
+        log.events.emit('config', destCfg)
+
+        // Add nested repos to the clone queue.
+        const repos = Object.entries(destCfg.repos)
+        repos.forEach(repo => {
+          repo[0] = path + '/' + repo[0]
+        })
+        cloner.concat(repos)
+      }
+    }
   }
 }
 
