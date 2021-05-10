@@ -41,7 +41,7 @@ Object.assign(global, {
   logs: [],
   indo(cmd = '') {
     const argv = quotes.parse(cmd) as string[]
-    process.argv = ['', ''].concat(argv)
+    process.argv = ['', '', '--config', '.'].concat(argv)
 
     let promise: any
     jest.isolateModules(() => {
