@@ -1,6 +1,7 @@
 /* tslint:disable:no-console */
 import crypto from 'crypto'
 import prompt, { Choice } from 'prompts'
+import semver from 'semver'
 import * as os from 'os'
 import { relative, resolve } from 'path'
 import realpath from 'realpath-native'
@@ -105,3 +106,6 @@ export const confirm = async (message: string): Promise<boolean> =>
 export const randstr = (len: number) => {
   return crypto.randomBytes(len).toString('hex')
 }
+
+export const satisfies = (version: string, semverRange: string) =>
+  semver.satisfies(version, semverRange, { includePrerelease: true })
