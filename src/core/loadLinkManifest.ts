@@ -1,5 +1,6 @@
 import { join } from 'path'
 import toml from 'markty-toml'
+import { ConfigIniParser } from 'config-ini-parser'
 import { JSONCache, loadCache } from './cache'
 import { RepoConfig } from './config'
 import { fs } from './fs'
@@ -70,18 +71,22 @@ export function loadLinkMetaData(
 }
 
 function readGitConfig(gitConfigPath: string) {
-  const data = toml(fs.read(gitConfigPath))
+  const parser = new ConfigIniParser()
+  parser.parse(fs.read(gitConfigPath))
+
   const remotes: { [name: string]: string } = {}
   const heads: { [name: string]: { remote: string; merge: string } } = {}
-  for (let key in data) {
-    const value = data[key]
-    if (key.startsWith('remote ')) {
-      key = key.slice(8, -1)
-      remotes[key] = value.url
-    } else if (key.startsWith('branch ')) {
-      key = key.slice(8, -1)
-      value.merge = value.merge.replace(/^refs\/heads\//, '')
-      heads[key] = value
+
+  for (const section of parser.sections()) {
+    if (section.startsWith('remote ')) {
+      const key = section.slice(8, -1)
+      remotes[key] = parser.get(section, 'url')
+    } else if (section.startsWith('branch ')) {
+      const key = section.slice(8, -1)
+      heads[key] = {
+        remote: parser.get(section, 'remote'),
+        merge: parser.get(section, 'merge').replace(/^refs\/heads\//, ''),
+      }
     }
   }
   return {
