@@ -184,7 +184,13 @@ async function cloneMissingRepos(cfg: RootConfig) {
         if (fs.exists(dest)) return
         fs.mkdir(dirname(dest))
         fs.link(dest, relative(dirname(dest), repoPaths[repoHash]))
-        return
+        return log(
+          green('+'),
+          'Linked',
+          green(cwdRelative(dest)),
+          'to',
+          yellow(cwdRelative(repoPaths[repoHash]))
+        )
       }
       // Currently, indo does not support nested .indo.json files that don't
       // have their own repository. As a workaround for testing purposes,
