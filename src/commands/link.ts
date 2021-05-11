@@ -7,6 +7,7 @@ import {
   cyan,
   fatal,
   green,
+  isDescendant,
   isPathEqual,
   log,
   success,
@@ -14,13 +15,19 @@ import {
   yellow,
 } from '../core/helpers'
 
-import { saveConfig, RootConfig } from '../core/config'
-import { loadLinkManifest, loadLinkMetaData } from '../core/loadLinkManifest'
+import {
+  saveConfig,
+  RootConfig,
+  loadAllConfigs,
+  loadHigherConfigs,
+} from '../core/config'
 import { getNearestPackage } from '../core/getNearestPackage'
 import { findLocalPackages } from '../core/findLocalPackages'
 import { loadPackages } from '../core/loadPackages'
 import { registry } from '../core/registry'
-import { indo } from './default'
+import { eachDependency } from '../core/eachDependency'
+import { loadVendors } from '../core/loadVendors'
+import { loadLinkManifest, loadLinkMetaData } from '../core/loadLinkManifest'
 
 export default (cfg: RootConfig | null) => {
   const args = slurm({
@@ -158,5 +165,25 @@ async function linkGlobalPackage(cfg: RootConfig, opts: LinkOptions) {
     }
   }
 
-  await indo(cfg.root)
+  // Ensure `cfg.parent` exists.
+  loadHigherConfigs(cfg)
+
+  loadAllConfigs(cfg).forEach(cfg => {
+    const vendors = loadVendors(cfg)
+
+    // Remove vendors unrelated to the newly linked directory.
+    for (const name in vendors) {
+      if (!isDescendant(vendors[name].root, link)) {
+        delete vendors[name]
+      }
+    }
+
+    const packages = loadPackages(findLocalPackages(cfg))
+    for (const pkg of Object.values(packages)) {
+      eachDependency(pkg, dep => {
+        if (!dep.name) return
+        if ()
+      })
+    }
+  })
 }

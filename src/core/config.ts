@@ -116,3 +116,37 @@ export function loadTopConfig(from: string) {
   }
   return loadConfig(join(root, dotIndoId))
 }
+
+/**
+ * Load the `.indo.json` files that exist in the ancestors of the
+ * given indo root. The returned configs array is ordered by
+ * deepest roots first. The given root is not included.
+ */
+export function loadHigherConfigs(cfg: RootConfig, configs: RootConfig[] = []) {
+  const topConfig = loadTopConfig(cfg.root)
+  if (cfg != topConfig)
+    for (let root = cfg.root; (root = dirname(root)); ) {
+      cfg = loadConfig(root)!
+      if (cfg == topConfig) break
+    }
+
+  return configs
+}
+
+/**
+ * Load all `.indo.json` files in depth-first order.
+ *
+ * Ancestors are not searched.
+ */
+export function loadAllConfigs(cfg: RootConfig, configs: RootConfig[] = []) {
+  configs.push(cfg)
+
+  for (const repoId of Object.keys(cfg.repos)) {
+    const repoConfig = loadConfig(join(cfg.root, repoId, dotIndoId))
+    if (repoConfig) {
+      loadAllConfigs(repoConfig, configs)
+    }
+  }
+
+  return configs
+}
