@@ -38,6 +38,7 @@ import {
 import { cpuCount, requestCPU } from '../core/cpu'
 import { installPackages } from '../core/installPackages'
 import { buildPackages } from '../core/buildPackages'
+import { loadLinkManifest } from '../core/loadLinkManifest'
 
 export default async (cfg: RootConfig) => {
   const args = slurm({
@@ -160,6 +161,14 @@ async function cloneMissingRepos(cfg: RootConfig) {
   const repos = Object.entries(cfg.repos)
   if (repos.length) {
     const repoPaths: { [hash: string]: string } = {}
+
+    // Linked repos will be reused.
+    const linkManifest = loadLinkManifest(cfg.root)
+    linkManifest.find((link, linkPath) => {
+      const hash = getRepoHash(link.repo)
+      repoPaths[hash] = join(cfg.root, linkPath)
+      return false
+    })
 
     const cloner = new AsyncTaskGroup(cpuCount, clone)
     await cloner.concat(repos)
