@@ -154,7 +154,9 @@ export async function indo(
 }
 
 function getRepoHash(repo: RepoConfig) {
-  return repo.url ? repo.url + '#' + (repo.head || 'master') : ''
+  return repo.url
+    ? repo.url.replace(/\.git$/, '') + '#' + (repo.head || 'master')
+    : ''
 }
 
 async function cloneMissingRepos(cfg: RootConfig) {
