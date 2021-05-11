@@ -15,6 +15,9 @@ export * from 'misty'
 export { startTask } from 'misty/task'
 export { crawl, createMatcher } from 'recrawl-sync'
 
+/** Cached metadata is kept here. */
+export const CACHE_DIR = '.git/.indo'
+
 export const time = <T>(label: string, action: () => T) => {
   const start = Date.now()
   const result = action()
