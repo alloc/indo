@@ -15,6 +15,7 @@ import {
 } from '../core/helpers'
 
 import { saveConfig, RootConfig } from '../core/config'
+import { loadLinkManifest, loadLinkMetaData } from '../core/loadLinkManifest'
 import { getNearestPackage } from '../core/getNearestPackage'
 import { findLocalPackages } from '../core/findLocalPackages'
 import { loadPackages } from '../core/loadPackages'
@@ -147,6 +148,14 @@ async function linkGlobalPackage(cfg: RootConfig, opts: LinkOptions) {
       'to',
       yellow(tildify(target))
     )
+
+    // As long as the linked directory is a git repository,
+    // its remote branch will be tracked.
+    const metadata = loadLinkMetaData(link)
+    if (metadata) {
+      const links = loadLinkManifest(cfg.root, true)
+      links.set(relative(cfg.root, link), metadata)
+    }
   }
 
   await indo(cfg.root)
