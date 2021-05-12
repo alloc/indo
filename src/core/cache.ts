@@ -3,6 +3,7 @@ import { dirname } from 'path'
 import { fs } from './fs'
 
 export interface JSONCache<T = any> {
+  path: string
   dirty: boolean
   get(key: string): T
   set(key: string, value: T | null): void
@@ -36,6 +37,9 @@ export function loadCache<T>(
   }
   let dirty = false
   cache = caches[cachePath] = {
+    get path() {
+      return cachePath
+    },
     get dirty() {
       return dirty
     },

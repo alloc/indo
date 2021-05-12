@@ -1,4 +1,4 @@
-import { join } from 'path'
+import { join, resolve } from 'path'
 import toml from 'markty-toml'
 import { ConfigIniParser } from 'config-ini-parser'
 import { JSONCache, loadCache } from './cache'
@@ -25,15 +25,17 @@ export function loadLinkManifest(root: string, skipUpdate?: boolean) {
 }
 
 export function updateLinkManifest(links: JSONCache<LinkMetaData>) {
-  links.find((link, linkPath) => {
+  const root = resolve(links.path, '../../..')
+  links.find((prevData, linkId) => {
+    const linkPath = join(root, linkId)
     if (fs.isLink(linkPath)) {
-      const newLink = loadLinkMetaData(linkPath, link)!
-      if (newLink) {
-        newLink == link || links.set(linkPath, newLink)
+      const newData = loadLinkMetaData(linkPath, prevData)!
+      if (newData) {
+        newData == prevData || links.set(linkId, newData)
         return false
       }
     }
-    links.set(linkPath, null)
+    links.set(linkId, null)
     return false
   })
 }
