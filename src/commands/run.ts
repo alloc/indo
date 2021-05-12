@@ -12,8 +12,7 @@ import {
 } from '../core/helpers'
 
 import { RootConfig } from '../core/config'
-import { loadPackages } from '../core/loadPackages'
-import { findLocalPackages } from '../core/findLocalPackages'
+import { loadLocalPackages } from '../core/loadLocalPackages'
 
 export default async (cfg: RootConfig) => {
   const args = slurm({
@@ -23,7 +22,7 @@ export default async (cfg: RootConfig) => {
     fatal('Must provide a script name')
   }
 
-  const packages = loadPackages(findLocalPackages(cfg))
+  const packages = loadLocalPackages(cfg)
   const task = startTask('Running...')
 
   const runner = new AsyncTaskGroup(args.concurrency)

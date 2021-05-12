@@ -14,7 +14,6 @@ import {
 } from './helpers'
 
 import { RootConfig } from './config'
-import { loadPackages } from './loadPackages'
 import { loadVendors } from './loadVendors'
 import {
   getPackage,
@@ -23,8 +22,8 @@ import {
   StringMap,
   toPackagePath,
 } from './Package'
-import { findLocalPackages } from './findLocalPackages'
 import { resolveAlias } from './resolveAlias'
+import { loadLocalPackages } from './loadLocalPackages'
 
 export interface VersionError {
   /** The dependent package */
@@ -51,7 +50,7 @@ export function collectVersionErrors() {
 
 export function linkPackages(
   cfg: RootConfig,
-  packages = loadPackages(findLocalPackages(cfg)),
+  packages = loadLocalPackages(cfg),
   opts: { force?: boolean; dryRun?: boolean } = {}
 ) {
   const vendor = time('load vendors', () => loadVendors(cfg))

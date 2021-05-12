@@ -27,8 +27,6 @@ import {
   RepoConfig,
 } from '../core/config'
 import { collectVersionErrors, linkPackages } from '../core/linkPackages'
-import { findLocalPackages } from '../core/findLocalPackages'
-import { loadPackages } from '../core/loadPackages'
 import {
   loadPackage,
   Package,
@@ -39,6 +37,7 @@ import { cpuCount, requestCPU } from '../core/cpu'
 import { installPackages } from '../core/installPackages'
 import { buildPackages } from '../core/buildPackages'
 import { loadLinkManifest } from '../core/loadLinkManifest'
+import { loadLocalPackages } from '../core/loadLocalPackages'
 
 export default async (cfg: RootConfig) => {
   const args = slurm({
@@ -94,9 +93,7 @@ export async function indo(
 
   const linking = configs.reverse().map(async cfg => {
     const rootPkg = loadPackage(toPackagePath(cfg.root))
-    const packages = time('find packages', () =>
-      loadPackages(findLocalPackages(cfg))
-    )
+    const packages = time('find packages', () => loadLocalPackages(cfg))
 
     log.debug('config found:', yellow(cwdRelative(cfg.path)))
     log.debug(

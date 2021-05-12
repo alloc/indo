@@ -2,9 +2,7 @@ import prompt from 'prompts'
 import semver from 'semver'
 import slurm from 'slurm'
 import { RootConfig } from '../core/config'
-import { findLocalPackages } from '../core/findLocalPackages'
 import { fs } from '../core/fs'
-import { getPublishedVersions } from '../core/getPublishedVersions'
 import {
   choose,
   cwdRelative,
@@ -15,7 +13,8 @@ import {
   startTask,
   yellow,
 } from '../core/helpers'
-import { loadPackages } from '../core/loadPackages'
+import { getPublishedVersions } from '../core/getPublishedVersions'
+import { loadLocalPackages } from '../core/loadLocalPackages'
 import {
   loadPackage,
   Package,
@@ -35,7 +34,7 @@ export default async (cfg: RootConfig) => {
     fatal('Must provide one or more dependency names')
   }
 
-  const packages = loadPackages(findLocalPackages(cfg))
+  const packages = loadLocalPackages(cfg)
 
   const rootPkg = loadPackage(toPackagePath(cfg.root))
   if (rootPkg) {

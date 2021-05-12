@@ -1,9 +1,8 @@
 import AsyncTaskGroup from 'async-task-group'
 import slurm from 'slurm'
 import { RootConfig } from '../core/config'
-import { findLocalPackages } from '../core/findLocalPackages'
+import { loadLocalPackages } from '../core/loadLocalPackages'
 import { fatal, green } from '../core/helpers'
-import { loadPackages } from '../core/loadPackages'
 
 export default async (cfg: RootConfig) => {
   const args = slurm({
@@ -17,7 +16,7 @@ export default async (cfg: RootConfig) => {
     )
   }
 
-  const packages = loadPackages(findLocalPackages(cfg))
+  const packages = loadLocalPackages(cfg)
 
   const runner = new AsyncTaskGroup(args.concurrency)
   await runner.map(Object.values(packages), async pkg => {

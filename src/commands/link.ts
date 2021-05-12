@@ -17,8 +17,7 @@ import {
 import { saveConfig, RootConfig } from '../core/config'
 import { loadLinkManifest, loadLinkMetaData } from '../core/loadLinkManifest'
 import { getNearestPackage } from '../core/getNearestPackage'
-import { findLocalPackages } from '../core/findLocalPackages'
-import { loadPackages } from '../core/loadPackages'
+import { loadLocalPackages } from '../core/loadLocalPackages'
 import { registry } from '../core/registry'
 import { indo } from './default'
 
@@ -102,7 +101,7 @@ async function linkGlobalPackage(cfg: RootConfig, opts: LinkOptions) {
     }
   }
 
-  const packages = loadPackages(findLocalPackages(cfg))
+  const packages = loadLocalPackages(cfg)
   if (opts.save) {
     const cwd = process.cwd()
     const pkg = Object.values(packages)
