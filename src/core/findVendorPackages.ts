@@ -36,7 +36,6 @@ export function findVendorPackages(cfg: RootConfig) {
             return false
           }
           const pkgPath = toPackagePath(cfg.root, rootId, dir)
-          packagePaths.push(pkgPath)
           const pkg = loadPackage(pkgPath)
           if (!pkg) {
             return true
@@ -47,6 +46,8 @@ export function findVendorPackages(cfg: RootConfig) {
             globs.forEach(glob => {
               findVendors(join(relative(cfg.root, pkg!.root), glob))
             })
+          } else {
+            packagePaths.push(pkgPath)
           }
           return false
         },
