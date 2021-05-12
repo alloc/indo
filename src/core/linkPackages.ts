@@ -53,11 +53,7 @@ export function linkPackages(
   packages = loadLocalPackages(cfg),
   opts: { force?: boolean; dryRun?: boolean } = {}
 ) {
-  const vendor = time('load vendors', () => loadVendors(cfg))
-  log.debug(
-    'vendor packages:',
-    Object.values(vendor).map(pkg => cwdRelative(pkg.root))
-  )
+  const vendor = loadVendors(cfg)
 
   time('link packages', () => {
     for (const pkg of Object.values(packages)) {
