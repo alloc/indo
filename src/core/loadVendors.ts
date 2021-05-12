@@ -4,7 +4,6 @@ import { loadPackages } from './loadPackages'
 import { findLocalPackages } from './findLocalPackages'
 import { findVendorPackages } from './findVendorPackages'
 import { makeCacheFn } from './makeCacheFn'
-import { time } from './helpers'
 
 /**
  * Find vendor packages for the given `.indo.json` root and in
@@ -12,11 +11,10 @@ import { time } from './helpers'
  */
 export function loadVendors(cfg: RootConfig) {
   const packages: PackageMap = {}
-  time('load vendors', () => {
-    if (cfg.parent)
-      loadAncestorPackages(cfg.parent, findLocalPackages, packages)
-    loadAncestorPackages(cfg, findVendorPackages, packages)
-  })
+  if (cfg.parent) {
+    loadAncestorPackages(cfg.parent, findLocalPackages, packages)
+  }
+  loadAncestorPackages(cfg, findVendorPackages, packages)
   return packages
 }
 
