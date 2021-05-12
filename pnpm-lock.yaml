@@ -4,10 +4,13 @@ dependencies:
   '@cush/shell': 1.0.0
   async-task-group: 1.3.3
   bocks: 1.0.0
+  config-ini-parser: 1.5.9
   dequals: 1.0.0
+  exit-hook: 2.2.1
   find-dependency: 1.2.0
   glob-regex: 0.3.2
   kleur: 4.1.4
+  markty-toml: 0.1.1
   misty: 1.3.1
   physical-cpu-count: 2.0.0
   prompts: 2.4.1
@@ -18,6 +21,7 @@ dependencies:
   shared-log: 1.2.4
   slurm: 0.5.10
 devDependencies:
+  '@alloc/fast-rimraf': 1.0.8
   '@alloc/prettier-config': 1.0.0
   '@types/jest': 26.0.22
   '@types/node': 12.12.37
@@ -43,6 +47,11 @@ packages:
       esbuild: '>=0.8.31'
     resolution:
       integrity: sha512-pD6UFG5xpWGkDJrZu2ZvSX0oJONMvU5RAC5pL018nNcFAPfDH9xhyj4DLMPGtDdIYYKhL9Ol5tJjSB/J6uMGow==
+  /@alloc/fast-rimraf/1.0.8:
+    dev: true
+    hasBin: true
+    resolution:
+      integrity: sha512-TsRTRLLDW6Q4fWBAYlbkcaHQDAANKsI0smrhS/1x7/GHcjVxo+r+2VRbqrWaYpmjdhvCp5v7n2wtwkMYp+Kivw==
   /@alloc/is-dev/1.2.2:
     dev: false
     resolution:
@@ -1193,6 +1202,10 @@ packages:
     dev: true
     resolution:
       integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=
+  /config-ini-parser/1.5.9:
+    dev: false
+    resolution:
+      integrity: sha512-FLAMUunXCqbpEbv/q0v76lLewmZ03LUM4xslsPpZ2IN7/sQUaKfXNoTl8EjOTjlkHgrNzmJ//Y5crgabbIWjfQ==
   /convert-source-map/1.7.0:
     dependencies:
       safe-buffer: 5.1.2
@@ -1476,12 +1489,12 @@ packages:
       source-map: 0.6.1
     resolution:
       integrity: sha512-mmHKys/C8BFUGI+MAWNcSYoORYLMdPzjrknd2Vc+bUsjN5bXcr8EhrNB+UTqfL1y3I9c4fw2ihgtMPQLBRiQxw==
-  /eslint-visitor-keys/2.0.0:
+  /eslint-visitor-keys/2.1.0:
     dev: true
     engines:
       node: '>=10'
     resolution:
-      integrity: sha512-QudtT6av5WXels9WjIM7qz1XD1cWGvX4gGXvp/zBn9nXG02D0utdU3Em2m/QjTnrsk6bBjmCygl3rmj118msQQ==
+      integrity: sha512-0rSmRBzXgDzIsD6mGdJgevzgezI534Cer5L/vyMX0kHzT/jiB43jRhd9YUlMGYLQy2zprNmoT8qasCGtY+QaKw==
   /esprima/4.0.1:
     dev: true
     engines:
@@ -2828,6 +2841,16 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-7Nyo8TFE5mDxtb1B8S80edmN+48=
+  /markty-toml/0.1.1:
+    dependencies:
+      markty: 0.0.4
+    dev: false
+    resolution:
+      integrity: sha512-no+RbxQ+CbFpHMW7bQOzsR/6BO1fLvgZ7+I+pHoIPfyt3fz8ULFNgl5rXf+J4vFLRj67omgpDCxOwTLXhmWDYw==
+  /markty/0.0.4:
+    dev: false
+    resolution:
+      integrity: sha512-V2g+PRfySY9zKL0n4NHuE2rK2daHuVrcdRaJ8Gfhy4IYwEb2NywCSqCrxrn2LSJQ+dXf2Gubqw9+kU5m7fXUJw==
   /md5-hex/3.0.1:
     dependencies:
       blueimp-md5: 2.18.0
@@ -2956,7 +2979,7 @@ packages:
     dependencies:
       '@alloc/is': 3.1.0
       '@alloc/types': 2.1.0
-      eslint-visitor-keys: 2.0.0
+      eslint-visitor-keys: 2.1.0
       magic-string: 0.24.1
       meriyah: 4.1.5
     dev: true
@@ -4286,6 +4309,7 @@ packages:
     resolution:
       integrity: sha512-aePbxDmcYW++PaqBsJ+HYUFwCdv4LVvdnhBy78E57PIor8/OVvhMrADFFEDh8DHDFRv/O9i3lPhsENjO7QX0+A==
 specifiers:
+  '@alloc/fast-rimraf': ^1.0.8
   '@alloc/is-dev': ^1.2.2
   '@alloc/prettier-config': ^1.0.0
   '@cush/exec': ^1.7.1
@@ -4298,13 +4322,16 @@ specifiers:
   '@types/shell-quote': ^1.7.0
   async-task-group: ^1.3.3
   bocks: ^1.0.0
+  config-ini-parser: ^1.5.9
   dequals: ^1.0.0
   esbuild: ^0.11.9
   esbuild-jest: npm:@alloc/esbuild-jest@^0.3.6
+  exit-hook: ^2.2.1
   find-dependency: ^1.1.0
   glob-regex: ^0.3.2
   jest: ^26.6.3
   kleur: ^4.1.4
+  markty-toml: ^0.1.1
   misty: ^1.3.1
   physical-cpu-count: ^2.0.0
   prettier: ~2.2.1
