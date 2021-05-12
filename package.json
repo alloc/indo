@@ -16,7 +16,7 @@
     "src"
   ],
   "scripts": {
-    "build": "tsc -p .",
+    "build": "rimraf dist && tsc -p .",
     "prepare": "npm run build",
     "prepublishOnly": "rm -rf dist",
     "test": "jest"
@@ -45,6 +45,7 @@
     "slurm": "^0.5.10"
   },
   "devDependencies": {
+    "@alloc/fast-rimraf": "^1.0.8",
     "@alloc/prettier-config": "^1.0.0",
     "@types/jest": "^26.0.22",
     "@types/node": "^12.11.1",
