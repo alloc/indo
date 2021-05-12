@@ -29,6 +29,7 @@ export function findVendorPackages(cfg: RootConfig) {
       glob = glob.slice(rootId.length)
       const only = createMatcher([glob])!
       crawl(root, {
+        skip: ['.git'],
         filter: () => false,
         enter(dir) {
           if (!only(dir) || isNodeModules(dir) || skip(dir)) {
