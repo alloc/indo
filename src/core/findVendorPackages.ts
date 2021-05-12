@@ -35,7 +35,7 @@ export function findVendorPackages(cfg: RootConfig) {
           if (!only(dir) || isNodeModules(dir) || skip(dir)) {
             return false
           }
-          const pkgPath = toPackagePath(cfg.root, rootId, dir)
+          const pkgPath = toPackagePath(root, dir)
           const pkg = loadPackage(pkgPath)
           if (!pkg) {
             return true
@@ -44,7 +44,7 @@ export function findVendorPackages(cfg: RootConfig) {
             const ws = pkg.workspaces
             const globs = Array.isArray(ws) ? ws : ws.packages
             globs.forEach(glob => {
-              findVendors(join(relative(cfg.root, pkg!.root), glob))
+              findVendors(join(relative(cfg.root, pkg.root), glob))
             })
           } else {
             packagePaths.push(pkgPath)
