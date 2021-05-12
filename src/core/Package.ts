@@ -65,10 +65,10 @@ export class Package {
     return dirname(this.path)
   }
 
-  get manager() {
+  get manager(): PackageManager {
     return Object.defineProperty(this, 'manager', {
       value: getPackageManager(this),
-    }).manager as PackageManager
+    }).manager
   }
 
   clone() {
