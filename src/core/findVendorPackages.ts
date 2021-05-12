@@ -2,8 +2,9 @@ import { dirname, join, relative } from 'path'
 import { crawl, createMatcher } from 'recrawl-sync'
 import { fs } from './fs'
 import { RootConfig } from './config'
+import { findPackages } from './findPackages'
 import { loadPackage, toPackagePath } from './Package'
-import { isNodeModules } from './helpers'
+import { isNodeModules, isSelfManaged } from './helpers'
 
 export function findVendorPackages(cfg: RootConfig) {
   const packagePaths: string[] = []
@@ -48,6 +49,20 @@ export function findVendorPackages(cfg: RootConfig) {
           }
           return false
         },
+      })
+    }
+  })
+
+  // Treat self-managed repos as vendors.
+  Object.keys(cfg.repos).forEach(repoDir => {
+    const absRepoDir = join(cfg.root, repoDir)
+    if (isSelfManaged(absRepoDir)) {
+      // Ensure globs targeting a specific repo can be used.
+      const ignore = cfg.ignore.map(glob =>
+        glob.startsWith(repoDir + '/') ? glob.slice(repoDir.length) : glob
+      )
+      findPackages(absRepoDir, ignore).forEach(pkgPath => {
+        packagePaths.push(pkgPath)
       })
     }
   })

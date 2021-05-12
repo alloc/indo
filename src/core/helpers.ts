@@ -3,11 +3,13 @@ import crypto from 'crypto'
 import prompt, { Choice } from 'prompts'
 import semver from 'semver'
 import * as os from 'os'
-import { relative, resolve } from 'path'
+import { join, relative, resolve } from 'path'
 import realpath from 'realpath-native'
 import { formatElapsed } from 'misty'
 import { gray } from 'kleur'
 import log from 'shared-log'
+import { dotIndoId, loadConfig } from './config'
+import { fs } from './fs'
 
 export { default as log } from 'shared-log'
 export { gray, green, red, yellow, cyan } from 'kleur'
@@ -29,6 +31,17 @@ export const time = <T>(label: string, action: () => T) => {
     log.debug(gray(label + ': ' + formatElapsed(start)))
   }
   return result
+}
+
+/**
+ * Returns `true` if the given directory should __not__ be managed
+ * by `indo` from a higher directory.
+ */
+export function isSelfManaged(absRepoDir: string) {
+  // Linked repos are readonly.
+  if (fs.isLink(absRepoDir)) return true
+  // Nested roots are managed explicitly.
+  return !!loadConfig(join(absRepoDir, dotIndoId))
 }
 
 /** Returns true if `parent` is equal to (or a parent of) the `path` argument */

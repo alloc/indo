@@ -1,7 +1,7 @@
 import { join } from 'path'
-import { dotIndoId, loadConfig, RootConfig } from './config'
+import { RootConfig } from './config'
 import { findPackages } from './findPackages'
-import { fs } from './fs'
+import { isSelfManaged } from './helpers'
 
 /**
  * Find local packages for an `.indo.json` root.
@@ -15,11 +15,7 @@ export function findLocalPackages(cfg: RootConfig) {
   // Find packages in nested repostories.
   Object.keys(cfg.repos).forEach(repoDir => {
     const absRepoDir = join(cfg.root, repoDir)
-
-    // Nested roots are skipped since they load themselves.
-    if (loadConfig(join(absRepoDir, dotIndoId))) return
-    // Linked repos are skipped since they are readonly.
-    if (fs.isLink(absRepoDir)) return
+    if (isSelfManaged(absRepoDir)) return
 
     // Ensure globs targeting a specific repo can be used.
     const ignore = cfg.ignore.map(glob =>
