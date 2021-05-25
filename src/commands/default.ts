@@ -9,6 +9,7 @@ import {
   cwdRelative,
   cyan,
   green,
+  isDescendant,
   log,
   red,
   startTask,
@@ -76,11 +77,20 @@ export async function indo(
   log.events.on('build', () => buildCount++)
   log.events.on('install', () => installCount++)
 
-  const configs: RootConfig[] = [cfg]
+  let configs = [cfg]
   log.events.on('config', (cfg: RootConfig) => configs.push(cfg))
 
   // Clone repos and find nested indo configs.
   await time('clone missing repos', () => cloneMissingRepos(cfg))
+
+  // Skip setup for higher roots.
+  configs = configs.filter(cfg => isDescendant(cfg.root, cwd))
+  if (!configs.length) {
+    return warn(
+      'No ".indo.json" file was found in the current directory.\n    ' +
+        'Try using the -c flag if you know where the ".indo.json" file is.'
+    )
+  }
 
   const versionErrors = collectVersionErrors()
 
