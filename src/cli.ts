@@ -38,6 +38,12 @@ if (helpArg !== 'help' && !fs.exists(cmdPath)) {
 
 export default (async () => {
   if (helpArg) {
+    if (process.stdout.isTTY) {
+      return require('@cush/shell').sync(`indo ${cmd} -h | less -r`, {
+        env: { ...process.env, FORCE_COLOR: '1' },
+        stdio: 'inherit',
+      })
+    }
     require('./core/printHelp').printHelp(cmdPath)
     return
   }

@@ -12,7 +12,7 @@ export default async (cfg: RootConfig) => {
   const cmd = args['--']
   if (!cmd) {
     fatal(
-      `No command given (eg: ${green('"indo run -- echo \\$PACKAGE_NAME"')})`
+      `No command given (eg: ${green('"indo exec -- echo \\$PACKAGE_NAME"')})`
     )
   }
 
