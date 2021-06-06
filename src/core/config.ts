@@ -98,8 +98,8 @@ export function createConfig(props?: Partial<Config>): Config {
 export function saveConfig(cfg: RootConfig) {
   const copy = {}
   const empty = createConfig()
-  for (const key in empty) {
-    if (!isDeepEqual(cfg[key], empty[key])) {
+  for (const key in cfg) {
+    if (key in empty && !isDeepEqual(cfg[key], empty[key])) {
       copy[key] = cfg[key]
     }
   }
