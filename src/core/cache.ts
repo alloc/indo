@@ -43,7 +43,7 @@ export function loadCache<T>(
     get dirty() {
       return dirty
     },
-    get: key => cache[key],
+    get: key => data[key],
     set(key, value) {
       if (value) data[key] = value
       else delete data[key]
