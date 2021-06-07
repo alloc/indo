@@ -8,6 +8,7 @@ import { searchParents } from './searchParents'
 export interface RepoConfig {
   url: string
   head?: string
+  optional?: boolean
 }
 
 interface Config {

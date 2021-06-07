@@ -6,6 +6,7 @@ import { fs } from '../core/fs'
 import { git } from '../core/git'
 import {
   choose,
+  confirm,
   cwdRelative,
   cyan,
   green,
@@ -39,6 +40,7 @@ import { installPackages } from '../core/installPackages'
 import { buildPackages } from '../core/buildPackages'
 import { loadLinkManifest } from '../core/loadLinkManifest'
 import { loadLocalPackages } from '../core/loadLocalPackages'
+import { getPromptMemory } from '../core/promptMemory'
 
 export default async (cfg: RootConfig) => {
   const args = slurm({
@@ -179,16 +181,19 @@ async function cloneMissingRepos(cfg: RootConfig) {
       return false
     })
 
-    const cloner = new AsyncTaskGroup(cpuCount, clone)
-    await cloner.concat(repos)
+    let promptQueue = Promise.resolve()
 
-    async function clone([path, repo]: [string, RepoConfig]) {
+    const cloner = new AsyncTaskGroup(cpuCount, clone)
+    await cloner.map(repos, entry => [...entry, cfg] as const)
+
+    async function clone([path, repo, cfg]: [string, RepoConfig, RootConfig]) {
       const dest = join(cfg.root, path)
+      const exists = fs.exists(dest)
 
       // Reuse identical clones from other indo roots.
       const repoHash = getRepoHash(repo)
       if (repoPaths[repoHash]) {
-        if (fs.exists(dest)) return
+        if (exists) return
         fs.mkdir(dirname(dest))
         fs.link(dest, relative(dirname(dest), repoPaths[repoHash]))
         return log(
@@ -199,6 +204,27 @@ async function cloneMissingRepos(cfg: RootConfig) {
           yellow(cwdRelative(repoPaths[repoHash]))
         )
       }
+
+      if (!exists && repo.optional) {
+        const promptMemory = getPromptMemory(cfg)
+        const cacheKey = 'no-clone:' + path
+        if (repoHash == promptMemory.get(cacheKey)) {
+          return // Already prompted before.
+        }
+
+        let allow = false
+        await (promptQueue = promptQueue.then(async () => {
+          log.warn(`Found an optional repo:\n  ${yellow(repoHash)}`)
+          log('')
+          allow = await confirm(`Clone it into ${green(cwdRelative(dest))}`)
+          log('')
+        }))
+
+        // Avoid prompting again if clone is unwanted.
+        promptMemory.set(cacheKey, allow ? null : repoHash)
+        if (!allow) return
+      }
+
       // Currently, indo does not support nested .indo.json files that don't
       // have their own repository. As a workaround for testing purposes,
       // you can use an empty `repo` object to tell Indo to process the
@@ -208,7 +234,7 @@ async function cloneMissingRepos(cfg: RootConfig) {
         repoPaths[repoHash] = dest
       }
 
-      if (!fs.exists(dest)) {
+      if (!exists) {
         const cpu = await requestCPU()
         const task = startTask('Cloning into ' + cyan(cwdRelative(dest)))
         try {
@@ -244,11 +270,10 @@ async function cloneMissingRepos(cfg: RootConfig) {
         log.events.emit('config', destCfg)
 
         // Add nested repos to the clone queue.
-        const repos = Object.entries(destCfg.repos)
-        repos.forEach(repo => {
-          repo[0] = path + '/' + repo[0]
-        })
-        cloner.concat(repos)
+        cloner.map(
+          Object.entries(destCfg.repos),
+          entry => [...entry, destCfg] as const
+        )
       }
     }
   }
