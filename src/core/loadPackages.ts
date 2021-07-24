@@ -1,4 +1,5 @@
 import { loadPackage, Package, PackageMap } from './Package'
+import { gray, log } from './helpers'
 
 /**
  * Load an array of `package.json` paths and deduplicate
@@ -14,8 +15,17 @@ export function loadPackages(
     const pkg = loadPackage(pkgPath)
     if (pkg) {
       const name = getName(pkg)
-      if (name) {
-        packages[name] ??= pkg
+      if (!name) {
+        log.debug(gray('[skipped]'), 'unnamed package:', {
+          path: pkgPath,
+        })
+      } else if (packages[name]) {
+        log.debug(gray('[skipped]'), 'duplicate package:', {
+          name,
+          paths: [pkgPath, packages[name].path],
+        })
+      } else {
+        packages[name] = pkg
       }
     }
   })
