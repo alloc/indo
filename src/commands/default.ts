@@ -82,6 +82,14 @@ export async function indo(
   let configs = [cfg]
   log.events.on('config', (cfg: RootConfig) => configs.push(cfg))
 
+  // Ensure the $PWD/.indo.json config is used.
+  if (cfg.root !== cwd) {
+    const cwdConfig = loadConfig(join(cwd, dotIndoId))
+    if (cwdConfig) {
+      configs.push(cwdConfig)
+    }
+  }
+
   // Clone repos and find nested indo configs.
   await time('clone missing repos', () => cloneMissingRepos(cfg))
 
