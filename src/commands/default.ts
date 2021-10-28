@@ -71,27 +71,33 @@ export async function indo(
     config?: RootConfig | false | null
   } = {}
 ) {
-  const cfg = opts.config || loadTopConfig(cwd)
-  if (!cfg) return
+  const topConfig = opts.config || loadTopConfig(cwd)
+  if (!topConfig) return
 
   let buildCount = 0
   let installCount = 0
   log.events.on('build', () => buildCount++)
   log.events.on('install', () => installCount++)
 
-  let configs = [cfg]
+  let configs = [topConfig]
   log.events.on('config', (cfg: RootConfig) => configs.push(cfg))
 
+  // If the working directory has an indo config, this variable
+  // will use it (unless an explicit config is passed).
+  // Otherwise, the top-most config is used.
+  let mainConfig = topConfig
+
   // Ensure the $PWD/.indo.json config is used.
-  if (cfg.root !== cwd) {
+  if (!opts.config && topConfig.root !== cwd) {
     const cwdConfig = loadConfig(join(cwd, dotIndoId))
     if (cwdConfig) {
+      mainConfig = cwdConfig
       configs.push(cwdConfig)
     }
   }
 
   // Clone repos and find nested indo configs.
-  await time('clone missing repos', () => cloneMissingRepos(cfg))
+  await time('clone missing repos', () => cloneMissingRepos(mainConfig))
 
   // Skip setup for higher roots.
   configs = configs.filter(cfg => isDescendant(cfg.root, cwd))
