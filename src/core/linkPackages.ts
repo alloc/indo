@@ -69,6 +69,9 @@ export function linkPackages(
       const nodeModulesPath = join(pkg.root, 'node_modules')
       for (let [alias, version] of Object.entries(deps)) {
         if (version.startsWith('file:')) continue
+        if (version.startsWith('workspace:')) {
+          continue // TODO: add workspace dependencies to `pkg.localDependencies`
+        }
         if (version.startsWith('link:')) {
           if (!version.includes('node_modules')) {
             const depPath = resolve(pkg.root, version.slice(5))
