@@ -2,6 +2,7 @@ import * as os from 'os'
 import { dirname, join } from 'path'
 import { writeFileSync, readFileSync } from 'atomically'
 import { fs } from './fs'
+import isDeepEqual from 'dequals'
 
 /** Local package registry */
 export class Registry {
@@ -48,7 +49,7 @@ export class Registry {
   protected _load() {
     if (!this._packages) {
       try {
-        this._packages = JSON.parse(readFileSync(this.path, 'utf8'))
+        this._packages = this._read()
       } catch (e: any) {
         if (e.code !== 'ENOENT') {
           console.error('Global registry is corrupted: ' + this.path)
@@ -59,8 +60,20 @@ export class Registry {
     }
   }
 
+  protected _read() {
+    return JSON.parse(readFileSync(this.path, 'utf8'))
+  }
+
   protected _save() {
-    writeFileSync(this.path, JSON.stringify(this._packages, null, 2))
+    const content = JSON.stringify(this._packages, null, 2)
+    writeFileSync(this.path, content)
+
+    // Double check if we weren't overwritten by a parallel process.
+    const current = this._read()
+    if (!isDeepEqual(current, this._packages)) {
+      this._packages = { ...current, ...this._packages }
+      this._save()
+    }
   }
 }
 
