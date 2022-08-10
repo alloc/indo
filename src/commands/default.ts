@@ -46,6 +46,7 @@ export default async (cfg: RootConfig) => {
   const args = slurm({
     config: { type: 'string' },
     force: { type: 'boolean' },
+    skipInstall: { type: 'boolean' },
     c: 'config',
     f: 'force',
   })
@@ -60,6 +61,7 @@ export default async (cfg: RootConfig) => {
 
   return indo(cfg.root, {
     force: args.force,
+    skipInstall: args.skipInstall,
     config,
   })
 }
@@ -69,6 +71,7 @@ export async function indo(
   opts: {
     force?: boolean
     config?: RootConfig | false | null
+    skipInstall?: boolean
   } = {}
 ) {
   const topConfig = opts.config || loadTopConfig(cwd)
@@ -127,8 +130,12 @@ export async function indo(
       Object.values(packages).map(pkg => cwdRelative(pkg.root))
     )
 
-    // Skip the install step if the root package uses Lerna or Yarn workspaces.
-    if (!rootPkg || (!rootPkg.workspaces && !rootPkg.lerna))
+    const skipInstall =
+      opts.skipInstall ||
+      // Skip the install step if the root package uses Lerna or Yarn workspaces.
+      (rootPkg && (rootPkg.workspaces || rootPkg.lerna))
+
+    if (!skipInstall)
       installer.push(async () => {
         for (const pkg of await installPackages(Object.values(packages)))
           installed.add(pkg)
