@@ -1,5 +1,6 @@
 import * as os from 'os'
 import { dirname, join } from 'path'
+import { writeFileSync, readFileSync } from 'atomically'
 import { fs } from './fs'
 
 /** Local package registry */
@@ -46,12 +47,20 @@ export class Registry {
 
   protected _load() {
     if (!this._packages) {
-      this._packages = fs.isFile(this.path) ? fs.readJson(this.path) : {}
+      try {
+        this._packages = JSON.parse(readFileSync(this.path, 'utf8'))
+      } catch (e: any) {
+        if (e.code !== 'ENOENT') {
+          console.error('Global registry is corrupted: ' + this.path)
+          throw e
+        }
+        this._packages = {}
+      }
     }
   }
 
   protected _save() {
-    fs.write(this.path, JSON.stringify(this._packages, null, 2))
+    writeFileSync(this.path, JSON.stringify(this._packages, null, 2))
   }
 }
 
