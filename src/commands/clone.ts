@@ -21,6 +21,7 @@ import { indo } from './default'
 
 export default async (cfg: RootConfig) => {
   const args = slurm({
+    'skip-optional': { type: 'boolean' },
     branch: { type: 'string' },
     b: 'branch',
   })
@@ -82,5 +83,7 @@ export default async (cfg: RootConfig) => {
 
   success('Updated "repos" in', cyan(cwdRelative(cfg.path)))
 
-  await indo(cfg.root)
+  await indo(cfg.root, {
+    skipOptional: args['skip-optional'],
+  })
 }

@@ -72,6 +72,7 @@ export async function indo(
     force?: boolean
     config?: RootConfig | false | null
     skipInstall?: boolean
+    skipOptional?: boolean
   } = {}
 ) {
   const topConfig = opts.config || loadTopConfig(cwd)
@@ -100,7 +101,9 @@ export async function indo(
   }
 
   // Clone repos and find nested indo configs.
-  await time('clone missing repos', () => cloneMissingRepos(mainConfig))
+  await time('clone missing repos', () =>
+    cloneMissingRepos(mainConfig, opts.skipOptional)
+  )
 
   // Skip setup for higher roots.
   configs = configs.filter(cfg => isDescendant(cfg.root, cwd))
@@ -189,7 +192,7 @@ function getRepoHash(repo: RepoConfig) {
     : ''
 }
 
-async function cloneMissingRepos(cfg: RootConfig) {
+async function cloneMissingRepos(cfg: RootConfig, skipOptional?: boolean) {
   const repos = Object.entries(cfg.repos)
   if (repos.length) {
     const repoPaths: { [hash: string]: string } = {}
@@ -227,6 +230,8 @@ async function cloneMissingRepos(cfg: RootConfig) {
       }
 
       if (!exists && repo.optional) {
+        if (skipOptional) return
+
         const promptMemory = getPromptMemory(cfg)
         const cacheKey = 'no-clone:' + path
         if (repoHash == promptMemory.get(cacheKey)) {
