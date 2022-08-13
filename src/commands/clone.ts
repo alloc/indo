@@ -22,6 +22,7 @@ import { indo } from './default'
 export default async (cfg: RootConfig) => {
   const args = slurm({
     'skip-optional': { type: 'boolean' },
+    'skip-install': { type: 'boolean' },
     branch: { type: 'string' },
     b: 'branch',
   })
@@ -85,5 +86,6 @@ export default async (cfg: RootConfig) => {
 
   await indo(cfg.root, {
     skipOptional: args['skip-optional'],
+    skipInstall: args['skip-install'],
   })
 }
