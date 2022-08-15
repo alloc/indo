@@ -46,6 +46,7 @@ export default async (cfg: RootConfig) => {
   const args = slurm({
     config: { type: 'string' },
     force: { type: 'boolean' },
+    skipOptional: { type: 'boolean' },
     skipInstall: { type: 'boolean' },
     c: 'config',
     f: 'force',
@@ -61,6 +62,7 @@ export default async (cfg: RootConfig) => {
 
   return indo(cfg.root, {
     force: args.force,
+    skipOptional: args.skipOptional,
     skipInstall: args.skipInstall,
     config,
   })
