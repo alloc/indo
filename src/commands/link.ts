@@ -157,5 +157,8 @@ async function linkGlobalPackage(cfg: RootConfig, opts: LinkOptions) {
     }
   }
 
-  await indo(cfg.root)
+  await indo(cfg.root, {
+    skipInstall: true,
+    skipOptional: true,
+  })
 }
