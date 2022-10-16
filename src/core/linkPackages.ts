@@ -154,7 +154,8 @@ export function linkPackages(
             log(
               green('+'),
               'Linked',
-              gray(pkg.name + ':') + green(alias),
+              gray((pkg.name || cwdRelative(dirname(pkg.path))) + ':') +
+                green(alias),
               'to',
               yellow(cwdRelative(dep.root))
             )
@@ -172,7 +173,8 @@ export function linkPackages(
                 log(
                   green('+'),
                   'Linked',
-                  gray(pkg.name + ':') + cyan(name),
+                  gray((pkg.name || cwdRelative(dirname(pkg.path))) + ':') +
+                    cyan(name),
                   'to',
                   yellow(cwdRelative(bin))
                 )
