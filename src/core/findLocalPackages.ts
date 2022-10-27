@@ -1,3 +1,4 @@
+import { realpathSync } from 'fs'
 import { join } from 'path'
 import { RootConfig } from './config'
 import { findPackages } from './findPackages'
@@ -10,7 +11,9 @@ import { isSelfManaged } from './helpers'
  */
 export function findLocalPackages(cfg: RootConfig) {
   // Find packages in the root repository.
-  const packagePaths = findPackages(cfg.root, cfg.ignore)
+  const packagePaths = new Set(
+    findPackages(cfg.root, cfg.ignore).map(pkgPath => realpathSync(pkgPath))
+  )
 
   // Find packages in nested repostories.
   Object.keys(cfg.repos).forEach(repoDir => {
@@ -23,9 +26,9 @@ export function findLocalPackages(cfg: RootConfig) {
     )
 
     findPackages(absRepoDir, ignore).forEach(pkgPath => {
-      packagePaths.push(pkgPath)
+      packagePaths.add(realpathSync(pkgPath))
     })
   })
 
-  return packagePaths
+  return [...packagePaths]
 }
