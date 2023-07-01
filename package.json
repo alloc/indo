@@ -42,7 +42,7 @@
     "realpath-native": "^1.1.0",
     "recrawl-sync": "^2.2.1",
     "saxon": "^0.2.0",
-    "semver": "^6.3.0",
+    "semver": "^7.5.2",
     "shared-log": "^1.2.4",
     "slurm": "^0.5.10"
   },
