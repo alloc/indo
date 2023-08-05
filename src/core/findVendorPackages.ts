@@ -16,7 +16,15 @@ export function findVendorPackages(cfg: RootConfig) {
   cfg.vendor.forEach(function findVendors(glob) {
     const isExact = !/[*.?]/.test(glob)
     if (isExact) {
-      return packagePaths.push(join(cfg.root, glob))
+      let exactPath = join(cfg.root, glob)
+      if (glob.endsWith('package.json')) {
+        return packagePaths.push(exactPath)
+      } else {
+        exactPath = join(exactPath, 'package.json')
+        if (fs.isFile(exactPath)) {
+          return packagePaths.push(exactPath)
+        }
+      }
     }
 
     let rootId = glob
