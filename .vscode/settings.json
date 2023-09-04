@@ -2,7 +2,11 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "[markdown]": {
     "editor.wordWrap": "on",
-    "editor.quickSuggestions": false,
+    "editor.quickSuggestions": {
+      "comments": "off",
+      "strings": "off",
+      "other": "off"
+    },
     "editor.formatOnSave": false
   }
 }
