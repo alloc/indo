@@ -1,5 +1,4 @@
 import { dirname, isAbsolute, join, relative, resolve } from 'path'
-import semver from 'semver'
 import { fs } from './fs'
 import {
   cwdRelative,
@@ -11,6 +10,7 @@ import {
   gray,
   green,
   yellow,
+  isVersionInRange,
 } from './helpers'
 
 import { RootConfig } from './config'
@@ -108,7 +108,7 @@ export function linkPackages(
           const valid =
             !version ||
             /^(latest|next)$/.test(version) ||
-            satisfies(dep.version, version) ||
+            isVersionInRange(dep.version, version) ||
             /^https?:\/\//.test(version)
 
           if (!valid) {
@@ -213,7 +213,7 @@ function searchPnpmCache(pkg: Package, name: string, semverRange: string) {
         }
         for (let versionHash of fs.list(versionDir)) {
           const version = versionHash.replace(/_.+$/, '')
-          if (satisfies(version, semverRange)) {
+          if (isVersionInRange(version, semverRange)) {
             paths.push(join(versionDir, versionHash, 'node_modules', name))
           }
         }
@@ -229,7 +229,7 @@ function searchPnpmCache(pkg: Package, name: string, semverRange: string) {
           if (cacheId.startsWith(name + '@')) {
             const versionRegex = /(?:@[^_]+\/)?[^_]+@([^_]+)(?:_.+)?/
             const [, version] = versionRegex.exec(cacheId)!
-            if (satisfies(version, semverRange)) {
+            if (isVersionInRange(version, semverRange)) {
               paths.push(join(cacheDir, cacheId, 'node_modules', name))
             }
           }
@@ -239,8 +239,4 @@ function searchPnpmCache(pkg: Package, name: string, semverRange: string) {
   }
 
   return paths
-}
-
-function satisfies(version: string, semverRange: string) {
-  return semver.satisfies(version, semverRange, { includePrerelease: true })
 }

@@ -123,5 +123,5 @@ export const randstr = (len: number) => {
   return crypto.randomBytes(len).toString('hex')
 }
 
-export const satisfies = (version: string, semverRange: string) =>
+export const isVersionInRange = (version: string, semverRange: string) =>
   semver.satisfies(version, semverRange, { includePrerelease: true })
