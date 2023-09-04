@@ -8,5 +8,7 @@
       "other": "off"
     },
     "editor.formatOnSave": false
-  }
+  },
+  "editor.wordWrapColumn": 100,
+  "rewrap.wrappingColumn": 80
 }
