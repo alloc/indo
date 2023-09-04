@@ -123,5 +123,25 @@ export const randstr = (len: number) => {
   return crypto.randomBytes(len).toString('hex')
 }
 
-export const isVersionInRange = (version: string, semverRange: string) =>
-  semver.satisfies(version, semverRange, { includePrerelease: true })
+/**
+ * Any `0.0.0` version is assumed to be compatible with any version range. If
+ * the `semverRange` starts with a letter, it is assumed to be a tag name, and
+ * the version must end with it (plus an optional `.[0-9]+` suffix in case of
+ * alpha/beta versions). The only exception is when the range is `latest` or
+ * `next`, in which case all versions are assumed to be compatible.
+ */
+export function isVersionInRange(version: string, semverRange: string) {
+  if (/^0\.0\.0(-.+)?$/.test(version)) {
+    return true
+  }
+  if (/^[a-z]/i.test(semverRange)) {
+    if (semverRange === 'latest' || semverRange === 'next') {
+      return true
+    }
+    const tagRegex = new RegExp('-' + semverRange + '(\\.[0-9]+)?$')
+    return tagRegex.test(version)
+  }
+  return semver.satisfies(version, semverRange, {
+    includePrerelease: true,
+  })
+}

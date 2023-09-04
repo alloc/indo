@@ -107,7 +107,6 @@ export function linkPackages(
         if (dep) {
           const valid =
             !version ||
-            /^(latest|next)$/.test(version) ||
             isVersionInRange(dep.version, version) ||
             /^https?:\/\//.test(version)
 
