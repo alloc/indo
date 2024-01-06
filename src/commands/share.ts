@@ -84,6 +84,10 @@ export default async (cfg: RootConfig) => {
         choices,
       })
 
+  if (!selected) {
+    return
+  }
+
   for (const root of selected) {
     const remotes = git.getRemotes(join(cfg.root, root))
 
