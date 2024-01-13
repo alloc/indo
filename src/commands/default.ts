@@ -312,7 +312,7 @@ async function findUnknownRepos(cfg: RootConfig, packages: PackageMap) {
 
   let changed = false
   for (let rootId of Array.from(gitRoots)) {
-    if (cfg.repos[rootId]) {
+    if (cfg.repos[rootId] || rootId.startsWith('..')) {
       continue
     }
     const cwd = join(cfg.root, rootId)
