@@ -9,7 +9,7 @@ export function sparseClone(
   url: string,
   branch: string | undefined,
   commit: string | undefined,
-  subpath: string | undefined
+  subpath: string
 ) {
   fs.mkdir(dest)
   let checkoutCommand = `git clone ${url} . --no-checkout --depth 1`

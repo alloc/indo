@@ -36,7 +36,7 @@ export async function installPackages(packages: Package[], force?: boolean) {
           task.finish()
           log.debug('install completed:', yellow(cwdRelative(pkg.root)))
           log.events.emit('install', pkg)
-        } catch (e) {
+        } catch (e: any) {
           task.finish()
           log.error('Installation failed:', yellow(cwdRelative(pkg.root)))
           if (isTest) {

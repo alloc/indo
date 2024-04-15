@@ -33,7 +33,6 @@ export default (cfg: RootConfig | null) => {
   if (name) {
     if (!cfg) {
       fatal('Missing config. Did you run', cyan('indo init'), 'yet?')
-      return
     }
     if (!args.g) {
       return linkGlobalPackage(cfg, {

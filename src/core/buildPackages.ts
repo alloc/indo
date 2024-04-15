@@ -57,7 +57,7 @@ export async function buildPackage(pkg: Package) {
     const task = startTask(`Building ${cyan(cwdRelative(pkg.root))}`)
     try {
       await promise
-    } catch (e) {
+    } catch (e: any) {
       task.finish()
       log.error('Build script failed:', yellow(cwdRelative(pkg.root)))
       if (isTest) {

@@ -54,7 +54,7 @@ export function loadConfig(configPath = findConfig(), force?: boolean) {
   let rawConfig: any
   try {
     rawConfig = fs.readJson(configPath)
-  } catch (err) {
+  } catch (err: any) {
     if (err.code == fs.NOT_REAL) return null
     throw err
   }
@@ -96,9 +96,10 @@ export function createConfig(props?: Partial<Config>): Config {
   }
 }
 
-export function saveConfig(cfg: RootConfig) {
-  const copy = {}
-  const empty = createConfig()
+export function saveConfig(cfg: RootConfig): void
+export function saveConfig(cfg: any) {
+  const copy: any = {}
+  const empty: any = createConfig()
   for (const key in cfg) {
     if (key in empty && !isDeepEqual(cfg[key], empty[key])) {
       copy[key] = cfg[key]

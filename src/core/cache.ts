@@ -10,7 +10,7 @@ export interface JSONCache<T = any> {
   find(fn: (value: T, key: string) => boolean): T
 }
 
-interface ManagedJSONCache extends JSONCache {
+interface ManagedJSONCache<T = any> extends JSONCache<T> {
   save(): void
 }
 
@@ -21,14 +21,14 @@ export function loadCache<T>(
   cachePath: string,
   onLoad?: (cache: JSONCache<T>) => void
 ): JSONCache<T> {
-  let cache: JSONCache<T> = caches[cachePath]
+  let cache: ManagedJSONCache<T> = caches[cachePath]
   if (cache) {
     return cache
   }
   let data: any
   try {
     data = fs.readJson(cachePath)
-  } catch (err) {
+  } catch (err: any) {
     if (err.code == fs.NOT_REAL) {
       data = {}
     } else {

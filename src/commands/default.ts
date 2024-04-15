@@ -273,7 +273,7 @@ async function cloneMissingRepos(cfg: RootConfig, skipOptional?: boolean) {
             `Cloned ${green(cwdRelative(dest))} from`,
             repo.url.replace(/^.+:\/\//, '')
           )
-        } catch (err) {
+        } catch (err: any) {
           task.finish()
           if (/\bnot (read|found)\b/.test(err.message)) {
             return warn(

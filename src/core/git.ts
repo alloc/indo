@@ -90,7 +90,7 @@ function parseGitString(
   let commit: string | undefined
   let subpath: string | undefined
 
-  if (gitString?.length > 0) {
+  if (gitString) {
     if (gitString.includes(':')) {
       ;[gitString, subpath] = gitString.split(':')
     }
