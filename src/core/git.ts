@@ -9,7 +9,7 @@ import { Package } from './Package'
 export const git = {
   clone(cwd: string, repo: RepoConfig, path: string) {
     if (repo.head?.includes(':')) {
-      const [head, subpath] = repo.head!.split(':')
+      const [head, subpath] = repo.head.split(':')
       return sparseClone(join(cwd, path), repo.url, head, subpath)
     }
     return exec(
