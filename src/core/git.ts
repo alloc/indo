@@ -5,18 +5,25 @@ import { RepoConfig, RootConfig } from './config'
 import { sparseClone } from './sparseClone'
 import { isHomeDir } from './helpers'
 import { Package } from './Package'
+import shell from '@cush/shell'
 
 export const git = {
   clone(cwd: string, repo: RepoConfig, path: string) {
-    if (repo.head?.includes(':')) {
-      const [head, subpath] = repo.head.split(':')
-      return sparseClone(join(cwd, path), repo.url, head, subpath)
+    const { branch, commit, subpath } = parseGitString(repo.head)
+
+    if (subpath) {
+      return sparseClone(join(cwd, path), repo.url, branch, commit, subpath)
     }
-    return exec(
-      `git clone ${repo.url} ${path} --depth 1`,
-      [repo.head ? ['-b', repo.head] : null],
-      { cwd }
-    )
+
+    let checkoutCommand = `git clone ${repo.url} ${path} --depth 1`
+    if (branch) {
+      checkoutCommand += ` -b ${branch}`
+    }
+    if (commit) {
+      checkoutCommand += ` && git checkout ${commit}`
+      return shell(checkoutCommand, { cwd })
+    }
+    return exec(checkoutCommand, { cwd })
   },
   getRemoteUrl(cwd: string, remote = 'origin') {
     return exec.sync(`git remote get-url ${remote}`, { cwd })
@@ -70,4 +77,32 @@ export const git = {
     }
     return gitRoots
   },
+}
+
+function parseGitString(
+  gitString: string | undefined
+): {
+  branch: string | undefined
+  commit: string | undefined
+  subpath: string | undefined
+} {
+  let branch: string | undefined
+  let commit: string | undefined
+  let subpath: string | undefined
+
+  if (gitString?.length > 0) {
+    if (gitString.includes(':')) {
+      ;[gitString, subpath] = gitString.split(':')
+    }
+
+    if (gitString.includes('#')) {
+      ;[branch, commit] = gitString.split('#')
+    } else if (/^[0-9a-f]{40}$/.test(gitString)) {
+      commit = gitString
+    } else {
+      branch = gitString
+    }
+  }
+
+  return { branch, commit, subpath }
 }

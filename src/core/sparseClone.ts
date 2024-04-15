@@ -7,12 +7,19 @@ import fs from 'saxon/sync'
 export function sparseClone(
   dest: string,
   url: string,
-  branch: string,
-  subpath: string
+  branch: string | undefined,
+  commit: string | undefined,
+  subpath: string | undefined
 ) {
   fs.mkdir(dest)
+  let checkoutCommand = `git clone ${url} . --no-checkout --depth 1`
+  if (commit) {
+    checkoutCommand += ` && git checkout ${commit}`
+  } else if (branch) {
+    checkoutCommand += ` -b ${branch}`
+  }
   return shell(
-    `git clone ${url} . -b ${branch} --no-checkout --depth 1
+    `${checkoutCommand}
      git config core.sparseCheckout true
      echo "${subpath}" >> .git/info/sparse-checkout
      git checkout
