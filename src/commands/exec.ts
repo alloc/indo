@@ -36,6 +36,6 @@ export default async (cfg: RootConfig) => {
 function injectEnv(cmd: string, env: object) {
   const envUnixRegex = /\$(\w+)/g
   return cmd.replace(envUnixRegex, (_, name) => {
-    return env[name] || ''
+    return (env as any)[name] || ''
   })
 }

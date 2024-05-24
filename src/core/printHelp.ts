@@ -23,7 +23,7 @@ export function printHelp(cmdPath: string) {
         close = opened.length && name == opened[0].name ? '/' : ''
       }
       if (close) {
-        const text = k[opened[0].name](
+        const text = k[opened[0].name as 'red'](
           opened[0].text + rawHelp.slice(opened[0].index, match.index)
         )
         lastIndex = match.index + match[0].length

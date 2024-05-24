@@ -17,7 +17,7 @@ if (cmd && cmd[0] !== '-') {
   if (cmd == helpArg) {
     cmd = 'default'
   } else {
-    const aliases = {
+    const aliases: Record<string, string> = {
       ls: 'list',
       rm: 'remove',
       mv: 'move',
