@@ -77,6 +77,9 @@ export const git = {
     }
     return gitRoots
   },
+  loadSubmodules(cwd: string) {
+    return exec.sync(`git submodule --quiet foreach 'echo $path'`, { cwd })
+  },
 }
 
 function parseGitString(

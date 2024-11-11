@@ -309,10 +309,14 @@ async function cloneMissingRepos(cfg: RootConfig, skipOptional?: boolean) {
 
 async function findUnknownRepos(cfg: RootConfig, packages: PackageMap) {
   const gitRoots = git.findRoots(cfg, Object.values(packages))
+  const gitSubmodules = git.loadSubmodules(cfg.root)
 
   let changed = false
   for (let rootId of Array.from(gitRoots)) {
     if (cfg.repos[rootId] || rootId.startsWith('..')) {
+      continue
+    }
+    if (gitSubmodules.includes(rootId)) {
       continue
     }
     const cwd = join(cfg.root, rootId)
