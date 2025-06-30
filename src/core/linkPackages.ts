@@ -107,6 +107,7 @@ export function linkPackages(
         if (dep) {
           const valid =
             !version ||
+            cfg.forceLink.includes(name) ||
             isVersionInRange(dep.version, version) ||
             /^https?:\/\//.test(version)
 

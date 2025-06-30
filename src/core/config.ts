@@ -16,6 +16,7 @@ interface Config {
   alias: { [name: string]: string }
   vendor: string[]
   ignore: string[]
+  forceLink: string[]
 }
 
 export interface RootConfig extends Config {
@@ -92,6 +93,7 @@ export function createConfig(props?: Partial<Config>): Config {
     alias: {},
     vendor: ['vendor/**'],
     ignore: [],
+    forceLink: [],
     ...props,
   }
 }
