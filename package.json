@@ -19,7 +19,6 @@
     "dev": "tsc -p . --watch",
     "build": "rimraf dist && tsc -p .",
     "prepare": "npm run build",
-    "prepublishOnly": "rm -rf dist",
     "test": "jest"
   },
   "dependencies": {
